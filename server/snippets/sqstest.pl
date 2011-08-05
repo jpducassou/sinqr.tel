@@ -17,16 +17,18 @@ my $sqs = new Amazon::SQS::Simple($access_key, $secret_key);
 my $q = $sqs->GetQueue('https://queue.amazonaws.com/041722291456/sinqrtel');
 
 # Retrieve a message
-my $msg = $q->ReceiveMessage( 'AttributeName.1' => 'All' );#, MaxNumberOfMessages=>1 );
+my $msg = $q->ReceiveMessage( 'AttributeName.1' => 'All' , MaxNumberOfMessages=>1 );
 
 if ( defined $msg ) {
   print $msg->MessageBody() . "\n";
   if ( defined $msg->{Attribute} ) {
-	print "\t" . join("|", @{$msg->{Attribute}} );
+	print "\t" . join("|", map {$_->{Name} . '=' . $_->{Value}} @{$msg->{Attribute}} );
   }
 
   # Delete the message
-  $q->DeleteMessage($msg->ReceiptHandle());
+  unless ( $q->DeleteMessage($msg->ReceiptHandle()) ) {
+	print "Delete failed\n";
+  }
 } else {
   print "No message visible right now\n";
 }

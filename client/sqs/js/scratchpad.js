@@ -3,13 +3,13 @@ function toggleDiv(elementName, parent) {
     var e = document.getElementById(elementName);
     if (e) {
         if ((e.style.display != 'block')) {
-            e.style.display = 'block'; 
+            e.style.display = 'block';
             e.style.position = "absolute";
             e.style.zIndex = "1";
             e.style.top = findPosY (parent) + 30 + "px";
             e.style.left = findPosX (parent) - 600 + "px";
         } else {
-            e.style.display = 'none'; 
+            e.style.display = 'none';
         }
     }
 }
@@ -18,12 +18,12 @@ function toggleBlock(elementName) {
     var e = document.getElementById(elementName);
     if (e) {
         if ((e.style.display != 'block')) {
-            e.style.display = 'block'; 
+            e.style.display = 'block';
         } else {
-            e.style.display = 'none'; 
+            e.style.display = 'none';
         }
     }
-}  
+}
 
 function findPosX(obj) {
     var curleft = 0;
@@ -48,7 +48,7 @@ function findPosY(obj)  {
     } else if(obj.y)   curtop += obj.y;
     return curtop;
 }
-       
+
 function cloneRow(id){
     var node = document.getElementById(id);
      var clone = node.cloneNode(true);
@@ -69,18 +69,18 @@ function parentContainer (node, level) {
     return node;
 }
 
-function crawlNode(node, idPrefix) {      
+function crawlNode(node, idPrefix) {
     if (node.id) {
             node.id =  indexPlus (node.id, idPrefix);
     } else if (node.name) {
         node.name =  indexPlus (node.name, idPrefix);
     }
-   
-    if(node.hasChildNodes()) {  
-        for(var i=0; i<node.childNodes.length; i++) {   
+
+    if(node.hasChildNodes()) {
+        for(var i=0; i<node.childNodes.length; i++) {
             crawlNode(node.childNodes[i], idPrefix);
-        }                                   
-    }                                           
+        }
+    }
 }
 
 function indexPlus (id, prefix) {
@@ -95,17 +95,17 @@ function buldIndexName(id, prefix, num) {
     var index = parseInt(extractIndex(prefix));
     var newIndex = index + parseInt(num);
     var name = extractName(prefix);
-    return id.replace (prefix, name + "" + (newIndex) + ""); 
-    
+    return id.replace (prefix, name + "" + (newIndex) + "");
+
 }
 
 function hideAddDelete(id) {
-    
+
      var addNode = document.getElementById(id + ".Add");
      var deleteNode = document.getElementById(id + ".Delete");
      addNode.style.display = 'none';
      deleteNode.style.display = 'none';
-     
+
      var previousNodeId =  indexPlus (id, id);
      var previousDeleteNode = document.getElementById(previousNodeId + ".Delete");
      previousDeleteNode.style.display = '';
@@ -122,7 +122,7 @@ function extractName (id) {
 }
 
 function showAddDelete(id) {
-    
+
     if (isFirstIndex(id)) {
         var deleteNode = document.getElementById(id + ".Delete");
         deleteNode.style.display = '';
@@ -133,7 +133,7 @@ function showAddDelete(id) {
     var deleteNode = document.getElementById(previousNodeId + ".Delete");
     addNode.style.display = '';
     deleteNode.style.display = '';
-    
+
 }
 
 function deleteRow(id){
@@ -191,7 +191,11 @@ function ignoreCaseSort(a, b) {
 
 function generateV1Signature(url, key) {
         var stringToSign = getStringToSign(url);
-        var signed =   b64_hmac_sha1(key, stringToSign);
+        //var signedold =   b64_hmac_sha1(key, stringToSign);
+        //rstr2b64(rstr_hmac_sha1(str2rstr_utf8(k), str2rstr_utf8(d))); }
+        var signed = Crypto.util.bytesToBase64( Crypto.HMAC (Crypto.SHA1, Crypto.charenc.UTF8.stringToBytes( stringToSign ), Crypto.charenc.UTF8.stringToBytes( key ), {asBytes: true}));
+        //alert( signedold );
+        alert( signed );
         return signed;
 }
 
@@ -220,14 +224,14 @@ function generateSignedURL(actionName, form, accessKeyId, secretKey, endpoint, v
    var url = endpoint + "?SignatureVersion=1&Action=" + actionName + "&Version=" + encodeURIComponent(version) + "&";
    for (var i = 0; i < form.elements.length; ++i) {
            var elementName = form.elements[i].name;
-        
+
         var elementValue = null;
-    
+
            if (form.elements[i].type == 'text') {
             elementValue = form.elements[i].value;
         } else if (form.elements[i].type == 'select-one') {
             elementValue = form.elements[i].options[form.elements[i].selectedIndex].value;
-        }    
+        }
         if (elementValue) {
                    url += elementName;
                    url += "=";
@@ -237,11 +241,11 @@ function generateSignedURL(actionName, form, accessKeyId, secretKey, endpoint, v
    }
    var timestamp = getNowTimeStamp();
    url += "Timestamp=" + encodeURIComponent(timestamp);
-   
+
    url += "&AWSAccessKeyId=" + encodeURIComponent(accessKeyId);
    var signature = generateV1Signature(url, secretKey);
-   url += "&Signature=" + encodeURIComponent(signature); 
-   
+   url += "&Signature=" + encodeURIComponent(signature);
+
    return url;
 }
 
