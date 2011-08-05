@@ -1,0 +1,127 @@
+<html>
+  <head>
+    <title>Amazon SQSScratchpad</title>
+    <script src="js/hmacsha1.js"></script>
+    <script src="js/scratchpad.js"></script>
+    <script>
+        function invokeRequest() {
+            var form = document.forms[0];
+            var accessKeyId =  parent.navbar.getAccessKeyId();
+            var secretKey =  parent.navbar.getSecretAccessKey();
+            var url = generateSignedURL("AddPermission",form, accessKeyId, secretKey, "https://queue.amazonaws.com", "2009-02-01");
+            var postFormArea = document.getElementById("PostFormArea");
+            postFormArea.innerHTML = getFormFieldsFromUrl(url);
+            var postForm = document.getElementById("PostForm");
+				var queueUrl = form['QueueUrl'].value;
+				postForm.action = queueUrl ;
+				form['QueueUrl'].value = "";
+            postForm.submit();
+				form['QueueUrl'].value = queueUrl;
+        }
+
+        function displayUrl() {
+            var form = document.forms[0];
+            var accessKeyId =  parent.navbar.getAccessKeyId();
+            var secretKey =  parent.navbar.getSecretAccessKey();
+				var queueUrl = form['QueueUrl'].value;
+				form['QueueUrl'].value = "";
+				form.action = queueUrl;
+            var url = generateSignedURL("AddPermission",form, accessKeyId, secretKey, "https://queue.amazonaws.com", "2009-02-01");
+            document.getElementById("preview").innerHTML = "<b>Signed URL:</b><p/>" + url + "<p/>";
+            document.getElementById("preview").style.display = "block";
+        }
+
+        function displayStringToSign() {
+            var form = document.forms[0];
+            var accessKeyId =  parent.navbar.getAccessKeyId();
+            var secretKey =  parent.navbar.getSecretAccessKey();
+				var queueUrl = form['QueueUrl'].value;
+				form['QueueUrl'].value = "";
+				form.action = queueUrl;
+            var url = generateSignedURL("AddPermission",form, accessKeyId, secretKey, "https://queue.amazonaws.com", "2009-02-01");
+            var stringToSign = getStringToSign(url);
+            document.getElementById("preview").innerHTML = "<b>String To Sign:</b><p/>" + stringToSign + "<p/>";
+            document.getElementById("preview").style.display = "block";
+        }
+    </script>
+
+    <link rel="stylesheet" type="text/css" href="css/scratchpad.css"/>
+  </head>
+
+  <body marginheight="0" marginwidth="0" bottommargin="0" rightmargin="0" leftmargin="0" topmargin="0">
+    <form name="myform" action="" enctype="application/x-www-form-urlencoded" method="get">
+      <table border="0" align="center" cellpadding="0" cellspacing="0" style="width: 100%">
+        <tr>
+          <td width="50%"><img height="1" src="images/spacer.gif" width="100"></td>
+          <td valign="top">
+            <table width="100%">
+              <tr>
+                <td valign="top" nowrap><font class="header">AddPermission</font>
+                  <br/><br/>
+                  <div style="padding-bottom: 2px; border-bottom: 1px dashed #cccccc; width: 100%"></div>
+                  <table cellspacing="10" width="100%" style="background-color: #eeeeee;  padding: 10px;">
+                    <tr><td>
+                        <table width="100%" align="center"><tr><td>
+                              <table border="0" width="100%" style="padding: 0px; margin: 0px; border: 2px solid #D5D5D5; background: url(images/bg-table.png) left top repeat-x;">
+   <tr>
+      <td>
+         <table cellpadding="0" cellspacing="3" border="0" bgcolor="#eeeeee" width="100%">
+            <tr>
+               <td align="right" style="padding-right:25px;padding-left:0px" width="250"><span class="label">Queue Url</span></td>
+               <td nowrap><input class="input" type="text" name="QueueUrl"></td>
+            </tr>
+         </table>
+         <table cellpadding="0" cellspacing="3" border="0" bgcolor="#eeeeee" width="100%">
+            <tr>
+               <td align="right" style="padding-right:25px;padding-left:0px" width="250"><span class="label">Label</span></td>
+               <td nowrap><input class="input" type="text" name="Label"></td>
+            </tr>
+         </table>
+         <table cellpadding="0" cellspacing="3" border="0" bgcolor="#eeeeee" width="100%" id="AWSAccountId.1">
+            <tr>
+               <td align="right" style="padding-right:25px;padding-left:0px" width="250"><span class="label">AWS Account Id</span></td>
+               <td nowrap><input class="input" type="text" name="AWSAccountId.1"><input style="display:''" type="image" src="images/delete.gif" vspace="5" hspace="5" onclick="deleteContainer(this, 4);return false;" id="AWSAccountId.1.Delete"><input vspace="5" type="image" src="images/add.gif" hspace="5" onclick="addContainer(this, 4);return false;" id="AWSAccountId.1.Add"></td>
+            </tr>
+         </table>
+         <table cellpadding="0" cellspacing="3" border="0" bgcolor="#eeeeee" width="100%" id="ActionName.1">
+            <tr>
+               <td align="right" style="padding-right:25px;padding-left:0px" width="250"><span class="label">Action Name</span></td>
+               <td nowrap><input class="input" type="text" name="ActionName.1"><input style="display:''" type="image" src="images/delete.gif" vspace="5" hspace="5" onclick="deleteContainer(this, 4);return false;" id="ActionName.1.Delete"><input vspace="5" type="image" src="images/add.gif" hspace="5" onclick="addContainer(this, 4);return false;" id="ActionName.1.Add"></td>
+            </tr>
+         </table>
+      </td>
+   </tr>
+</table>
+                        </td></tr></table>
+                    </td></tr>
+                  </table>
+                </td>
+              </tr>
+
+            </table>
+            <div class="blurb" id="preview" style="margin: 20 1 1 1;overflow: auto;display:none"></div>
+            <img height="15" src="images/spacer.gif" width="700">
+            <table width="100%">
+              <tr>
+                <td><a href="javascript:invokeRequest();"><img   border="0" src="images/button-invokerequest.png"></a>&nbsp;&nbsp;&nbsp;<a href="javascript:displayUrl();"><img   border="0" src="images/button-displayurl.png"></a>&nbsp;&nbsp;&nbsp;<a href="javascript:displayStringToSign();"><img   border="0" src="images/button-displaystringtosign.png"></a>&nbsp;&nbsp;&nbsp;<a href="javascript:document.forms[0].reset()"><img border="0" src="images/button-resetform.png"></a>
+                </td>
+              </tr>
+            </table>
+          </td>
+          <td width="50%"><img height="1" src="images/spacer.gif" width="100"></td>
+        </tr>
+      </table>
+
+      <br/><br/>
+      <div style="padding-bottom: 2px; border-bottom: 1px dashed #cccccc; width: 100%"></div>
+      <center><div style="padding: 15px" class="smallLabel">Amazon SQS API Version: 2009-02-01. Scratchpad generated: Wed Apr 08 20:52:59 PDT 2009  </div></center>
+    </form>
+    <form id="PostForm" name="PostForm" target="_new" action="https://queue.amazonaws.com" enctype="application/x-www-form-urlencoded" method="post">
+      <div id="PostFormArea"></div>
+    </form>
+  </body>
+</html>
+
+
+
+
