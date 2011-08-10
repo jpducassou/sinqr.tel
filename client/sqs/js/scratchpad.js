@@ -161,23 +161,3 @@ function addContainer(node, parentLevel) {
     hideAddDelete(parent.id);
     return false;
 }
-
-
-function addZero(n) {
-    return ( n < 0 || n > 9 ? "" : "0" ) + n;
-}
-
-
-/////////////////// Build Form Fields /////////////////////////////////////////////////////
-//function getFormFieldsFromUrl (url) {
-//    var fields  = "";
-//    var query = url.split("?")[1];
-//    var params = query.split("&");
-//    for (var i = 0; i < params.length; i++) {
-//        var param = params[i].split("=");
-//        var name =   param[0];
-//        var value =  param[1];
-//         fields += "<input type=\"hidden\" name=\""+name+"\" value=\""+decodeURIComponent(value)+"\">";
-//    }
-//    return fields;
-//}

@@ -4,7 +4,7 @@
 	<!--<script type="text/javascript" src="http://crypto-js.googlecode.com/files/2.3.0-crypto-sha1-hmac.js"></script>-->
     <script type="text/javascript" src="js/2.3.0-crypto-sha1-hmac.js"></script>
 	<!--<script type="text/javascript" src="js/hmacsha1.js"></script>-->
-	<script type="text/javascript" src="js/scratchpad.js"></script>
+	<!--<script type="text/javascript" src="js/scratchpad.js"></script>-->
     <script type="text/javascript" src="js/sendmessage.js"></script>
 
     <link rel="stylesheet" type="text/css" href="css/scratchpad.css"/>
@@ -29,8 +29,20 @@
       <td>
          <table cellpadding="0" cellspacing="3" border="0" bgcolor="#eeeeee" width="100%">
             <tr>
+               <td align="right" style="padding-right:25px;padding-left:0px" width="250"><span class="label">ID</span></td>
+               <td nowrap><script>document.write(getPublicId());</script></td>
+            </tr>
+         </table>
+		 <table cellpadding="0" cellspacing="3" border="0" bgcolor="#eeeeee" width="100%">
+            <tr>
+               <td align="right" style="padding-right:25px;padding-left:0px" width="250"><span class="label">Secret</span></td>
+               <td nowrap><script>document.write(getPublicAccessKey());</script></td>
+            </tr>
+         </table>
+		 <table cellpadding="0" cellspacing="3" border="0" bgcolor="#eeeeee" width="100%">
+            <tr>
                <td align="right" style="padding-right:25px;padding-left:0px" width="250"><span class="label">Queue Url</span></td>
-               <td nowrap><input class="input" type="text" name="QueueUrl"></td>
+               <td nowrap><script>document.write(getPublicQueueURI());</script></td>
             </tr>
          </table>
          <table cellpadding="0" cellspacing="3" border="0" bgcolor="#eeeeee" width="100%">
@@ -39,33 +51,33 @@
                <td nowrap><input class="input" type="text" name="MessageBody" id="MessageBody"></td>
             </tr>
          </table>
-         <table style="margin: 20px" cellpadding="0" width="90%" cellspacing="2" border="0" bgcolor="#eeeeee" id="Attribute.1">
-            <tr>
-               <td style="border: 2px dashed #cccccc;">
-                  <table width="100%">
-                     <tr>
-                        <td><input align="right" hspace="5" vspace="5" type="image" src="images/add.gif" onclick="addContainer(this, 8);return false;" id="Attribute.1.Add"><input align="right" type="image" style="display:''" src="images/delete.gif" hspace="5" vspace="5" onclick="deleteContainer(this, 8);return false;" id="Attribute.1.Delete"><div class="legend"><img src="images/bluearrow.gif" align="absmiddle" hspace="10">Attribute
-                           </div>
-                        </td>
-                     </tr>
-                  </table>
-                  <fieldset style="padding-left: 30px;padding-right: 30px;padding-bottom: 30px; border: 0px;">
-                     <table cellpadding="0" cellspacing="3" border="0" bgcolor="#eeeeee" width="100%">
-                        <tr>
-                           <td align="right" style="padding-right:25px;padding-left:0px" width="250"><span class="label">Name</span></td>
-                           <td nowrap><input class="input" type="text" name="Attribute.1.Name"></td>
-                        </tr>
-                     </table>
-                     <table cellpadding="0" cellspacing="3" border="0" bgcolor="#eeeeee" width="100%">
-                        <tr>
-                           <td align="right" style="padding-right:25px;padding-left:0px" width="250"><span class="label">Value</span></td>
-                           <td nowrap><input class="input" type="text" name="Attribute.1.Value"></td>
-                        </tr>
-                     </table>
-                  </fieldset>
-               </td>
-            </tr>
-         </table>
+         <!--<table style="margin: 20px" cellpadding="0" width="90%" cellspacing="2" border="0" bgcolor="#eeeeee" id="Attribute.1">-->
+         <!--   <tr>-->
+         <!--      <td style="border: 2px dashed #cccccc;">-->
+         <!--         <table width="100%">-->
+         <!--            <tr>-->
+         <!--               <td><input align="right" hspace="5" vspace="5" type="image" src="images/add.gif" onclick="addContainer(this, 8);return false;" id="Attribute.1.Add"><input align="right" type="image" style="display:''" src="images/delete.gif" hspace="5" vspace="5" onclick="deleteContainer(this, 8);return false;" id="Attribute.1.Delete"><div class="legend"><img src="images/bluearrow.gif" align="absmiddle" hspace="10">Attribute-->
+         <!--                  </div>-->
+         <!--               </td>-->
+         <!--            </tr>-->
+         <!--         </table>-->
+         <!--         <fieldset style="padding-left: 30px;padding-right: 30px;padding-bottom: 30px; border: 0px;">-->
+         <!--            <table cellpadding="0" cellspacing="3" border="0" bgcolor="#eeeeee" width="100%">-->
+         <!--               <tr>-->
+         <!--                  <td align="right" style="padding-right:25px;padding-left:0px" width="250"><span class="label">Name</span></td>-->
+         <!--                  <td nowrap><input class="input" type="text" name="Attribute.1.Name"></td>-->
+         <!--               </tr>-->
+         <!--            </table>-->
+         <!--            <table cellpadding="0" cellspacing="3" border="0" bgcolor="#eeeeee" width="100%">-->
+         <!--               <tr>-->
+         <!--                  <td align="right" style="padding-right:25px;padding-left:0px" width="250"><span class="label">Value</span></td>-->
+         <!--                  <td nowrap><input class="input" type="text" name="Attribute.1.Value"></td>-->
+         <!--               </tr>-->
+         <!--            </table>-->
+         <!--         </fieldset>-->
+         <!--      </td>-->
+         <!--   </tr>-->
+         <!--</table>-->
       </td>
    </tr>
 </table>
