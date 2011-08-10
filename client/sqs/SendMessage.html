@@ -1,29 +1,53 @@
 <html>
   <head>
     <title>Amazon SQSScratchpad</title>
-    <script type="text/javascript" src="http://crypto-js.googlecode.com/files/2.3.0-crypto-sha1-hmac.js"></script>
+	<!--<script type="text/javascript" src="http://crypto-js.googlecode.com/files/2.3.0-crypto-sha1-hmac.js"></script>-->
+    <script type="text/javascript" src="js/2.3.0-crypto-sha1-hmac.js"></script>
+	<script type="text/javascript" src="js/hmacsha1.js"></script>
 	<script type="text/javascript" src="js/scratchpad.js"></script>
-    <script>
+    <script type="text/javascript">
+		//function invokeRequest () {
+		//  var http = new XMLHttpRequest();
+		//
+		//  var params = "lorem=ipsum&name=binny";
+		//  var form = document.getElementById("UIForm");
+		//  var url = generateSignedURL("SendMessage",form, getPublicId() , getPublicAccessKey() , "https://queue.amazonaws.com", "2009-02-01");
+		//
+		//  http.open("POST", url, true);
+		//
+		//  //Send the proper header information along with the request
+		//  http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+		//  http.setRequestHeader("Content-length", params.length);
+		//  http.setRequestHeader("Connection", "close");
+		//
+		//  http.onreadystatechange = function() {//Call a function when the state changes.
+		//	if(http.readyState == 4 && http.status == 200) {
+		//	  alert(http.responseText);
+		//	}
+		//  }
+		//  http.send(params);
+		//}
+
         function invokeRequest() {
-            var form = document.forms[0];
-            var accessKeyId =  parent.navbar.getAccessKeyId();
-            var secretKey =  parent.navbar.getSecretAccessKey();
-            var url = generateSignedURL("SendMessage",form, accessKeyId, secretKey, "https://queue.amazonaws.com", "2009-02-01");
+            var messageBody = document.getElementById("MessageBody");
+            var accessKeyId =  getPublicId();
+            var secretKey =  getPublicAccessKey();
+            var url = generateSignedURL("SendMessage", messageBody.value, accessKeyId, secretKey, "https://queue.amazonaws.com", "2009-02-01");
             var postFormArea = document.getElementById("PostFormArea");
             postFormArea.innerHTML = getFormFieldsFromUrl(url);
             var postForm = document.getElementById("PostForm");
-				var queueUrl = form['QueueUrl'].value;
-				postForm.action = queueUrl ;
-				form['QueueUrl'].value = "";
+				var queueUrl = getPublicQueueURI();
+				postForm.action = queueUrl;
+				//form['QueueUrl'].value = "";
             postForm.submit();
-				form['QueueUrl'].value = queueUrl;
+				//form['QueueUrl'].value = queueUrl;
         }
 
         function displayUrl() {
-            var form = document.forms[0];
-            var accessKeyId =  parent.navbar.getAccessKeyId();
-            var secretKey =  parent.navbar.getSecretAccessKey();
-				var queueUrl = form['QueueUrl'].value;
+            var form = document.getElementById("UIForm");
+            var accessKeyId =  getPublicId();
+            var secretKey =  getPublicAccessKey();
+				var queueUrl = getPublicQueueURI();
 				form['QueueUrl'].value = "";
 				form.action = queueUrl;
             var url = generateSignedURL("SendMessage",form, accessKeyId, secretKey, "https://queue.amazonaws.com", "2009-02-01");
@@ -32,10 +56,10 @@
         }
 
         function displayStringToSign() {
-            var form = document.forms[0];
-            var accessKeyId =  parent.navbar.getAccessKeyId();
-            var secretKey =  parent.navbar.getSecretAccessKey();
-				var queueUrl = form['QueueUrl'].value;
+            var form = document.getElementById("UIForm");
+            var accessKeyId =  getPublicId();
+            var secretKey =  getPublicAccessKey();
+				var queueUrl = getPublicQueueURI();
 				form['QueueUrl'].value = "";
 				form.action = queueUrl;
             var url = generateSignedURL("SendMessage",form, accessKeyId, secretKey, "https://queue.amazonaws.com", "2009-02-01");
@@ -49,7 +73,7 @@
   </head>
 
   <body marginheight="0" marginwidth="0" bottommargin="0" rightmargin="0" leftmargin="0" topmargin="0">
-    <form name="myform" action="" enctype="application/x-www-form-urlencoded" method="get">
+    <form name="UIForm" id="UIForm" action="" enctype="application/x-www-form-urlencoded" method="get">
       <table border="0" align="center" cellpadding="0" cellspacing="0" style="width: 100%">
         <tr>
           <td width="50%"><img height="1" src="images/spacer.gif" width="100"></td>
@@ -74,7 +98,7 @@
          <table cellpadding="0" cellspacing="3" border="0" bgcolor="#eeeeee" width="100%">
             <tr>
                <td align="right" style="padding-right:25px;padding-left:0px" width="250"><span class="label">Message Body</span></td>
-               <td nowrap><input class="input" type="text" name="MessageBody"></td>
+               <td nowrap><input class="input" type="text" name="MessageBody" id="MessageBody"></td>
             </tr>
          </table>
          <table style="margin: 20px" cellpadding="0" width="90%" cellspacing="2" border="0" bgcolor="#eeeeee" id="Attribute.1">
@@ -118,7 +142,7 @@
             <img height="15" src="images/spacer.gif" width="700">
             <table width="100%">
               <tr>
-                <td><a href="javascript:invokeRequest();"><img   border="0" src="images/button-invokerequest.png"></a>&nbsp;&nbsp;&nbsp;<a href="javascript:displayUrl();"><img   border="0" src="images/button-displayurl.png"></a>&nbsp;&nbsp;&nbsp;<a href="javascript:displayStringToSign();"><img   border="0" src="images/button-displaystringtosign.png"></a>&nbsp;&nbsp;&nbsp;<a href="javascript:document.forms[0].reset()"><img border="0" src="images/button-resetform.png"></a>
+                <td><a href="javascript:invokeRequest();"><img   border="0" src="images/button-invokerequest.png"></a>&nbsp;&nbsp;&nbsp;<a href="javascript:displayUrl();"><img   border="0" src="images/button-displayurl.png"></a>&nbsp;&nbsp;&nbsp;<a href="javascript:displayStringToSign();"><img   border="0" src="images/button-displaystringtosign.png"></a>&nbsp;&nbsp;&nbsp;<a href="javascript:document.getElementByID("UIForm").reset()"><img border="0" src="images/button-resetform.png"></a>
                 </td>
               </tr>
             </table>

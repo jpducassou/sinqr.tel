@@ -1,3 +1,17 @@
+/////////////////// Fixed values /////////////////////////////////////////////////////
+
+function getPublicQueueURI() {
+    return 'https://queue.amazonaws.com/041722291456/sinqrtel_public';
+}
+
+function getPublicId() {
+    return 'AKIAIC2DBRTIUKHMGASQ';
+}
+
+function getPublicAccessKey() {
+    return '2Ofh3ICjeKpxeWBV2KGmKJ4co4WoeGtpumiiGEPX';
+}
+
 /////////////////// Form Fields Display /////////////////////////////////////////////////////
 function toggleDiv(elementName, parent) {
     var e = document.getElementById(elementName);
@@ -191,10 +205,8 @@ function ignoreCaseSort(a, b) {
 
 function generateV1Signature(url, key) {
         var stringToSign = getStringToSign(url);
-        //var signedold =   b64_hmac_sha1(key, stringToSign);
         //rstr2b64(rstr_hmac_sha1(str2rstr_utf8(k), str2rstr_utf8(d))); }
         var signed = Crypto.util.bytesToBase64( Crypto.HMAC (Crypto.SHA1, Crypto.charenc.UTF8.stringToBytes( stringToSign ), Crypto.charenc.UTF8.stringToBytes( key ), {asBytes: true}));
-        //alert( signedold );
         alert( signed );
         return signed;
 }
@@ -220,31 +232,12 @@ function getStringToSign(url) {
 }
 
 /////////////////// Signed URL /////////////////////////////////////////////////////
-function generateSignedURL(actionName, form, accessKeyId, secretKey, endpoint, version) {
-   var url = endpoint + "?SignatureVersion=1&Action=" + actionName + "&Version=" + encodeURIComponent(version) + "&";
-   for (var i = 0; i < form.elements.length; ++i) {
-           var elementName = form.elements[i].name;
-
-        var elementValue = null;
-
-           if (form.elements[i].type == 'text') {
-            elementValue = form.elements[i].value;
-        } else if (form.elements[i].type == 'select-one') {
-            elementValue = form.elements[i].options[form.elements[i].selectedIndex].value;
-        }
-        if (elementValue) {
-                   url += elementName;
-                   url += "=";
-                   url += encodeURIComponent(elementValue);
-                   url += "&";
-        }
-   }
-   var timestamp = getNowTimeStamp();
-   url += "Timestamp=" + encodeURIComponent(timestamp);
-
+function generateSignedURL(actionName, messageBody, accessKeyId, secretKey, endpoint, version) {
+   var url = endpoint + "?SignatureVersion=1&Action=" + actionName + "&Version=" + encodeURIComponent(version);
+   url += "&MessageBody=" + encodeURIComponent( messageBody );
+   url += "&Timestamp=" + encodeURIComponent( getNowTimeStamp() );
    url += "&AWSAccessKeyId=" + encodeURIComponent(accessKeyId);
-   var signature = generateV1Signature(url, secretKey);
-   url += "&Signature=" + encodeURIComponent(signature);
+   url += "&Signature=" + encodeURIComponent( generateV1Signature(url, secretKey) );
 
    return url;
 }

@@ -1,13 +1,13 @@
 <html>
   <head>
     <title>Amazon SQSScratchpad</title>
-    <script src="js/hmacsha1.js"></script>
-    <script src="js/scratchpad.js"></script>
+    <script type="text/javascript" src="http://crypto-js.googlecode.com/files/2.3.0-crypto-sha1-hmac.js"></script>
+    <script type="text/javascript" src="js/scratchpad.js"></script>
     <script>
         function invokeRequest() {
             var form = document.forms[0];
-            var accessKeyId =  parent.navbar.getAccessKeyId();
-            var secretKey =  parent.navbar.getSecretAccessKey();
+            var accessKeyId = parent.navbar.getAccessKeyId();
+            var secretKey = parent.navbar.getSecretAccessKey();
             var url = generateSignedURL("ListQueues",form, accessKeyId, secretKey, "https://queue.amazonaws.com", "2009-02-01");
             var postFormArea = document.getElementById("PostFormArea");
             postFormArea.innerHTML = getFormFieldsFromUrl(url);
@@ -120,7 +120,3 @@
     </form>
   </body>
 </html>
-
-
-
-
