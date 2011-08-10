@@ -3,71 +3,9 @@
     <title>Amazon SQSScratchpad</title>
 	<!--<script type="text/javascript" src="http://crypto-js.googlecode.com/files/2.3.0-crypto-sha1-hmac.js"></script>-->
     <script type="text/javascript" src="js/2.3.0-crypto-sha1-hmac.js"></script>
-	<script type="text/javascript" src="js/hmacsha1.js"></script>
+	<!--<script type="text/javascript" src="js/hmacsha1.js"></script>-->
 	<script type="text/javascript" src="js/scratchpad.js"></script>
-    <script type="text/javascript">
-		//function invokeRequest () {
-		//  var http = new XMLHttpRequest();
-		//
-		//  var params = "lorem=ipsum&name=binny";
-		//  var form = document.getElementById("UIForm");
-		//  var url = generateSignedURL("SendMessage",form, getPublicId() , getPublicAccessKey() , "https://queue.amazonaws.com", "2009-02-01");
-		//
-		//  http.open("POST", url, true);
-		//
-		//  //Send the proper header information along with the request
-		//  http.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-		//  http.setRequestHeader("Content-length", params.length);
-		//  http.setRequestHeader("Connection", "close");
-		//
-		//  http.onreadystatechange = function() {//Call a function when the state changes.
-		//	if(http.readyState == 4 && http.status == 200) {
-		//	  alert(http.responseText);
-		//	}
-		//  }
-		//  http.send(params);
-		//}
-
-        function invokeRequest() {
-            var messageBody = document.getElementById("MessageBody");
-            var accessKeyId =  getPublicId();
-            var secretKey =  getPublicAccessKey();
-            var url = generateSignedURL("SendMessage", messageBody.value, accessKeyId, secretKey, "https://queue.amazonaws.com", "2009-02-01");
-            var postFormArea = document.getElementById("PostFormArea");
-            postFormArea.innerHTML = getFormFieldsFromUrl(url);
-            var postForm = document.getElementById("PostForm");
-				var queueUrl = getPublicQueueURI();
-				postForm.action = queueUrl;
-				//form['QueueUrl'].value = "";
-            postForm.submit();
-				//form['QueueUrl'].value = queueUrl;
-        }
-
-        function displayUrl() {
-            var form = document.getElementById("UIForm");
-            var accessKeyId =  getPublicId();
-            var secretKey =  getPublicAccessKey();
-				var queueUrl = getPublicQueueURI();
-				form['QueueUrl'].value = "";
-				form.action = queueUrl;
-            var url = generateSignedURL("SendMessage",form, accessKeyId, secretKey, "https://queue.amazonaws.com", "2009-02-01");
-            document.getElementById("preview").innerHTML = "<b>Signed URL:</b><p/>" + url + "<p/>";
-            document.getElementById("preview").style.display = "block";
-        }
-
-        function displayStringToSign() {
-            var form = document.getElementById("UIForm");
-            var accessKeyId =  getPublicId();
-            var secretKey =  getPublicAccessKey();
-				var queueUrl = getPublicQueueURI();
-				form['QueueUrl'].value = "";
-				form.action = queueUrl;
-            var url = generateSignedURL("SendMessage",form, accessKeyId, secretKey, "https://queue.amazonaws.com", "2009-02-01");
-            var stringToSign = getStringToSign(url);
-            document.getElementById("preview").innerHTML = "<b>String To Sign:</b><p/>" + stringToSign + "<p/>";
-            document.getElementById("preview").style.display = "block";
-        }
-    </script>
+    <script type="text/javascript" src="js/sendmessage.js"></script>
 
     <link rel="stylesheet" type="text/css" href="css/scratchpad.css"/>
   </head>

@@ -18,7 +18,7 @@ my $sqs = new Amazon::SQS::Simple( $access_key, $secret_key );
 my $q = $sqs->GetQueue( $queue_uri );
 
 # Retrieve a message
-my $msg = $q->ReceiveMessage( 'AttributeName.1' => 'All' , MaxNumberOfMessages=>1, VisibilityTimeout=>1 );
+my $msg = $q->ReceiveMessage( 'AttributeName.1' => 'All' , MaxNumberOfMessages=>1, VisibilityTimeout=>60 );
 
 if ( defined $msg ) {
   print $msg->MessageBody() . "\n";
