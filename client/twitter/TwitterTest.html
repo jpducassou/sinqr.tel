@@ -11,60 +11,39 @@
 
 <body>
 <script type="text/javascript" src="https://www.google.com/jsapi?key=ABQIAAAAGbCP7xAnDeaBWr-NDrNqXBQmMOc3nLjHthTa4EGe0lmmw0PRdxREC4FbLwhuQ0MKiSEZhZaqWLSXNA"></script>
-<script>google.load("jquery", "1.6.2");</script>
+<script type="text/javascript">google.load("jquery", "1.6.2");</script>
+<script type="text/javascript" src="http://widgets.twimg.com/j/2/widget.js"></script>
 
-<!--<script src="http://widgets.twimg.com/j/2/widget.js"></script>
+<button id="go">&raquo; Run</button>
+
+<script>
+$("#go").click(function(){
+  $("#tweet-div").animate({
+    width: "400",
+    opacity: 1,
+  }, 1500 );
+});
+</script>
+
+<script src="http://widgets.twimg.com/j/2/widget.js"></script>
 <script>
 new TWTR.Widget({
   version: 2,
   type: 'profile',
-  rpp: 5,
+  rpp: 4,
   interval: 6000,
-  width: 200,
-  height: 300,
-  theme: {
-    shell: {
-      background: '#ff8400',
-      color: '#000000'
-    },
-    tweets: {
-      background: '#ffffff',
-      color: '#000000',
-      links: '#0000ff'
-    }
-  },
-  features: {
-    scrollbar: true,
-    loop: false,
-    live: true,
-    hashtags: true,
-    timestamp: true,
-    avatars: false,
-    behavior: 'all'
-  }
-}).render().setUser('gbarcouy').start();
-</script>-->
-
-<!--<script src="http://widgets.twimg.com/j/2/widget.js"></script>
-<script>
-new TWTR.Widget({
-  version: 2,
-  type: 'list',
-  rpp: 5,
-  interval: 6000,
-  title: '@palafo',
-  subject: 'Linkers',
+  opacity: 0.5,
   width: 250,
   height: 300,
   theme: {
     shell: {
-      background: '#ad0000',
+      background: '#333333',
       color: '#ffffff'
     },
     tweets: {
-      background: '#ffffff',
-      color: '#444444',
-      links: '#ad0000'
+      background: '#000000',
+      color: '#ffffff',
+      links: '#4aed05'
     }
   },
   features: {
@@ -76,30 +55,14 @@ new TWTR.Widget({
     avatars: true,
     behavior: 'all'
   }
-}).render().setList('palafo', 'linkers').start();
-</script>-->
-
-<div id="clickme">
-  Click here
-</div>
-
-<script>
-$('#clickme').click(function() {
-  $('#twtr-widget-x').animate({
-    opacity: 1,
-    width: '350',
-    //height: 'toggle'
-  }, 1000, function() {
-    // Animation complete.
-alert('done');
-  });
-});
+}).render().setUser('roby_jazz').start();
 </script>
 
-<div id="twtr-widgwet-x"></div>
+<br/>
 
-<script src="http://widgets.twimg.com/j/2/widget.js"></script>
-<script>
+<div id="tweet-div" style="left: 200; opacity: 0.2"></div>
+
+<script type="text/javascript">
 var tweet_search = ['sinqrtel'];
 tweet_search.push('gbarcouy');
 tweet_search.push('#sqrt_uy_uy');
@@ -108,14 +71,14 @@ tweet_search.push('#sqrt_uy_uy_w_1000');
 new TWTR.Widget({
 	type: 'search',
 	search: tweet_search.join(' OR '),
-	width: 200,
+	width: 250,
 	height: 350,
+	id: "tweet-div",
+	opacity: 0.2,
 	interval: 6000,
-	id: "twtr-widget-x",
-	subject: "Tú y sinqrtel",
-	//title: "gbarcouy",
+	title: "Tú y sinqrtel",
 	rpp: 30,
-	//footer: "Follow me",
+	footer: "mas...",
 	theme: {
 		shell: {
 			background: '#ff8400',
@@ -140,6 +103,15 @@ new TWTR.Widget({
 		toptweets: true // only for search widget
 	}
 }).render().start();
-</script> 
+
+$.("#tweet-div").click(function(){
+  $("#tweet-div").animate({
+    width: "400",
+    background-color: "#bca",
+    opacity: 1,
+  }, 1500 );
+});
+</script>
+Test!
 </body>
 </html>
