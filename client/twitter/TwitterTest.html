@@ -14,15 +14,28 @@
 <script type="text/javascript">google.load("jquery", "1.6.2");</script>
 <script type="text/javascript" src="http://widgets.twimg.com/j/2/widget.js"></script>
 
-<button id="go">&raquo; Run</button>
-
 <script>
-$("#go").click(function(){
+ $(document).ready(function() {
+
+$("div.twtr-hd").id="twtr-hd";
+   
+var tweet_visible;
+$("#tweet-div").click(function(){
+if ( tweet_visible ) {
   $("#tweet-div").animate({
-    width: "400",
+    left: "-230",
+    opacity: 0.5,
+  }, 1000 );
+} else {
+  $("#tweet-div").animate({
+    left: "0",
     opacity: 1,
-  }, 1500 );
+  }, 1000 );
+};
+tweet_visible = !tweet_visible;
 });
+
+ });
 </script>
 
 <script src="http://widgets.twimg.com/j/2/widget.js"></script>
@@ -32,7 +45,6 @@ new TWTR.Widget({
   type: 'profile',
   rpp: 4,
   interval: 6000,
-  opacity: 0.5,
   width: 250,
   height: 300,
   theme: {
@@ -60,7 +72,7 @@ new TWTR.Widget({
 
 <br/>
 
-<div id="tweet-div" style="left: 200; opacity: 0.2"></div>
+<div id="tweet-div" style="left: -230px; opacity: 0.5"></div>
 
 <script type="text/javascript">
 var tweet_search = ['sinqrtel'];
@@ -94,24 +106,14 @@ new TWTR.Widget({
 		avatars: true,
 		hashtags: true,
 		timestamp: true,
-		fullscreen: false, // ignores width and height and just goes full screen
+		fullscreen: false,
 		scrollbar: false,
 		live: true,
 		loop: true,
 		behavior: 'default',
-		dateformat: 'absolute', // defaults to relative (eg: 3 minutes ago)
-		toptweets: true // only for search widget
+		dateformat: 'relative',
 	}
 }).render().start();
-
-$.("#tweet-div").click(function(){
-  $("#tweet-div").animate({
-    width: "400",
-    background-color: "#bca",
-    opacity: 1,
-  }, 1500 );
-});
 </script>
-Test!
 </body>
 </html>
