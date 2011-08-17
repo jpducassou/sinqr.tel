@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+      "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <title>selectortest</title>
+  <meta name="generator" content="Amaya, see http://www.w3.org/Amaya/" />
+
+  <style>
+body { font-size:14px; }
+</style>
+  <script src="http://code.jquery.com/jquery-latest.js"></script>
+</head>
+<body>
+  
+                    
+<ul id="tweet-div">
+    <li>Item 1</li>
+    <li class="twtr-doc">Item 2 
+        <ul class="twtr-hd"><li>Nested item 1</li><li>Nested item 2</li><li>Nested item 3</li></ul>
+       </li>
+    <li>Item 3</li>
+</ul>
+
+<script>$("#tweet-div > .twtr-doc > .twtr-hd").css("border", "3px double red");</script>
+
+<script>
+ $(document).ready(function() {
+
+var tweet_visible;
+$("#tweet-div > .twtr-doc > .twtr-hd").click(function(){
+if ( tweet_visible ) {
+  $("#tweet-div > .twtr-doc > .twtr-hd").animate({
+    left: "-230",
+    opacity: 0.5,
+  }, 1000 );
+} else {
+  $("#tweet-div > .twtr-doc > .twtr-hd").animate({
+    left: "0",
+    opacity: 1,
+  }, 1000 );
+};
+tweet_visible = !tweet_visible;
+});
+
+ });
+</script>
+
+</body>
+</html>

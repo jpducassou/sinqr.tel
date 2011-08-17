@@ -17,10 +17,8 @@
 <script>
  $(document).ready(function() {
 
-$("div.twtr-hd").id="twtr-hd";
-   
 var tweet_visible;
-$("#tweet-div").click(function(){
+$("#tweet-div > .twtr-doc > .twtr-hd").click(function(){
 if ( tweet_visible ) {
   $("#tweet-div").animate({
     left: "-230",
