@@ -14,21 +14,27 @@
 <script type="text/javascript">google.load("jquery", "1.6.2");</script>
 <script type="text/javascript" src="http://widgets.twimg.com/j/2/widget.js"></script>
 
+<div id="social" style="width: 300px; left: -250px; opacity: 1; position: relative">
+
+<img src="http://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Twitter_logo_initial.svg/40px-Twitter_logo_initial.svg.png" id="social-twitter" style="right: 0; top: 0; position: absolute"  alt="Twitter"/>
+<img src="http://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/Facebook_icon.svg/40px-Facebook_icon.svg.png" id="social-facebook" style="right: 0; top: 50px;width: 50px; height: 50px; position: absolute"  alt="Facebook"/>
+<img src="http://upload.wikimedia.org/wikipedia/commons/c/ce/Mail-envelope.png" id="social-mail" style="right: 0; top: 100px;width: 50px; height: 50px; position: absolute" alt="Mail"/>
+<div id="tweet-div" style="width: 250px; left: 0px; opacity: 0.5; background-color: #00; position: relative">
+
+</div>
+</div>
+
 <script>
  $(document).ready(function() {
 
 var tweet_visible;
-$("#tweet-div > .twtr-doc > .twtr-hd").click(function(){
+$("#social-twitter").click(function(){
 if ( tweet_visible ) {
-  $("#tweet-div").animate({
-    left: "-230",
-    opacity: 0.5,
-  }, 1000 );
+  $("#social").animate({left: "-250"}, 1000 );
+  $("#tweet-div").animate({opacity: 0.2}, 1000 );
 } else {
-  $("#tweet-div").animate({
-    left: "0",
-    opacity: 1,
-  }, 1000 );
+  $("#social").animate({left: "0"}, 1000 );
+  $("#tweet-div").animate({opacity: 1}, 1000 );
 };
 tweet_visible = !tweet_visible;
 });
@@ -36,7 +42,51 @@ tweet_visible = !tweet_visible;
  });
 </script>
 
-<script src="http://widgets.twimg.com/j/2/widget.js"></script>
+<br/>
+
+<script type="text/javascript">
+var tweet_search = ['sinqrtel'];
+tweet_search.push('gbarcouy');
+tweet_search.push('#sqrt_uy_uy');
+tweet_search.push('#sqrt_uy_uy_w_1000');
+//alert( tweet_search.join(' OR ') );
+new TWTR.Widget({
+	type: 'search',
+	search: tweet_search.join(' OR '),
+	width: 250,
+	height: 350,
+	id: "tweet-div",
+	opacity: 0.2,
+	interval: 6000,
+	title: "Tú y sinqrtel",
+	rpp: 30,
+	footer: "Seguinos...",
+	theme: {
+		shell: {
+			background: '#ff8400',
+			color: '#000000'
+		},
+		tweets: {
+			background: '#ffffff',
+			color: '#000000',
+			links: '#0000ff'
+		}
+	},
+	features: {
+		avatars: true,
+		hashtags: true,
+		timestamp: true,
+		fullscreen: false,
+		scrollbar: false,
+		live: true,
+		loop: true,
+		behavior: 'default',
+		dateformat: 'relative',
+	}
+}).render().start();
+</script>
+
+
 <script>
 new TWTR.Widget({
   version: 2,
@@ -68,50 +118,5 @@ new TWTR.Widget({
 }).render().setUser('roby_jazz').start();
 </script>
 
-<br/>
-
-<div id="tweet-div" style="left: -230px; opacity: 0.5"></div>
-
-<script type="text/javascript">
-var tweet_search = ['sinqrtel'];
-tweet_search.push('gbarcouy');
-tweet_search.push('#sqrt_uy_uy');
-tweet_search.push('#sqrt_uy_uy_w_1000');
-//alert( tweet_search.join(' OR ') );
-new TWTR.Widget({
-	type: 'search',
-	search: tweet_search.join(' OR '),
-	width: 250,
-	height: 350,
-	id: "tweet-div",
-	opacity: 0.2,
-	interval: 6000,
-	title: "Tú y sinqrtel",
-	rpp: 30,
-	footer: "mas...",
-	theme: {
-		shell: {
-			background: '#ff8400',
-			color: '#000000'
-		},
-		tweets: {
-			background: '#ffffff',
-			color: '#000000',
-			links: '#0000ff'
-		}
-	},
-	features: {
-		avatars: true,
-		hashtags: true,
-		timestamp: true,
-		fullscreen: false,
-		scrollbar: false,
-		live: true,
-		loop: true,
-		behavior: 'default',
-		dateformat: 'relative',
-	}
-}).render().start();
-</script>
 </body>
 </html>
