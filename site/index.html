@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Bienvenido a Sinqrtel.com</title>
+<link href="common.css" rel="stylesheet" type="text/css" />
+<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+</head>
+<body>
+<script type="text/javascript" src="https://www.google.com/jsapi?key=ABQIAAAAGbCP7xAnDeaBWr-NDrNqXBQmMOc3nLjHthTa4EGe0lmmw0PRdxREC4FbLwhuQ0MKiSEZhZaqWLSXNA"></script>
+
+<div class="mnu_izquierda">
+sinqrtel.com
+<div style="height: 400px"></div>
+<div class="mnu_izquierda_cmd">Cómo jugar</div>
+<div style="height: 10px"></div>
+<div class="mnu_izquierda_cmd">Registrarse</div>
+</div>
+<script type="text/javascript">
+google.load("jquery", "1.6.2");
+google.load("jqueryui", "1.8.16");
+</script>
+<div class="popup_continue_cel"><img src="qrwwwsinqrtelcom.png" width="91" height="91" />ir a tu cel</div>
+
+<script>
+// Handler for .ready() called.
+$(function() {
+	$('.mnu_izquierda_cmd').bind( {
+		'mouseenter mouseleave': function () { $(this).toggleClass('mnu_izquierda_cmd_mouseenter', 1000); },
+		//click: function () { $(this).toggleClass('mnu_izquierda_cmd_mouseenter', 1000); }
+	});
+});
+
+setInterval( function() { $('.popup_continue_cel').toggleClass('popup_continue_cel_up',2000) }, 5000);
+</script>
+
+</body>
+</html>
