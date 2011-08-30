@@ -18,26 +18,28 @@
     
 	<div class="main_content">
 		<div class="main_content_top">
-	        <div style="text-align: center;">
-    		    <img src="banners/728x90_bwin.gif" width="728" height="90" />
-	        </div>
-        </div>
-        <div class="main_content_middle">
+			<div style="text-align: center;">
+    <img src="banners/728x90_bwin.gif" width="728" height="90" />				
+			</div>
+		</div>
+    
+		<div class="main_content_middle">
 			<div style="height: 15px"></div>
-        	<div id="tweet-div">
-            </div>
-        </div>
-        <div class="main_content_bottom"></div>
-        <div class="main_content_copyright">
-			<ul id="link_list">
-				<li><a href="http://www.sinqrtel.com/about/">Quiénes somos</a></li>
-				<li><a href="http://www.sinqrtel.com/contact/">contacto</a></li>
-				<li><a href="http://www.sinqrtel.com/help/">ayuda</a></li>
-				<li><a href="http://www.sinqrtel.com/jobs/">empleo</a></li>
-				<li><a href="https://es.foursquare.com/legal/privacy">política de privacidad</a></li>
-				<li><a href="https://es.foursquare.com/legal/terms">condiciones</a></li>
-			</ul> &copy; 2011 sinqrtel.com
-        </div>
+			<div id="tweet-div"></div>
+    </div>
+
+		<div class="main_content_bottom">
+			<div class="main_content_copyright">
+				<ul id="link_list">
+					<li><a href="http://www.sinqrtel.com/about/">Quiénes somos</a></li>
+					<li><a href="http://www.sinqrtel.com/contact/">contacto</a></li>
+					<li><a href="http://www.sinqrtel.com/help/">ayuda</a></li>
+					<li><a href="http://www.sinqrtel.com/jobs/">empleo</a></li>
+					<li><a href="https://es.foursquare.com/legal/privacy">privacidad</a></li>
+					<li><a href="https://es.foursquare.com/legal/terms">condiciones</a></li>
+				</ul> &copy; 2011 sinqrtel.com
+			</div>
+     </div>
 	</div>
 </div>
 
@@ -48,7 +50,7 @@ google.load("jquery", "1.6.2");
 google.load("jqueryui", "1.8.16");
 </script>
 
-<div class="popup_continue_cel"><img src="qr.www.sinqrtel.com.png" width="91" height="91" />ir a tu cel</div>
+<div class="popup_continue_cel"><div><img src="qr.www.sinqrtel.com.png" width="91" height="91" />ir a tu cel</div></div>
 
 <script>
 // Handler for .ready() called.
@@ -58,12 +60,11 @@ $(function() {
 	});
 });
 
-setInterval( function() { $('.popup_continue_cel').toggleClass('popup_continue_cel_up',2000) }, 15000);
+setInterval( function() { $('.popup_continue_cel').toggleClass('popup_continue_cel_up',2000); $('.popup_continue_cel').effect("bounce", { times:3 }, 300); }, 15000);
 </script>
 
-    <script src="http://widgets.twimg.com/j/2/widget.js"></script>
+<script src="http://widgets.twimg.com/j/2/widget.js"></script>
 <script>
-
 var tweet_search = ['sinqrtel'];
 tweet_search.push('gbarcouy');
 tweet_search.push('#sqrt_uy_uy');
@@ -80,7 +81,7 @@ new TWTR.Widget({
 	footer: '',
 	rpp: 30,
 	width: 'auto',
-	height: 300,
+	height: 410,
 	theme: {
 		shell: {
 			background: '#f90',
@@ -103,40 +104,6 @@ new TWTR.Widget({
     	behavior: 'default'
 	}
 }).render().start();
-
-/*
-new TWTR.Widget({
-  version: 2,
-  type: 'search',
-  search: 'arcoiris',
-  interval: 30000,
-  id: 'tweet-div',
-  title: 'Es un arcoiris doble',
-  subject: 'Cruzando el cielo',
-  width: 'auto',
-  height: 300,
-  theme: {
-    shell: {
-      background: '#8ec1da',
-      color: '#ffffff'
-    },
-    tweets: {
-      background: '#ffffff',
-      color: '#444444',
-      links: '#1985b5'
-    }
-  },
-  features: {
-    scrollbar: false,
-    loop: true,
-    live: true,
-    hashtags: true,
-    timestamp: true,
-    avatars: true,
-    toptweets: true,
-    behavior: 'default'
-  }
-}).render().start();*/
 </script>
 
 </body>
