@@ -7,31 +7,136 @@
 <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 </head>
 <body>
+
+<div class="all_content">
+	<div class="mnu_izquierda">sinqrtel.com
+		<div style="height: 400px"></div>
+		<div class="mnu_izquierdo_cmd">Cómo jugar</div>
+		<div style="height: 10px"></div>
+		<div class="mnu_izquierdo_cmd">Registrarse</div>
+	</div>
+    
+	<div class="main_content">
+		<div class="main_content_top">
+	        <div style="text-align: center;">
+    		    <img src="banners/728x90_bwin.gif" width="728" height="90" />
+	        </div>
+        </div>
+        <div class="main_content_middle">
+			<div style="height: 15px"></div>
+        	<div id="tweet-div">
+            </div>
+        </div>
+        <div class="main_content_bottom"></div>
+        <div class="main_content_copyright">
+			<ul id="link_list">
+				<li><a href="http://www.sinqrtel.com/about/">Quiénes somos</a></li>
+				<li><a href="http://www.sinqrtel.com/contact/">contacto</a></li>
+				<li><a href="http://www.sinqrtel.com/help/">ayuda</a></li>
+				<li><a href="http://www.sinqrtel.com/jobs/">empleo</a></li>
+				<li><a href="https://es.foursquare.com/legal/privacy">política de privacidad</a></li>
+				<li><a href="https://es.foursquare.com/legal/terms">condiciones</a></li>
+			</ul> &copy; 2011 sinqrtel.com
+        </div>
+	</div>
+</div>
+
 <script type="text/javascript" src="https://www.google.com/jsapi?key=ABQIAAAAGbCP7xAnDeaBWr-NDrNqXBQmMOc3nLjHthTa4EGe0lmmw0PRdxREC4FbLwhuQ0MKiSEZhZaqWLSXNA"></script>
 
-<div class="mnu_izquierda">
-sinqrtel.com
-<div style="height: 400px"></div>
-<div class="mnu_izquierda_cmd">Cómo jugar</div>
-<div style="height: 10px"></div>
-<div class="mnu_izquierda_cmd">Registrarse</div>
-</div>
 <script type="text/javascript">
 google.load("jquery", "1.6.2");
 google.load("jqueryui", "1.8.16");
 </script>
-<div class="popup_continue_cel"><img src="qrwwwsinqrtelcom.png" width="91" height="91" />ir a tu cel</div>
+
+<div class="popup_continue_cel"><img src="qr.www.sinqrtel.com.png" width="91" height="91" />ir a tu cel</div>
 
 <script>
 // Handler for .ready() called.
 $(function() {
-	$('.mnu_izquierda_cmd').bind( {
-		'mouseenter mouseleave': function () { $(this).toggleClass('mnu_izquierda_cmd_mouseenter', 1000); },
-		//click: function () { $(this).toggleClass('mnu_izquierda_cmd_mouseenter', 1000); }
+	$('.mnu_izquierdo_cmd').bind( {
+		'mouseenter mouseleave': function () { $(this).toggleClass('mnu_izquierdo_cmd_mouseenter', 1000); },
 	});
 });
 
-setInterval( function() { $('.popup_continue_cel').toggleClass('popup_continue_cel_up',2000) }, 5000);
+setInterval( function() { $('.popup_continue_cel').toggleClass('popup_continue_cel_up',2000) }, 15000);
+</script>
+
+    <script src="http://widgets.twimg.com/j/2/widget.js"></script>
+<script>
+
+var tweet_search = ['sinqrtel'];
+tweet_search.push('gbarcouy');
+tweet_search.push('#sqrt_uy_uy');
+tweet_search.push('#sqrt_uy_uy_w_1000');
+
+new TWTR.Widget({
+	version: 2,
+	type: 'search',
+	search: tweet_search.join(' OR '),
+	interval: 30000,
+	title: '',
+	id: 'tweet-div',
+	subject: '',
+	footer: '',
+	rpp: 30,
+	width: 'auto',
+	height: 300,
+	theme: {
+		shell: {
+			background: '#f90',
+			color: '#000000'
+		},
+		tweets: {
+			background: '#ffffff',
+			color: '#000000',
+			links: '#0000ff'
+		}
+	},
+	features: {
+    	scrollbar: false,
+		loop: true,
+		live: true,
+    	hashtags: true,
+    	timestamp: true,
+    	avatars: true,
+    	toptweets: true,
+    	behavior: 'default'
+	}
+}).render().start();
+
+/*
+new TWTR.Widget({
+  version: 2,
+  type: 'search',
+  search: 'arcoiris',
+  interval: 30000,
+  id: 'tweet-div',
+  title: 'Es un arcoiris doble',
+  subject: 'Cruzando el cielo',
+  width: 'auto',
+  height: 300,
+  theme: {
+    shell: {
+      background: '#8ec1da',
+      color: '#ffffff'
+    },
+    tweets: {
+      background: '#ffffff',
+      color: '#444444',
+      links: '#1985b5'
+    }
+  },
+  features: {
+    scrollbar: false,
+    loop: true,
+    live: true,
+    hashtags: true,
+    timestamp: true,
+    avatars: true,
+    toptweets: true,
+    behavior: 'default'
+  }
+}).render().start();*/
 </script>
 
 </body>

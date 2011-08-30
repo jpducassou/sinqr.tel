@@ -45,6 +45,7 @@ tweet_visible = !tweet_visible;
 <br/>
 
 <script type="text/javascript">
+$(function() {
 var tweet_search = ['sinqrtel'];
 tweet_search.push('gbarcouy');
 tweet_search.push('#sqrt_uy_uy');
@@ -84,38 +85,7 @@ new TWTR.Widget({
 		dateformat: 'relative',
 	}
 }).render().start();
-</script>
-
-
-<script>
-new TWTR.Widget({
-  version: 2,
-  type: 'profile',
-  rpp: 4,
-  interval: 6000,
-  width: 250,
-  height: 300,
-  theme: {
-    shell: {
-      background: '#333333',
-      color: '#ffffff'
-    },
-    tweets: {
-      background: '#000000',
-      color: '#ffffff',
-      links: '#4aed05'
-    }
-  },
-  features: {
-    scrollbar: true,
-    loop: false,
-    live: true,
-    hashtags: true,
-    timestamp: true,
-    avatars: true,
-    behavior: 'all'
-  }
-}).render().setUser('roby_jazz').start();
+});
 </script>
 
 </body>
