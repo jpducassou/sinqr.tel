@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+      "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <title>lzwtest</title>
+  <meta name="generator" content="Bluefish 2.0.3" />
+</head>
+
+<body>
+<script type="text/javascript"
+src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js">
+</script>
+<script type="text/javascript" src="lzw.js">
+</script>
+<script type="text/javascript">
+ $(document).ready(function() {
+ var comp = new LZ77;
+  $("#txtUncompressed").keypress(function() {
+     $("#txtUncompressedSize").html( $("#txtUncompressed").val().length );
+   });
+  $("#cmdCompress").click(function() {
+     var txtLZW = comp.compress( $("#txtUncompressed").val() );
+     $("#txtCompressedSize").html( txtLZW.length + ':' + txtLZW );
+   });
+ });
+</script>
+
+Text
+<textarea id="txtUncompressed" rows="6" cols="25"></textarea><button
+id="cmdCompress">Compress</button>
+
+<div id="txtUncompressedSize">UnComp</div>
+<br />
+<br />
+LZW<input id="txtCompressed" type="text" />
+
+<div id="txtCompressedSize">Comp</div>
+
+<p></p>
+</body>
+</html>

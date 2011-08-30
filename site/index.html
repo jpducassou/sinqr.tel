@@ -22,9 +22,16 @@
     <img src="banners/728x90_bwin.gif" width="728" height="90" />				
 			</div>
 		</div>
-    
-		<div class="main_content_middle">
+    	<div class="main_content_middle">
 			<div style="height: 15px"></div>
+            <div class="main_content_middle_register">
+            <form>
+            <div class="forms">
+            	<input name="user[name]" type="text" maxlength="50" size="50" autocompelete="off"/><span class="holder">Nombre</span>
+            	<input name="user[email]" type="text" autocompelete="off"/><span class="holder">Email</span>
+            </div>
+            </form>
+            </div>
 			<div id="tweet-div"></div>
     </div>
 
@@ -58,9 +65,15 @@ $(function() {
 	$('.mnu_izquierdo_cmd').bind( {
 		'mouseenter mouseleave': function () { $(this).toggleClass('mnu_izquierdo_cmd_mouseenter', 1000); },
 	});
-});
 
-setInterval( function() { $('.popup_continue_cel').toggleClass('popup_continue_cel_up',2000); $('.popup_continue_cel').effect("bounce", { times:3 }, 300); }, 15000);
+	$('.forms input').css('background-color','red');
+	$('.formsinput').bind( {
+		'focus': function () { $(this).next("span").css('background-color','red').fadeOut(1000); },
+		'blur': function () { $(this).next("span").css('display','inline').fadeIn(1000); },
+	});
+	
+	setInterval( function() { $('.popup_continue_cel').toggleClass('popup_continue_cel_up',2000); $('.popup_continue_cel').effect("bounce", { times:3 }, 300); }, 15000);
+});
 </script>
 
 <script src="http://widgets.twimg.com/j/2/widget.js"></script>
@@ -80,7 +93,7 @@ new TWTR.Widget({
 	subject: '',
 	footer: '',
 	rpp: 30,
-	width: 'auto',
+	width: 768,
 	height: 410,
 	theme: {
 		shell: {
