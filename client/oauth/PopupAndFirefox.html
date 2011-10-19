@@ -1,0 +1,709 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en"><head profile="http://www.ietf.org/rfc/rfc2731.txt">
+
+  <meta name="generator" content="HTML Tidy for Windows (vers 25 March 2009), see http://tidy.sourceforge.net/">
+  <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+  <meta http-equiv="Content-Language" content="en">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <meta http-equiv="Content-Script-Type" content="text/javascript">
+  <meta name="DC.author" content="Gérard Talbot">
+  <meta name="DC.creator" content="Gérard Talbot">
+  <meta name="DC.title" content="Popup windows and Firefox">
+  <meta name="DC.date.created" content="2003-05-05T09:54:03+11:00" scheme="W3CDTF">
+  <meta name="DC.date.modified" content="2009-04-04T09:54:03+11:00" scheme="W3CDTF">
+
+  <title>Popup windows and Firefox</title>
+
+  <link rel="icon" href="http://www.gtalbot.org/GRAPHICS/ICO/Firefox.png" type="image/png">
+  <link rel="start" href="http://www.gtalbot.org/" title="Gérard Talbot's Homepage">
+  <link rel="up" href="http://www.gtalbot.org/FirefoxSection/" title="Firefox section">
+  <link rel="subsection" href="#WhatArePopups" title="What are popups? (according to Firefox)">
+  <link rel="subsection" href="#TestPopupControl" title="Test your popup control setting">
+  <link rel="subsection" href="#OpenLinkNewWindow" title="Open a link in a new window">
+  <link rel="subsection" href="#RaiseLowerSetting" title="Raise or lower windows setting">
+  <link rel="subsection" href="#ExcerptsRenownedSources" title="Excerpts of world renowned sources">
+  <link rel="glossary" href="http://www.gtalbot.org/FirefoxSection/Popup/GlossaryOfTerms.html" title="Glossary of terms pertaining to this document">
+  <link rel="copyright" href="http://www.gtalbot.org/Varia/CopyrightNotice.html" title="Copyright notice">
+  <link rel="Validation&nbsp;HTML" href="http://validator.w3.org/check?uri=http%3A%2F%2Fwww.gtalbot.org%2FFirefoxSection%2FPopup%2FPopupAndFirefox.html;verbose=1" title="Validation HTML">
+  <link rel="Validation&nbsp;CSS" href="http://jigsaw.w3.org/css-validator/validator?uri=http%3A%2F%2Fwww.gtalbot.org%2FFirefoxSection%2FPopup%2FPopupAndFirefox.html&amp;warning=2&amp;profile=css21&amp;usermedium=all" title="Validation CSS">
+
+  <style type="text/css">
+  body
+  {
+  background-color: white;
+  color: black;
+  line-height: 140%;
+  }
+
+  h1 {line-height: 150%;}
+
+  h2, h3, h4 {border-bottom: 1px solid #CCC;}
+
+  a:link {background-color: white; color: blue;}
+  a:visited {background-color: white; color: purple;}
+  a:link:hover {background-color: #EEE; color: blue;}
+  a:visited:hover {background-color: #EEE; color: purple;}
+  a:focus, button:focus, input:focus {outline: 2px dotted black;}
+
+  #navigation
+  {
+  font-family: Tahoma, sans-serif;
+  }
+
+  #navigation a
+  {
+  font-weight: bold;
+  padding: 8px;
+  }
+
+  #page-content-container
+  {
+  border: solid silver;
+  float: right;
+  margin: 2em;
+  width: 33%;
+  }
+
+  #page-content
+  {
+  margin-top: 0px;
+  padding: 8px;
+  text-align: center;
+  }
+
+  #WhatArePopups {clear: right;}
+
+  .QuoteStartSection
+  {
+  font-size: 90%;
+  margin-left: auto;
+  margin-bottom: 1em;
+  width: 50%;
+  }
+
+  #what-are-popups-explain
+  {
+  border: solid #457566;
+  font: 14px Arial, sans-serif;
+  padding: 8px;
+  }
+
+  .menu-interface {font: menu;}
+
+  #russian-dolls-section
+  {
+  border: none green;
+  width: 590px;
+  }
+
+  #russian-dolls-section div
+  {
+  left: 28%;
+  position: relative;
+  width: 70%;
+  }
+
+  #russian-dolls
+  {
+  border: none red;
+  margin-top: -150px;
+  }
+
+  img.fltLeft
+  {
+  float: left;
+  padding: 12px;
+  }
+
+  .pref-setting {font: 14px Arial, sans-serif;}
+
+  th, td, fieldset {padding: 1em;}
+
+  tr > td:first-child
+  {
+  background-color: rgb(235, 232, 216);
+  color: inherit;
+  }
+
+  hr, fieldset
+  {
+  clear: both;
+  margin-top: 32px;
+  margin-bottom: 32px;
+  width: 66%;
+  }
+
+  *[accesskey] span, .access {text-decoration: underline;}
+
+  #new-page-opening
+  {
+  border: solid #457566;
+  display: table-cell;
+  padding: 8px;
+  }
+
+  ul.references
+  {
+  list-style: url("../../GRAPHICS/GIF/Reference.gif") disc;
+  }
+
+  .fltRight {float: right;}
+
+  p + blockquote {margin-top: 2em;}
+
+  #validation {clear: both;}
+
+  #validation img, #validation a {margin: 0em 1em; vertical-align: middle;}
+
+  #validation img {padding: 0.5em;}
+  </style>
+
+  <script type="text/javascript">
+  var WindowObjectReferenceOfRequestedPopup, WindowObjectReferenceOfIntermediaryPopup;
+
+  function OpenRequestedPopup(strUrl, strTarget)
+  {
+  var windowWidth, windowHeight, windowLeft, windowTop;
+
+  if(typeof window.screenX == "number" && typeof window.innerWidth == "number")
+  {
+  windowWidth = window.innerWidth * .68;
+  windowHeight = window.innerHeight * .68;
+  windowLeft = window.screenX + window.innerWidth * .16;
+  windowTop = window.screenY + window.innerHeight * .16;
+  }
+  else if(typeof window.screenTop == "number" && typeof document.documentElement.offsetHeight == "number")
+  {
+  windowWidth = document.documentElement.offsetWidth * .68;
+  windowHeight = document.documentElement.offsetHeight * .68;
+  windowLeft = window.screenLeft + document.documentElement.offsetWidth * .16;
+  windowTop = window.screenTop - 50;
+  }
+  else
+  {
+  windowWidth = 500;
+  windowHeight = 250;
+  windowLeft = 60;
+  windowTop = 40;
+  };
+
+  /* The above code is just to define reasonable sizes and initial positions to the popup to be. */
+
+  if (WindowObjectReferenceOfRequestedPopup == null || WindowObjectReferenceOfRequestedPopup.closed)
+  {
+  WindowObjectReferenceOfRequestedPopup = window.open(strUrl, strTarget, "top=" + windowTop + ",left=" + windowLeft + ",width=" + windowWidth + ",height=" + windowHeight + ",menubar,toolbar,location,resizable,scrollbars,status");
+  }
+  else
+  {
+  if(WindowObjectReferenceOfRequestedPopup.focus)
+    {
+    WindowObjectReferenceOfRequestedPopup.focus();
+    };
+  };
+
+  /*
+  The above 9 lines of code creates the popup; if the popup is already opened, then it is only brought on top. This feature is possible only if the user allows it via the setting Edit/Preferences.../category:Advanced/Scripts & Plugins/Allow webpages to:/Raise or lower windows
+  */
+  }
+
+  function OpenIntermediaryPopup(strUrl, strTarget)
+  {
+  var windowWidth, windowHeight, windowLeft, windowTop;
+
+  if(typeof window.screenX == "number" && typeof window.innerWidth == "number")
+  {
+  windowWidth = window.innerWidth * .68;
+  windowHeight = window.innerHeight * .68;
+  windowLeft = window.screenX + window.innerWidth * .16;
+  windowTop = window.screenY + window.innerHeight * .16;
+  }
+  else if(typeof window.screenTop == "number" && typeof document.documentElement.offsetHeight == "number")
+  {
+  windowWidth = document.documentElement.offsetWidth * .68;
+  windowHeight = document.documentElement.offsetHeight * .68;
+  windowLeft = window.screenLeft + document.documentElement.offsetWidth * .16;
+  windowTop = window.screenTop - 50;
+  }
+  else
+  {
+  windowWidth = 500;
+  windowHeight = 250;
+  windowLeft = 60;
+  windowTop = 40;
+  };
+
+  if (WindowObjectReferenceOfIntermediaryPopup == null || WindowObjectReferenceOfIntermediaryPopup.closed)
+  {
+  WindowObjectReferenceOfIntermediaryPopup = window.open(strUrl, strTarget, "top=" + windowTop + ",left=" + windowLeft + ",width=" + windowWidth + ",height=" + windowHeight + ",menubar,toolbar,location,resizable,scrollbars,status");
+  }
+  else
+  {
+  if(WindowObjectReferenceOfRequestedPopup.focus)
+    {
+    WindowObjectReferenceOfRequestedPopup.focus();
+    };
+  };
+  /*
+  The above 9 line of code creates the popup, unless it is already opened (or minimized) in which case the popup window is brought in front of other windows. This feature is possible only if the user has the "Raise or lower windows" checkbox checked.
+  */
+  }
+
+  function BringRequestedPopupOnTop()
+  {
+  if(WindowObjectReferenceOfRequestedPopup != null && !WindowObjectReferenceOfRequestedPopup.closed)
+  {
+  if(WindowObjectReferenceOfRequestedPopup.focus)
+    {
+    WindowObjectReferenceOfRequestedPopup.focus();
+    };
+  };
+
+  /*
+  The above 4 lines of code verify if the popup exists and if the popup has not been closed: it that's the case, then the popup window is given focus and the popup window is brought on top of other windows.
+  */
+  }
+  </script>
+
+</head>
+
+<body>
+
+  <div id="navigation">
+    You are here: <a href="http://www.gtalbot.org/" rel="start">Home</a> &gt; <a href="http://www.gtalbot.org/FirefoxSection/" rel="up">Firefox section</a> &gt; Popup windows and Firefox
+  </div>
+
+  <h1>Popup windows and Firefox</h1>
+
+  <div id="page-content-container">
+    <h4 id="page-content">Page Content</h4>
+
+    <ul>
+      <li><a href="#WhatArePopups">What are popups?</a></li>
+
+      <li><a href="#TestPopupControl">Test your popup control
+      setting</a></li>
+
+      <li><a href="#OpenLinkNewWindow">Open a link in a new window: when
+      and how can that setting affect my surfing?</a></li>
+
+      <li><a href="#RaiseLowerSetting">What does the "Raise or lower
+      windows" setting do exactly?</a></li>
+
+      <li><a href="#ExcerptsRenownedSources">Excerpts from world renowned
+      sources</a></li>
+    </ul>
+  </div>
+
+  <h2 id="WhatArePopups">What are popups? (according to Firefox)</h2>
+
+  <div class="QuoteStartSection">
+    <q cite="http://www.useit.com/alertbox/990530.html">If I want a new
+    window, I will open it myself!</q><br>
+    Jakob Nielsen, <a href="http://www.useit.com/alertbox/990530.html">The
+    Top Ten <em>New</em> Mistakes of Web Design</a>, May 30th 1999
+  </div>
+
+  <p class="pref-setting">Preference setting to control popup windows in
+  Firefox<br>
+  <img src="PopupAndFirefox_files/WhatArePopupsInFirefox-3.png" alt="can be accessed via/from the menu Tools/Options.../Content category" height="128" width="469"></p>
+
+  <div id="what-are-popups-explain">
+    <p><strong>What are Popups? (according to Firefox)</strong></p>
+
+    <p><strong>Popup windows, or popups, are windows that appear
+    automatically without your permission.</strong> They vary in size but
+    usually don't cover the whole screen. Some popups open on top of the
+    current Firefox window while others appear underneath Firefox
+    (pop-unders).</p>
+
+    <p>Firefox allows you to control both popups and popunders through the
+    Content panel in Options. (...)</p>
+  </div>
+
+  <p>Unfortunately other browsers, web designers and popup killer softwares
+  define popups differently. They distinguish <strong>2 types of popups:
+  requested popups and unrequested popups</strong>. This distinction is
+  more suitable, useful and to the point. The popups Firefox can block and
+  suppress are unrequested popups via the <span class="menu-interface">Tools/Options.../Content category/Block pop-up
+  windows</span> setting.</p>
+
+  <p><strong>Requested popups</strong> are windows created as a result of
+  clicking a link or clicking a button. <strong>One mouse click, only one
+  popup.</strong></p>
+
+  <p><strong>Unrequested popups</strong> are windows created automatically
+  without any user interaction. Often, such unrequested popups have
+  advertisement content. They often "pop up" as you arrive at a site or as
+  you close a window. <strong>One mouse click, more than one
+  popup.</strong></p>
+
+  <div id="russian-dolls-section">
+  <div>
+    If a new window opens up and you did not click a link nor a button,
+    then you are having an unrequested popup. If you click a link and 2 new
+    windows open up, then you are having 1 requested popup and
+
+    <div>
+      1 unrequested popup. If you type in an address in the location bar
+      and 2 new windows are created, then you can be sure that one of them
+      was an unrequested popup.
+    </div>
+  </div><img src="PopupAndFirefox_files/RussianDolls.jpg" id="russian-dolls" alt="Unrequested popups often act like Russian nesting dolls: a doll may hide another doll which in turn may hide another doll..." height="344" width="585">
+  </div>
+
+  <fieldset id="TestPopupControl">
+    <legend accesskey="t"><span>T</span>est your popup control
+    setting</legend>
+
+    <p><a href="http://www.gtalbot.org/FirefoxSection/Popup/RequestedPopup.html" target="TargetRequestedPopupWindow" onclick="OpenRequestedPopup(this.href, this.target); return false;">Open a
+    requested popup</a></p>
+
+    <p><a href="http://www.gtalbot.org/FirefoxSection/Popup/IntermediaryWindow.html" target="TargetIntermediaryWindow" onclick="OpenIntermediaryPopup(this.href, this.target); return false;">Open an
+    UNrequested popup</a></p>
+  </fieldset>
+
+  <table rules="rows" border="2">
+    <tbody><tr>
+      <th>Equivalent setting in<br>
+      Tools/Options.../Content category/</th>
+
+      <th>Equivalent setting in<br>
+      about:config</th>
+    </tr>
+
+    <tr>
+      <td><img src="PopupAndFirefox_files/CheckboxCheckedFirefox.png" alt="&#9745;" height="13" width="13"><span class="pref-setting">&nbsp;&nbsp;<span class="access">B</span>lock pop-up
+      windows</span></td>
+
+      <td><code>dom.disable_open_during_load set to true</code></td>
+    </tr>
+
+    <tr>
+      <td><img src="PopupAndFirefox_files/CheckboxUncheckedFirefox.png" alt="&#9744;" height="13" width="13"><span class="pref-setting">&nbsp;&nbsp;<span class="access">B</span>lock pop-up
+      windows</span></td>
+
+      <td><code>dom.disable_open_during_load set to false</code></td>
+    </tr>
+  </tbody></table>
+
+  <p class="fltRight"><a href="#page-content">[Page Content]</a></p>
+  <hr id="OpenLinkNewWindow">
+
+  <h2>Open a link in a new window: when and how can that setting affect my
+  surfing?</h2>
+
+  <div class="QuoteStartSection">
+    <q cite="http://www.snyderconsulting.net/article_7tricks.htm#7">(...)
+    some people can use Windows applications for years without
+    understanding the concept of task switching. (When I point to the task
+    bar and ask them what it's for, they can't tell me.) (...) spawning
+    second browser windows can completely throw users off track because it
+    removes the one thing they are sure how to use: the 'Back' button.(...)
+    In another recent study, six out of 17 users had difficulty with
+    multiple windows, and three of them required assistance to get back to
+    the first window and continue the task.</q><br>
+    Carolyn Snyder, <a href="http://www.snyderconsulting.net/article_7tricks.htm#7">Seven tricks
+    that Web users don't know: 7. Second browser windows</a>, June 2001
+  </div>
+
+  <div class="QuoteStartSection">
+    <q cite="http://www.useit.com/alertbox/990530.html">(...) Users often
+    don't notice that a new window has opened, especially if they are using
+    a small monitor where the windows are maximized to fill up the screen.
+    So a user who tries to return to the origin will be confused by a
+    grayed out <em>Back</em> button.</q> Jakob Nielsen, <a href="http://www.useit.com/alertbox/990530.html">The Top Ten <em>New</em>
+    Mistakes of Web Design: 2. Opening New Browser Windows</a>, May 30,
+    1999
+  </div>
+
+  <p>The HTML 4.01 target attribute is primarly used to target a specified
+  frame but it can also target a new window or an already opened secondary
+  window. Clicking a link which has a target attribute will no longer open
+  another window (or an already opened window) if the user has checked</p>
+
+  <div class="pref-setting">
+    <img src="PopupAndFirefox_files/OpenLinkInNewWindowSettingFirefox-3.png" class="fltLeft" alt="the radio button to open links in new tabs" height="161" width="469">
+
+    <p id="new-page-opening"><strong>New pages should be opened in
+    ...</strong>: This option controls whether links from other
+    applications or from web pages which request to be opened in new
+    windows are to be opened in new windows or in new tabs in the most
+    recent window.</p>
+  </div>
+
+  <p>What this setting does is to allow the target attribute of a link to
+  open a new window or to divert it in a new tab.</p>
+
+  <fieldset>
+    <legend>Interactive demo</legend>
+
+    <p><a href="http://www.gtalbot.org/FirefoxSection/Popup/ANormalPageWithOUTTarget.html">A normal link loading a
+    page in the same window</a></p>
+
+    <p><a href="http://www.gtalbot.org/FirefoxSection/Popup/APageWITHTarget.html" target="ANewWindow">This link has a
+    target attribute in it:<br>
+    depending on your preference setting, it may or may not open the
+    document in a new window or in a new tab</a></p>
+  </fieldset>
+
+  <table rules="rows" border="2">
+    <tbody><tr>
+      <th>Equivalent setting in<br>
+      Tools/Options.../Tabs category/New pages should be opened in:</th>
+
+      <th>Equivalent instruction in<br>
+      about:config</th>
+    </tr>
+
+    <tr>
+      <td><img src="PopupAndFirefox_files/RadioCheckedFirefox.png" alt="&#9673;" height="13" width="13"> <span class="pref-setting">a
+      ne<span class="access">w</span> window</span></td>
+
+      <td><code>browser.link.open_newwindow set to 2</code></td>
+    </tr>
+
+    <tr>
+      <td><img src="PopupAndFirefox_files/RadioCheckedFirefox.png" alt="&#9673;" height="13" width="13"> <span class="pref-setting">a new
+      <span class="access">t</span>ab</span></td>
+
+      <td><code>browser.link.open_newwindow set to 3 (default)</code></td>
+    </tr>
+  </tbody></table>
+
+  <p>References:</p>
+
+  <ul class="references">
+    <li>
+      <a href="http://www.w3.org/TR/html401/present/frames.html#h-16.3.2">Target
+      semantics in HTML 4.01</a>
+
+      <blockquote>
+        <p>If any target attribute refers to an unknown frame F, the user
+        agent should create a new window and frame, assign the name F to
+        the frame, and load the resource designated by the element in the
+        new frame.<br>
+        User agents may provide users with a mechanism to override the
+        target attribute.</p>
+      </blockquote>
+    </li>
+
+    <li>
+      <a href="http://www.htmlhelp.com/faq/html/links.html#new-window">6.3.
+      How do I create a link that opens a new window?</a>
+
+      <blockquote cite="http://www.htmlhelp.com/faq/html/links.html#new-window">
+        <p>&lt;a target="_blank" href="..."&gt; opens a new, unnamed
+        window.<br>
+        &lt;a target="example" href="..."&gt; opens a new window named
+        "example", provided that a window or frame by that name does not
+        already exist.</p>
+      </blockquote>
+    </li>
+
+    <li>
+      <a href="http://www.w3.org/TR/html401/appendix/notes.html#notes-frames">HTML
+      4.01 B.8 Notes on frames</a><br>
+
+      <blockquote cite="http://www.w3.org/TR/html401/appendix/notes.html#notes-frames">
+        <p>(...) If no such frame was found in (3), create a new window and
+        assign it the target name.</p>
+      </blockquote>
+    </li>
+  </ul>
+
+  <p class="fltRight"><a href="#page-content">[Page Content]</a></p>
+  <hr id="RaiseLowerSetting">
+
+  <h2>What does the "Raise or lower windows" setting do exactly?</h2>
+
+  <div class="QuoteStartSection">
+    <q cite="http://www.accessify.com/features/tutorials/the-perfect-popup/">The
+    biggest fault with pop-ups is that it takes the focus away from the
+    main browser window, and this can be disconcerting. It presents general
+    usability issues aside from accessibility. How often have you seen
+    someone launch a pop-up and then inadvertently click back on the
+    launcher window and thinking that nothing's happened, click the link
+    again with nothing happening? Of course the window has opened but is
+    now under the launcher window, and only moving down to the task-bar and
+    selecting the window from there will solve this. (...) To address the
+    issue of a window losing focus, you can use JavaScript to re-set the
+    focus.</q><br>
+    Ian Lloyd, <a href="http://www.accessify.com/features/tutorials/the-perfect-popup/">"The
+    Perfect Pop-up" tutorial at Accessify.com</a>, November 20th 2002
+  </div>
+
+  <p><strong>The <span class="pref-setting">Raise or lower windows</span>
+  setting allows web designers to bring popup windows on top of their own
+  opener window or to bring the opener window on top of the popup
+  window.</strong> The following images display both windowing situations.
+  The javascript window methods used to bring on top or bring behind
+  windows are focus(&nbsp;) and blur(&nbsp;). They are helpful to web
+  designers; as an user you can give to webpage designers the ability to
+  use these focus(&nbsp;) and blur(&nbsp;) methods on popup windows.</p>
+
+  <p>Here the popup window is on <strong>top</strong>, is in
+  <strong>front</strong> of the opener window. The focus(&nbsp;) command is
+  the command web designers use to bring a window in front of all other
+  windows when it is behind or when it has been minimized.<br>
+  <br>
+  <img src="PopupAndFirefox_files/RaiseFocus_2.png" alt="" height="730" width="740"></p>
+
+  <p>While here, in the following image just below, the popup is
+  <strong>behind</strong>, is <strong>under</strong> the opener window. In
+  real web surfing and viewing conditions, the whole popup would not be
+  visible: here, the image of the opener is transparent. Most of the time,
+  the user does not notice that a popup "vanished" behind the opener.<br>
+  <br>
+  <img src="PopupAndFirefox_files/LowerBlur_2.png" alt="" height="594" width="688"></p>
+
+  <fieldset>
+    <legend>Interactive demo</legend>
+
+    <ol>
+      <li>First create a popup window by clicking the next link,</li>
+
+      <li>then just click somewhere outside of the popup window in order to
+      make this popup window get behind the opener window.</li>
+
+      <li>Then bring the popup back on top by clicking the button or by
+      clicking the link again.</li>
+    </ol>
+
+    <p>Repeat the same steps by checking or unchecking the <span class="pref-setting">Raise or lower windows</span> setting in the Advanced
+    setting category.<br>
+    Try with the popup window minimized.</p>
+
+    <p><a href="http://www.gtalbot.org/FirefoxSection/Popup/RequestedPopup.html" target="TargetRequestedPopupWindow" onclick="OpenRequestedPopup(this.href, this.target); return false;">Open a
+    requested popup</a></p>
+
+    <p><button type="button" onclick="BringRequestedPopupOnTop();" accesskey="h">If t<span>h</span>e popup exists behind the opener or if
+    it is minimized,<br>
+    then bring it on top, in front of the opener window</button></p>
+  </fieldset>
+
+  <p><img src="PopupAndFirefox_files/Tip.gif" alt="Tip" height="40" width="34"> Allowing webpages to be able to give focus to popup windows is
+  recommendable because it will then make efficient use of resources on
+  your computer. Instead of closing an already opened popup window and then
+  re-creating that same popup window, it will simply bring it on top, bring
+  it in front of other windows: therefore little cpu activity, very little
+  RAM involved and very little time spent.</p>
+
+  <p>References:</p>
+
+  <ul class="references">
+    <li>"Giving focus to a window brings the window forward in most
+    windowing systems."<br>
+    <a href="http://devedge-temp.mozilla.org/library/manuals/2000/javascript/1.3/reference/window.html#1202234">
+    The focus(&nbsp;) method definition at
+    devedge-temp.mozilla.org</a></li>
+
+    <li>"Removing focus from a window sends the window to the background in
+    most windowing systems."<br>
+    <a href="http://devedge-temp.mozilla.org/library/manuals/2000/javascript/1.3/reference/window.html#1201622">
+    The blur(&nbsp;) method definition at devedge-temp.mozilla.org</a></li>
+  </ul>
+
+  <p class="fltRight"><a href="#page-content">[Page Content]</a></p>
+  <hr id="ExcerptsRenownedSources">
+
+  <h2>Excerpts from world renowned sources</h2>
+
+  <blockquote cite="http://msdn.microsoft.com/en-gb/library/bb263982.aspx#dude04232001_topic3">
+  <p><img src="PopupAndFirefox_files/Excerpt.gif" alt="Excerpt: " height="40" width="34"> Only open a new window in direct response to a user
+    action, and think about how to make it clear to the user that their
+    action will open a separate window.<br>
+    In my view, one of the most irritating things for any computer program
+    to do is to open a new window without the user having initiated an
+    action. If you use window.open only in direct response to a user
+    action, then the user will associate the action with the
+    result.(...)<br>
+    Do not use a pop-up only to display an advertisement.<br>
+    An advertisement is unlikely to get a user's positive attention if it
+    is not part of the primary site they are visiting.</p>
+  </blockquote>
+
+  <p>Dave Massy,<br>
+  <!-- Many thanks to Michael "spam_ninja" :) --> <a href="http://msdn.microsoft.com/en-gb/library/bb263982.aspx#dude04232001_topic3">
+  Annoying and Intrusive Sites, Microsoft Corporation</a>,<br>
+  May 2001</p>
+
+  <blockquote>
+    <p><img src="PopupAndFirefox_files/Excerpt.gif" alt="Excerpt: " height="40" width="34"> Have you ever selected a link to look at a new page,
+    then discovered that the "back" or "go back" or "previous page" control
+    of your browser no longer seems to work? Surprise... the link you chose
+    may have caused the new page to load in its own new window. If both
+    pages are full-screen you may not know that you have two browser
+    sessions on the go. The code to open the new page in its own window
+    might look like this:<br>
+    <br>
+    <code>&lt;A HREF="new-page.htm" TARGET="_blank"&gt;The Wonderful World
+    of Sponge&lt;/A&gt;</code><br>
+    <br>
+    where TARGET=_blank tells the browser to spawn (or open) a new window
+    for this page.<br>
+    So, if your link spawns a new window, or causes another windows to "pop
+    up" on your display, or move the focus of the system to a new FRAME or
+    Window, then the nice thing to do is to tell the user that something
+    like that will happen.</p>
+  </blockquote>
+
+  <p><img src="PopupAndFirefox_files/w3c_home-lg.gif" title="World Wide Web Consortium" alt="World Wide Web Consortium" height="48" width="72"><img src="PopupAndFirefox_files/wai-lg.gif" alt=" Web Accessibility Initiative" height="48" width="212"><br>
+  <a href="http://www.w3.org/WAI/wcag-curric/sam77-0.htm">World Wide Web
+  Consortium Accessibility Initiative regarding popups</a>,<br>
+  2000</p>
+
+  <blockquote cite="http://diveintoaccessibility.org/day_16_not_opening_new_windows.html">
+    <p><img src="PopupAndFirefox_files/Excerpt.gif" alt="Excerpt: " height="40" width="34"> In all dominant browsers, using the &lt;a
+    target="_blank"&gt; tag to force a link to open in a new window breaks
+    the Back button. The new window does not retain the browser history of
+    the previous window, so the "Back" button is disabled. This is
+    incredibly confusing, even for me, and I've been using the web for 10
+    years. In 2002, it's amazing that people still do this.</p>
+  </blockquote>
+
+  <p>Mark Pilgrim,<br>
+  <a href="http://diveintoaccessibility.org/day_16_not_opening_new_windows.html">Dive
+  Into Accessibility: not opening new windows</a>,<br>
+  2002</p>
+
+  <blockquote cite="http://msdn.microsoft.com/en-us/library/ms997581.aspx#winuifaq_topic2">
+    <p><img src="PopupAndFirefox_files/Excerpt.gif" alt="Excerpt: " height="40" width="34"> Research shows that most users don't like to run more
+    than one application at a time. In fact, many users are confused by
+    multiple applications.</p>
+  </blockquote>
+
+  <p>Windows User Experience team,<br>
+  <!-- Many thanks to Michael "spam_ninja" :) for the heads up --><a href="http://msdn.microsoft.com/en-us/library/ms997581.aspx#winuifaq_topic2">Microsoft
+  Windows User Experience Frequently Asked Questions: Why is the taskbar at
+  the bottom of the screen?</a>,<br>
+  March 2001</p>
+
+  <blockquote cite="http://msdn.microsoft.com/en-gb/library/aa384943.aspx">
+    <p><img src="PopupAndFirefox_files/Excerpt.gif" alt="Excerpt: " height="40" width="34"> Using pop-up browser windows to display advertising on
+    the Web has become so commonplace that there is now software that
+    prevents these windows from opening. This software can have the
+    unwanted side effect of preventing legitimate Web pages from being
+    displayed, sometimes suppressing an entire digital media
+    presentation.</p>
+  </blockquote>
+
+  <p>Kevin Larkin, Jim Travis, Microsoft New Media Platforms Division,<br>
+  <!-- Many thanks to Michael "spam_ninja" :) for the heads up --><a href="http://msdn.microsoft.com/en-gb/library/aa384943.aspx">Windows Media
+  Player 11 SDK: Advantages of Using HTMLView</a> ,<br>
+  January 2003 (Windows Media Player 9 SDK) and 2007</p>
+
+  <p class="fltRight"><a href="#page-content">[Page Content]</a></p>
+  <hr>
+
+  <p><img src="PopupAndFirefox_files/Walla.gif" class="fltLeft" alt="" height="200" width="129"> This concludes my presentation on popup windows
+  and Firefox settings.<br>
+  I hope you now understand better how popups work and which Firefox
+  settings can do what and how for you.</p>
+
+  <p><em>Credits go to Michael (spam_ninja) <img src="PopupAndFirefox_files/wavey.gif" title=":)" alt=":)" height="29" width="25"> for notifying me of some broken links.</em></p>
+
+  <p id="validation"><a href="http://validator.w3.org/check?uri=http%3A%2F%2Fwww.gtalbot.org%2FFirefoxSection%2FPopup%2FPopupAndFirefox.html;verbose=1" title="Verify this page's compliance to the transitional definition of HTML 4.01">
+  <img src="PopupAndFirefox_files/valid-html401.png" alt="Valid HTML 4.01!" height="31" width="88"></a> &nbsp; <a href="http://jigsaw.w3.org/css-validator/validator?uri=http://www.gtalbot.org/FirefoxSection/Popup/PopupAndFirefox.html&amp;warning=2&amp;profile=css21&amp;usermedium=all" title="Verify this page's CSS code"><img src="PopupAndFirefox_files/vcss.png" alt="CSS compliant" height="31" width="88"></a> &nbsp; <a href="http://www.webstandards.org/"><img src="PopupAndFirefox_files/webstandardsproject.gif" alt="Web standards project" height="31" width="88"></a> &nbsp; <a href="http://www.mozilla.com/en-US/firefox/all.html" title="Download the latest version of Firefox"><img src="PopupAndFirefox_files/GetFirefoxAnim4.gif" alt="Firefox 5.0" height="60" width="120"></a> &nbsp; <a href="http://www.kompozer.net/" title="KompoZer is an advanced web standards compliant HTML editor"><img src="PopupAndFirefox_files/Fait-Avec-KompoZer.png" alt="Get KompoZer 0.8" height="15" width="80"></a></p>
+
+
+</body></html>

@@ -1,0 +1,114 @@
+$VAR1 = {
+          'owner_displayname' => 'gbarco',
+          'buckets' => [
+                         bless( {
+                                  'creation_date' => '2011-07-25T17:48:43.000Z',
+                                  'account' => bless( {
+                                                        'errstr' => undef,
+                                                        'ua' => bless( {
+                                                                         'max_redirect' => 7,
+                                                                         'conn_cache' => bless( {
+                                                                                                  'cc_limit_total' => 10,
+                                                                                                  'cc_conns' => [
+                                                                                                                  [
+                                                                                                                    bless( \*Symbol::GEN1, 'LWP::Protocol::http::Socket' ),
+                                                                                                                    'http',
+                                                                                                                    's3.amazonaws.com:80',
+                                                                                                                    1316611953
+                                                                                                                  ]
+                                                                                                                ]
+                                                                                                }, 'LWP::ConnCache' ),
+                                                                         'protocols_forbidden' => undef,
+                                                                         'show_progress' => undef,
+                                                                         'handlers' => {
+                                                                                         'response_header' => bless( [
+                                                                                                                       {
+                                                                                                                         'owner' => 'LWP::UserAgent::parse_head',
+                                                                                                                         'callback' => sub { "DUMMY" },
+                                                                                                                         'm_media_type' => 'html',
+                                                                                                                         'line' => 'C:/Perl/lib/LWP/UserAgent.pm:612'
+                                                                                                                       }
+                                                                                                                     ], 'HTTP::Config' )
+                                                                                       },
+                                                                         'no_proxy' => [],
+                                                                         'protocols_allowed' => undef,
+                                                                         'local_address' => undef,
+                                                                         'use_eval' => 1,
+                                                                         'requests_redirectable' => [
+                                                                                                      'GET',
+                                                                                                      'HEAD',
+                                                                                                      'DELETE',
+                                                                                                      'PUT'
+                                                                                                    ],
+                                                                         'timeout' => 30,
+                                                                         'def_headers' => bless( {
+                                                                                                   'user-agent' => 'libwww-perl/5.837'
+                                                                                                 }, 'HTTP::Headers' ),
+                                                                         'proxy' => {},
+                                                                         'max_size' => undef
+                                                                       }, 'LWP::UserAgent' ),
+                                                        'err' => undef,
+                                                        'secure' => 0,
+                                                        'host' => 's3.amazonaws.com',
+                                                        'aws_access_key_id' => 'AKIAIC2DBRTIUKHMGASQ',
+                                                        'timeout' => 30,
+                                                        'aws_secret_access_key' => '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'
+                                                      }, 'Amazon::S3' ),
+                                  'bucket' => 'sinqrtel'
+                                }, 'Amazon::S3::Bucket' ),
+                         bless( {
+                                  'creation_date' => '2011-07-26T16:40:39.000Z',
+                                  'account' => $VAR1->{'buckets'}[0]{'account'},
+                                  'bucket' => 'www.cet.com.uy'
+                                }, 'Amazon::S3::Bucket' ),
+                         bless( {
+                                  'creation_date' => '2011-08-09T20:30:18.000Z',
+                                  'account' => $VAR1->{'buckets'}[0]{'account'},
+                                  'bucket' => 'www.modarabito.com'
+                                }, 'Amazon::S3::Bucket' ),
+                         bless( {
+                                  'creation_date' => '2011-07-26T16:50:36.000Z',
+                                  'account' => $VAR1->{'buckets'}[0]{'account'},
+                                  'bucket' => 'www.sinqrtel.com'
+                                }, 'Amazon::S3::Bucket' )
+                       ],
+          'owner_id' => '7c7855d3fd316dfefd3af862a40cdd21f015d5fd69e6f201a9d03fac70ea03c4'
+        };
+
+$VAR1 = {
+          'keys' => [
+                      {
+                        'etag' => 'd41d8cd98f00b204e9800998ecf8427e',
+                        'owner_displayname' => 'gbarco',
+                        'storage_class' => 'STANDARD',
+                        'last_modified' => '2011-07-25T18:07:55.000Z',
+                        'owner_id' => '7c7855d3fd316dfefd3af862a40cdd21f015d5fd69e6f201a9d03fac70ea03c4',
+                        'size' => '0',
+                        'key' => 'corporate_$folder$'
+                      },
+                      {
+                        'etag' => '3f979b034e2cee55ee328823bdd78fcc',
+                        'owner_displayname' => 'gbarco',
+                        'storage_class' => 'STANDARD',
+                        'last_modified' => '2011-07-26T13:43:25.000Z',
+                        'owner_id' => '7c7855d3fd316dfefd3af862a40cdd21f015d5fd69e6f201a9d03fac70ea03c4',
+                        'size' => '962050',
+                        'key' => 'marketing/CYS_FORO_PV.jpg'
+                      },
+                      {
+                        'etag' => 'd41d8cd98f00b204e9800998ecf8427e',
+                        'owner_displayname' => 'gbarco',
+                        'storage_class' => 'STANDARD',
+                        'last_modified' => '2011-07-25T18:07:59.000Z',
+                        'owner_id' => '7c7855d3fd316dfefd3af862a40cdd21f015d5fd69e6f201a9d03fac70ea03c4',
+                        'size' => '0',
+                        'key' => 'marketing_$folder$'
+                      }
+                    ],
+          'marker' => '',
+          'max_keys' => '1000',
+          'is_truncated' => 0,
+          'next_marker' => undef,
+          'bucket' => 'sinqrtel',
+          'prefix' => ''
+        };
