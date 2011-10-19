@@ -28,8 +28,19 @@ function failure(data) {
 
 $(document).ready(function() {
   $("#social-mail").click(function(){
-    var oauth_google_url = "https://accounts.google.com/o/oauth2/auth?client_id=932822599581.apps.googleusercontent.com&redirect_uri=http://www.sinqrtel.com/oauth2callback.html&scope=https://www.google.com/m8/feeds/&response_type=token";
-    window.open( oauth_google_url, "Google oAuth", "top=40,left=60,width=500,height=350,menubar=no,toolbar=no,location=no,resizable=no,scrollbars=no,status=no");
+    $.post(
+      url [, data] [, success(data, textStatus, jqXHR)] [, dataType] )
+
+urlA string containing the URL to which the request is sent.
+
+dataA map or string that is sent to the server with the request.
+
+success(data, textStatus, jqXHR)A callback function that is executed if the request succeeds.
+
+dataTypeThe type of data expected from the server. Default: Intelligent Guess (xml, json, script, or html).
+
+//    var oauth_google_url = "https://accounts.google.com/o/oauth2/auth?client_id=932822599581.apps.googleusercontent.com&redirect_uri=http://www.sinqrtel.com/oauth2callback.html&scope=https://www.google.com/m8/feeds/&response_type=token";
+//    window.open( oauth_google_url, "Google oAuth", "top=40,left=60,width=500,height=350,menubar=no,toolbar=no,location=no,resizable=no,scrollbars=no,status=no");
   });
 });
 
