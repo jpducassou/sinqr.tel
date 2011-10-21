@@ -1,14 +1,27 @@
 <html>
+
 <body>
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "http://connect.facebook.net/en_US/all.js#xfbml=1&appId=207120562693777";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
 
 <script type="text/javascript" src="https://www.google.com/jsapi?key=ABQIAAAAGbCP7xAnDeaBWr-NDrNqXBQmMOc3nLjHthTa4EGe0lmmw0PRdxREC4FbLwhuQ0MKiSEZhZaqWLSXNA"></script>
 <script type="text/javascript">
   google.load("jquery", "1.6.2");
   google.load("jqueryui", "1.7.2");
 </script>
+
 <script type="text/javascript" src="http://crypto-js.googlecode.com/files/2.4.0-crypto-sha1-hmac-pbkdf2-blockmodes-aes.js"></script>
 
+<div class="fb-like" data-href="www.sinqrtel.com" data-send="true" data-width="450" data-show-faces="true" data-action="recommend"></div>
+
 <img src="http://upload.wikimedia.org/wikipedia/commons/c/ce/Mail-envelope.png" id="social-mail" style="right: 0; top: 100px;width: 50px; height: 50px; position: absolute" alt="Mail"/>
+
 <script type="text/javascript">
 
 /////////////////// Auth /////////////////////////////////////////////////////
@@ -97,7 +110,7 @@ function invokeRequest() {
   }
 }
 
-var oauth = OAuth({
+/*var oauth = OAuth({
     consumerKey: "Ey8qbJ1OJnqmOUUxSaoOw",
     consumerSecret: "KjtbULvvVg9iqjjvmZuDcUsvaxdO53xI0GKXaFW1XzA",
     //accessTokenKey: "[YOUR-PERSONAL-TWITTER-ACCESS-TOKEN-KEY]",
@@ -113,7 +126,7 @@ function success(data){
 
 function failure(data) {
     alert("Throw rotten fruit, something failed");
-}
+}*/
 
 //https://accounts.google.com/o/oauth2/auth?client_id=932822599581.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Fwww.sinqrtel.com%2Foauth2callback.html&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo%23email&response_type=token&state=undefined
 function get_google_authorization_uri( client_id, redirect_uri, scope, state ) {

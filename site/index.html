@@ -1,123 +1,165 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<title>Bienvenido a Sinqrtel.com</title>
-<link href="common.css" rel="stylesheet" type="text/css" />
-<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
-</head>
-<body>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
 
-<div class="all_content">
-	<div class="mnu_izquierda">sinqrtel.com
-		<div style="height: 400px"></div>
-		<div class="mnu_izquierdo_cmd">Cómo jugar</div>
-		<div style="height: 10px"></div>
-		<div class="mnu_izquierdo_cmd">Registrarse</div>
-	</div>
-    
-	<div class="main_content">
-		<div class="main_content_top">
-			<div style="text-align: center;">
-    <img src="banners/728x90_bwin.gif" width="728" height="90" />				
-			</div>
-		</div>
-    	<div class="main_content_middle">
-			<div style="height: 15px"></div>
-            <div class="main_content_middle_register">
-            <form>
-            <div class="forms">
-            	<input name="user[name]" type="text" maxlength="50" size="50" autocompelete="off"/><span class="holder">Nombre</span>
-            	<input name="user[email]" type="text" autocompelete="off"/><span class="holder">Email</span>
-            </div>
-            </form>
-            </div>
-			<div id="tweet-div"></div>
-    </div>
-
-		<div class="main_content_bottom">
-			<div class="main_content_copyright">
-				<ul id="link_list">
-					<li><a href="http://www.sinqrtel.com/about/">Quiénes somos</a></li>
-					<li><a href="http://www.sinqrtel.com/contact/">contacto</a></li>
-					<li><a href="http://www.sinqrtel.com/help/">ayuda</a></li>
-					<li><a href="http://www.sinqrtel.com/jobs/">empleo</a></li>
-					<li><a href="https://es.foursquare.com/legal/privacy">privacidad</a></li>
-					<li><a href="https://es.foursquare.com/legal/terms">condiciones</a></li>
-				</ul> &copy; 2011 sinqrtel.com
-			</div>
-     </div>
-	</div>
-</div>
-
+<title>Sinqrtel.com</title>
 <script type="text/javascript" src="https://www.google.com/jsapi?key=ABQIAAAAGbCP7xAnDeaBWr-NDrNqXBQmMOc3nLjHthTa4EGe0lmmw0PRdxREC4FbLwhuQ0MKiSEZhZaqWLSXNA"></script>
-
 <script type="text/javascript">
-google.load("jquery", "1.6.2");
+google.load("jquery", "1.6.4");
 google.load("jqueryui", "1.8.16");
 </script>
 
-<div class="popup_continue_cel"><div><img src="qr.www.sinqrtel.com.png" width="91" height="91" />ir a tu cel</div></div>
+<style type="text/css">
+.counter_row_2 {
+	position: relative;
+	top: 33px;
+	left: -170px;
+}
+.counter_digit_holder {
+	background: url('counterelements.png');
+	float: left;
+}
+.counter_digit_spacer {
+	float: left;
+	width: 2px;
+}
+.counter_label_holder {
+	background: url('counterelements.png');
+	float: left;
+}
+.counter {
+ position:relative;
+ top:0px;
+ left:627px;
+}
+.counter_0 {
+	background-position: 0px 0px; width: 20px; height: 32px;
+}
+.counter_1 {
+	background-position: 0px -33px; width: 20px; height: 32px;
+}
+.counter_2 {
+	background-position: 0px -66px; width: 20px; height: 32px;
+}
+.counter_3 {
+	background-position: 0px -99px; width: 20px; height: 32px;
+}
+.counter_4 {
+	background-position: 0px -132px; width: 20px; height: 32px;
+}
+.counter_5 {
+	background-position: 0px -165px; width: 20px; height: 32px;
+}
+.counter_6 {
+	background-position: 0px -198px; width: 20px; height: 32px;
+}
+.counter_7 {
+	background-position: 0px -231px; width: 20px; height: 32px;
+}
+.counter_8 {
+	background-position: 0px -264px; width: 20px; height: 32px;
+}
+.counter_9 {
+	background-position: 0px -297px; width: 20px; height: 32px;
+}
+.counter_days {
+	background-position: 0px -330px; width: 40px; height: 12px;
+}
+.counter_hours {
+	background-position: 0px -343px; width: 40px; height: 12px;
+}
+.counter_minutes {
+	background-position: 0px -356px; width: 40px; height: 12px;
+}
+.counter_seconds {
+	background-position: 0px -369px; width: 40px; height: 12px;
+}
+</style>
+</head>
+<body background="bk.png">
+<table width="800" border="0" height="600" align="center">
+  <tr bgcolor="#CCCCCC">
+    <th scope="col" height="45">
+<div id="counter" class="counter">
+	<div class="counter_digit_spacer">&nbsp;</div>
+	<div id="counter_holder_0" class="counter_digit_holder counter_9">&nbsp;</div>
+	<div id="counter_holder_1" class="counter_digit_holder counter_9">&nbsp;</div>
+	<div class="counter_digit_spacer">&nbsp;</div>
+	<div id="counter_holder_2" class="counter_digit_holder counter_9">&nbsp;</div>
+	<div id="counter_holder_3" class="counter_digit_holder counter_9">&nbsp;</div>
+	<div class="counter_digit_spacer">&nbsp;</div>
+	<div id="counter_holder_4" class="counter_digit_holder counter_9">&nbsp;</div>
+	<div id="counter_holder_5" class="counter_digit_holder counter_9">&nbsp;</div>
+	<div class="counter_digit_spacer">&nbsp;</div>
+	<div id="counter_holder_6" class="counter_digit_holder counter_9">&nbsp;</div>
+	<div id="counter_holder_7" class="counter_digit_holder counter_9">&nbsp;</div>
+	<div class="counter_digit_spacer">&nbsp;</div>
 
+	<div class="counter_row_2">
+		<div class="counter_digit_spacer">&nbsp;</div>
+		<div class="counter_label_holder counter_days">&nbsp;</div>
+		<div class="counter_digit_spacer">&nbsp;</div>
+		<div class="counter_label_holder counter_hours">&nbsp;</div>
+		<div class="counter_digit_spacer">&nbsp;</div>
+		<div class="counter_label_holder counter_minutes">&nbsp;</div>
+		<div class="counter_digit_spacer">&nbsp;</div>
+		<div class="counter_label_holder counter_seconds">&nbsp;</div>
+		<div class="counter_digit_spacer">&nbsp;</div>
+	</div>
+</div>
+</th>
+  </tr>
+  <tr>
+    <td><img src="bk2.png" border="0" usemap="#Map" /></td>
+  </tr>
+</table>
+
+<map name="Map" id="Map"><area shape="rect" coords="588,250,756,315" href="mailto:pablo@sinqrtel.com" target="_blank" />
+</map>
 <script>
-// Handler for .ready() called.
-$(function() {
-	$('.mnu_izquierdo_cmd').bind( {
-		'mouseenter mouseleave': function () { $(this).toggleClass('mnu_izquierdo_cmd_mouseenter', 1000); },
-	});
+function updateCountdown(yr,m,d){
+	var difference = ( new Date( 2011, 11-1, 15, 0, 0, 0 ).getTime() - new Date().getTime() );
+	if ( difference < 0 ) difference = 0;
+	var seconds = Math.floor(difference / 1000) % 60;
+	var minutes = Math.floor(difference / 60000 ) % 60; //1000 / 60
+	var hours = Math.floor(difference / 3600000 ) % 24; //1000 / 60 / 60
+	var days = Math.floor(difference / 86400000 ); //1000 / 60 / 60 / 24
 
-	$('.forms input').css('background-color','red');
-	$('.formsinput').bind( {
-		'focus': function () { $(this).next("span").css('background-color','red').fadeOut(1000); },
-		'blur': function () { $(this).next("span").css('display','inline').fadeIn(1000); },
-	});
-	
-	setInterval( function() { $('.popup_continue_cel').toggleClass('popup_continue_cel_up',2000); $('.popup_continue_cel').effect("bounce", { times:3 }, 300); }, 15000);
-});
-</script>
+	var digits = new Array (
+		Math.floor(days/10),
+		days % 10,
+		Math.floor(hours/10),
+		hours % 10,
+		Math.floor(minutes/10),
+		minutes % 10,
+		Math.floor(seconds/10),
+		seconds % 10
+	);
 
-<script src="http://widgets.twimg.com/j/2/widget.js"></script>
-<script>
-var tweet_search = ['sinqrtel'];
-tweet_search.push('gbarcouy');
-tweet_search.push('#sqrt_uy_uy');
-tweet_search.push('#sqrt_uy_uy_w_1000');
-
-new TWTR.Widget({
-	version: 2,
-	type: 'search',
-	search: tweet_search.join(' OR '),
-	interval: 30000,
-	title: '',
-	id: 'tweet-div',
-	subject: '',
-	footer: '',
-	rpp: 30,
-	width: 768,
-	height: 410,
-	theme: {
-		shell: {
-			background: '#f90',
-			color: '#000000'
-		},
-		tweets: {
-			background: '#ffffff',
-			color: '#000000',
-			links: '#0000ff'
+	for (d=0;d<=7;d++) {
+		$("#counter_holder_" + d).removeClass().addClass("counter_digit_holder counter_" + digits[d] );
+		var sum=0;
+		for (dat=d;dat<=7;dat++) {
+			sum=sum+digits[dat];
 		}
-	},
-	features: {
-    	scrollbar: false,
-		loop: true,
-		live: true,
-    	hashtags: true,
-    	timestamp: true,
-    	avatars: true,
-    	toptweets: true,
-    	behavior: 'default'
+		if (difference > 0 && d<7 && sum==0) {
+			$("#counter_holder_" + d).effect("shake", { direction: "down", distance: 10, times: 1 }, 100 );
+		}
 	}
-}).render().start();
-</script>
+}
 
-</body>
-</html>
+function shakeCountDown() {
+	var element = Math.floor(Math.random()*8);
+	var dir = (Math.random() <= 0.5 ? "down" : "left");
+
+	$("#counter_holder_" + element).effect("shake", { direction: dir, distance: 5, times: Math.floor(Math.random() * 3) + 1  }, Math.floor(Math.random() * 50) + 50 );
+
+}
+
+ $(document).ready(function() {
+	window.setInterval(updateCountdown, 1000);
+	window.setInterval(shakeCountDown, Math.random() * 5000 + 5000 );
+ });
+
+</script>
+</body></html>
