@@ -20,7 +20,7 @@
 
 <div class="fb-like" data-href="www.sinqrtel.com" data-send="true" data-width="450" data-show-faces="true" data-action="recommend"></div>
 
-<img src="http://upload.wikimedia.org/wikipedia/commons/c/ce/Mail-envelope.png" id="social-mail" style="right: 0; top: 100px;width: 50px; height: 50px; position: absolute" alt="Mail"/>
+<img src="http://www.google.com/images/srpr/logo3w.png" id="auth-google" alt="Google Login"/>
 
 <script type="text/javascript">
 
@@ -128,7 +128,7 @@ function failure(data) {
     alert("Throw rotten fruit, something failed");
 }*/
 
-//https://accounts.google.com/o/oauth2/auth?client_id=932822599581.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Fwww.sinqrtel.com%2Foauth2callback.html&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo%23email&response_type=token&state=undefined
+//https://accounts.google.com/o/oauth2/auth?client_id=932822599581.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Fwww.sinqrtel.com%2Fauth%2Fgoogle_callback.html&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo%23email&response_type=token&state=undefined
 function get_google_authorization_uri( client_id, redirect_uri, scope, state ) {
   return "https://accounts.google.com/o/oauth2/auth?client_id=" + encodeURIComponent( client_id )
     + "&redirect_uri=" + encodeURIComponent( redirect_uri )
@@ -138,9 +138,9 @@ function get_google_authorization_uri( client_id, redirect_uri, scope, state ) {
 }
 
 $(document).ready(function() {
-  $("#social-mail").click(function(){
+  $("#auth-google").click(function(){
     //invokeRequest();
-    var oauth_google_url = get_google_authorization_uri("932822599581.apps.googleusercontent.com","http://www.sinqrtel.com/oauth2callback.html","https://www.googleapis.com/auth/userinfo#email");
+    var oauth_google_url = get_google_authorization_uri("932822599581.apps.googleusercontent.com","http://www.sinqrtel.com/auth/google_callback.html","https://www.googleapis.com/auth/userinfo#email");
     //can request, expires in not needed
     //https://www.googleapis.com/userinfo/email?alt=json&access_token=ya29.AHES6ZRGoXI6ozgKpYEqBlQtHraMfWW_UwleUlpHVpcJu9as8GuBhg&token_type=Bearer&expires_in=3600
     alert ( oauth_google_url );

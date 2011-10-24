@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+      "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+  <title>Google OAuth 2.0 Callback</title>
+</head>
+<body>
+<script>
+var testhash = "state=undefined&access_token=ya29.AHES6ZSiIVmKl-Xls3s58burmslJg6hf_YG3sZy29iQCRGw8I82BZGs&token_type=Bearer&expires_in=3600";
+window.location.hash = testhash;
+
+//https://www.googleapis.com/userinfo/email?alt=json&access_token=ya29.AHES6ZRGoXI6ozgKpYEqBlQtHraMfWW_UwleUlpHVpcJu9as8GuBhg&token_type=Bearer&expires_in=3600
+function getUserName (access_token) {
+  var http = new XMLHttpRequest();
+  http.open("GET", "https://www.googleapis.com/userinfo/email?alt=json&token_type=Bearer&access_token=" + access_token , true);
+  http.setRequestHeader("Connection", "close" );
+
+  http.send( "" );
+
+  http.onreadystatechange = function() {//Call a function when the state changes.
+    if(http.readyState == 4 && http.status == 200) {
+      alert("Sent, got 200" + http.responseText);
+    } else {
+      alert("Got" + http.status + " " + http.responseText );
+    }
+  }
+}
+
+if ( ! window.location.hash.match(/access_denied$/) ) {
+  var params = [], hash;
+  var hashes = window.location.hash.split('&');
+  for(var i = 0; i < hashes.length; i++)
+  {
+      hash = hashes[i].split('=');
+      params.push(hash[0]);
+      params[hash[0]] = hash[1];
+  }
+
+  alert( params );
+
+  getUserName( params['access_token']);
+} else {
+  window.location = "/help/google_auth.html"
+}
+</script>
+</body>
+</html>
