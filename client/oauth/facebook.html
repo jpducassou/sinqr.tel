@@ -1,0 +1,63 @@
+<html>
+<head>
+<title>My Facebook Login Page</title>
+</head>
+<body>
+      <div id="fb-root"></div>
+      <script>
+        window.fbAsyncInit = function() {
+          FB.init({
+            appId      : '207120562693777',
+            status     : true,
+            cookie     : true,
+            frictionlessRequests : true,
+            xfbml      : true,
+            oauth: true
+          });
+        };
+        (function(d){
+           var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
+           js = d.createElement('script'); js.id = id; js.async = true;
+           js.src = "//connect.facebook.net/en_US/all.js";
+           d.getElementsByTagName('head')[0].appendChild(js);
+         }(document));
+      </script>
+      <input type="button"
+        onclick="sendRequestToOneRecipient(); return false;"
+        value="Send Request to One User"
+      />
+      <input type="text" value="User ID" name="user_id" size=”50” />
+    </p>
+    <p>
+      <input type="button"
+        onclick="sendRequestToManyRecipients(); return false;"
+        value="Send Request to Many Users"
+      />
+        <input type="text"
+          value="Comma Delimited List of Multiple User IDs"
+          name="user_ids" size=”50” />
+       </p>
+     <script>
+   function sendRequestToOneRecipient() {
+        var user_id = document.getElementsByName("user_id")[0].value;
+        FB.ui({method: 'apprequests',
+          message: 'My Great Request',
+          to: user_id,
+        }, requestCallback);
+      }
+
+      function sendRequestToManyRecipients() {
+        var user_ids = document.getElementsByName("user_ids")[0].value;
+        FB.ui({method: 'apprequests',
+          message: 'My Great Request',
+          to: user_ids,
+        }, requestCallback);
+      }
+
+      function requestCallback(response) {
+        // Handle callback here
+        console.log(response);
+      }
+    </script>
+    </body>
+ </html>

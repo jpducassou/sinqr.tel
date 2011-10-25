@@ -2,13 +2,24 @@
 
 <body>
 <div id="fb-root"></div>
-<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) {return;}
-  js = d.createElement(s); js.id = id;
-  js.src = "http://connect.facebook.net/en_US/all.js#xfbml=1&appId=207120562693777";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));</script>
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '207120562693777',
+      status     : true,
+      cookie     : true,
+      oauth      : true,
+      xfbml      : true
+    });
+  };
+  (function(d){
+     var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
+     js = d.createElement('script'); js.id = id; js.async = true;
+     js.src = "http://connect.facebook.net/es_ES/all.js";
+     d.getElementsByTagName('head')[0].appendChild(js);
+   }(document));
+</script>
+<div class="fb-login-button">Login usando Facebook</div>
 
 <script type="text/javascript" src="https://www.google.com/jsapi?key=ABQIAAAAGbCP7xAnDeaBWr-NDrNqXBQmMOc3nLjHthTa4EGe0lmmw0PRdxREC4FbLwhuQ0MKiSEZhZaqWLSXNA"></script>
 <script type="text/javascript">
@@ -21,6 +32,7 @@
 <div class="fb-like" data-href="www.sinqrtel.com" data-send="true" data-width="450" data-show-faces="true" data-action="recommend"></div>
 
 <img src="http://www.google.com/images/srpr/logo3w.png" id="auth-google" alt="Google Login"/>
+<img src="http://farm1.static.flickr.com/225/503165914_f8a5d293bc_o.jpg" id="auth-facebook" width="300" alt="Facebook Login"/>
 
 <script type="text/javascript">
 
@@ -61,16 +73,6 @@ function getStringToSign( params ) {
 
   return stringToSign;
 }
-//
-//var params = new Array();
-//myArray['one'] = 1;
-//myArray['two'] = 2;
-//myArray['three'] = 3;
-//
-//// show the values stored
-//for (var i in myArray) {
-//	alert('key is: ' + i + ', value is: ' + myArray[i]);
-//}
 
 /////////////////// Signed URL /////////////////////////////////////////////////////
 function generateSignedParams( oauth_callback, oauth_consumer_key, oauth_nonce, oauth_consumer_secret, oauth_token_secret ) {
@@ -110,24 +112,6 @@ function invokeRequest() {
   }
 }
 
-/*var oauth = OAuth({
-    consumerKey: "Ey8qbJ1OJnqmOUUxSaoOw",
-    consumerSecret: "KjtbULvvVg9iqjjvmZuDcUsvaxdO53xI0GKXaFW1XzA",
-    //accessTokenKey: "[YOUR-PERSONAL-TWITTER-ACCESS-TOKEN-KEY]",
-    //accessTokenSecret: "[YOUR-PERSONAL-TWITTER-ACCESS-TOKEN-SECRET]"
-});
-
-function success(data){
-    var timeline = JSON.parse(data.text);
-    timeline.forEach(function (element){
-        alert(element.text);
-    });
-}
-
-function failure(data) {
-    alert("Throw rotten fruit, something failed");
-}*/
-
 //https://accounts.google.com/o/oauth2/auth?client_id=932822599581.apps.googleusercontent.com&redirect_uri=http%3A%2F%2Fwww.sinqrtel.com%2Fauth%2Fgoogle_callback.html&scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo%23email&response_type=token&state=undefined
 function get_google_authorization_uri( client_id, redirect_uri, scope, state ) {
   return "https://accounts.google.com/o/oauth2/auth?client_id=" + encodeURIComponent( client_id )
@@ -145,6 +129,40 @@ $(document).ready(function() {
     //https://www.googleapis.com/userinfo/email?alt=json&access_token=ya29.AHES6ZRGoXI6ozgKpYEqBlQtHraMfWW_UwleUlpHVpcJu9as8GuBhg&token_type=Bearer&expires_in=3600
     alert ( oauth_google_url );
     window.open( oauth_google_url, "Google oAuth", "top=40,left=60,width=500,height=350,menubar=no,toolbar=no,location=no,resizable=no,scrollbars=no,status=no");
+  });
+  $("#auth-facebook").click(function(){
+    FB.login(function(response) {
+      if (response.authResponse) {
+        console.log('Welcome!  Fetching your information.... ');
+        FB.api('/me', function(response) {
+          console.log('Good to see you, ' + response.name + '.');
+          FB.logout(function(response) {
+            console.log('Logged out.');
+          });
+        });
+      } else {
+        console.log('User cancelled login or did not fully authorize.');
+      }
+    }, {scope: 'email'});
+  });
+  FB.getLoginStatus(function(response) {
+    if (response.status === 'connected') {
+      // the user is logged in and connected to your
+      // app, and response.authResponse supplies
+      // the user’s ID, a valid access token, a signed
+      // request, and the time the access token
+      // and signed request each expire
+      var uid = response.authResponse.userID;
+      var accessToken = response.authResponse.accessToken;
+      alert('Kindly provided his uid:' + uid );
+    } else if (response.status === 'not_authorized') {
+      alert( response.status );
+      // the user is logged in to Facebook,
+      //but not connected to the app
+    } else {
+      // the user isn't even logged in to Facebook.
+      alert('Not even logged');
+    }
   });
 });
 
