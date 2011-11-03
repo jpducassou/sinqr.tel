@@ -79,8 +79,6 @@ function getStringToSign( params ) {
     stringToSign += decodeURIComponent(value);
   }
 
-  alert( stringToSign );
-
   return stringToSign;
 }
 
@@ -102,9 +100,8 @@ function generateSignedParams(actionName, messageBody, queueUrl, accessKeyId, se
   return params;
 }
 
-function invokeRequest() {
-  var messageBody = document.getElementById("MessageBody");
-  var postBody = generateSignedParams("SendMessage", messageBody.value, getPublicQueueURI(), getPublicId(), getPublicAccessKey(), "https://queue.amazonaws.com", "2009-02-01");
+function invokeRequest(message) {
+  var postBody = generateSignedParams("SendMessage", message, getPublicQueueURI(), getPublicId(), getPublicAccessKey(), "https://queue.amazonaws.com", "2009-02-01");
   //request creation
   var http = new XMLHttpRequest();
   http.open("POST", getPublicQueueURI(), true);
@@ -113,12 +110,10 @@ function invokeRequest() {
   //http.setRequestHeader("Content-length", url.length);
   http.setRequestHeader("Connection", "close" );
 
-  alert( postBody );
   http.send( postBody );
 
-  http.onreadystatechange = function() {//Call a function when the state changes.
+  /*http.onreadystatechange = function() {//Call a function when the state changes.
     if(http.readyState == 4 && http.status == 200) {
-      alert("Sent, got 200");
     }
-  }
+  }*/
 }

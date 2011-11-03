@@ -1,0 +1,339 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+<link href='http://fonts.googleapis.com/css?family=Nova+Round' rel='stylesheet' type='text/css'>
+
+<title>Sinqrtel.com</title>
+<script type="text/javascript" src="sendmessage.js"></script>
+<script type="text/javascript" src="http://crypto-js.googlecode.com/files/2.4.0-crypto-sha1-hmac-pbkdf2-blockmodes-aes.js"></script>
+<script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
+<script type="text/javascript" src="https://www.google.com/jsapi?key=ABQIAAAAGbCP7xAnDeaBWr-NDrNqXBQmMOc3nLjHthTa4EGe0lmmw0PRdxREC4FbLwhuQ0MKiSEZhZaqWLSXNA"></script>
+<script type="text/javascript">
+google.load("jquery", "1.6.4");
+google.load("jqueryui", "1.8.16");
+
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-24758076-1']);
+_gaq.push(['_trackPageview']);
+
+(function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+</script>
+
+<style type="text/css">
+.counter_digit_holder {
+	background: url('counterelements.png');
+	float: left;
+}
+.counter_digit_spacer {
+	float: left;
+	width: 2px;
+}
+.counter_label_holder {
+	background: url('counterelements.png');
+	float: left;
+}
+.counter_0 {
+	background-position: 0px 0px; width: 20px; height: 32px;
+}
+.counter_1 {
+	background-position: 0px -33px; width: 20px; height: 32px;
+}
+.counter_2 {
+	background-position: 0px -66px; width: 20px; height: 32px;
+}
+.counter_3 {
+	background-position: 0px -99px; width: 20px; height: 32px;
+}
+.counter_4 {
+	background-position: 0px -132px; width: 20px; height: 32px;
+}
+.counter_5 {
+	background-position: 0px -165px; width: 20px; height: 32px;
+}
+.counter_6 {
+	background-position: 0px -198px; width: 20px; height: 32px;
+}
+.counter_7 {
+	background-position: 0px -231px; width: 20px; height: 32px;
+}
+.counter_8 {
+	background-position: 0px -264px; width: 20px; height: 32px;
+}
+.counter_9 {
+	background-position: 0px -297px; width: 20px; height: 32px;
+}
+.counter_days {
+	background-position: 0px -330px; width: 40px; height: 12px;
+}
+.counter_hours {
+	background-position: 0px -343px; width: 40px; height: 12px;
+}
+.counter_minutes {
+	background-position: 0px -356px; width: 40px; height: 12px;
+}
+.counter_seconds {
+	background-position: 0px -369px; width: 40px; height: 12px;
+}
+.counter {
+	float: right;
+}
+#fb_like_top {
+	float:left;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+#fb_like_bottom {
+	clear: both;
+	position: relative;
+	top: 0;
+	left: 0;
+}
+#center_layout {
+	text-align: left;
+	vertical-align: middle;
+}
+#center_text {
+  float: left;
+  color: #FFA000;
+  text-align: left;
+  vertical-align: middle;
+  font-family: 'Nova Round', cursive;
+  font-size: 30px;
+  margin: 5px;
+}
+#header_layout {
+	margin: 0 auto;
+	width: 800px;
+	height: 45px;
+	background-color: #CCCCCC;
+	padding: 0;
+	clear: both;
+}
+#footer_layout {
+	margin: 0 auto;
+	width: 800px;
+	height: 70px;
+	background-color: #CCCCCC;
+	padding: 0;
+	clear: both;
+}
+#main_image {
+	width: 800px;
+	position: relative;
+	clear: both;
+	float: bottom;
+}
+#registerdiv {
+  position: absolute;
+  top: 0px;
+  width: 300px;
+  right: 0;
+  font-family: 'Nova Round', cursive;
+}
+#email {
+  width: 240px;
+  font-family: 'Nova Round', cursive;
+  text-align: center;
+}
+input {
+    outline:none;
+    transition: all 0.25s ease-in-out;
+    -webkit-transition: all 0.25s ease-in-out;
+    -moz-transition: all 0.25s ease-in-out;
+    border-radius:3px;
+    -webkit-border-radius:3px;
+    -moz-border-radius:3px;
+    border:1px solid rgba(0,0,0, 0.2);
+}
+input:focus {
+    box-shadow: 0 0 10px rgba(0, 0, 128, 0.8);
+    -webkit-box-shadow: 0 0 10px rgba(0, 0, 128, 0.8);
+    -moz-box-shadow: 0 0 10px rgba(0, 0, 128, 0.8);
+    border:1px solid rgba(0, 0, 0, 0.8);
+}
+input.invalid {
+  color: #ff0000;
+  background-color: #ffdddd;
+}
+input.valid {
+  color: #4d4948;
+  background-color: #ddffdd;
+}
+#already_signed {
+  border: 1px solid rgb(0,0,0);
+  display: none;
+  text-align: center;
+  vertical-align: middle;
+  width: 240px;
+  background-color: #ffffff;
+  font-family: 'Nova Round', cursive;
+}
+#signin_button {
+  display: none;
+  border: 1px solid rgb(0,0,0);
+  background-color: #ffffff;
+  text-align: center;
+  vertical-align: middle;
+  width: 240px;
+  font-family: 'Nova Round', cursive;
+}
+.spacer5px {
+  clear: both;
+  height: 5px;
+}
+</style>
+</head>
+<body background="bk.png">
+<div id="fb-root"></div>
+<!--facebook-->
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "http://connect.facebook.net/es_LA/all.js#xfbml=1&appId=207120562693777";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));
+</script>
+
+<!--main table-->
+<div id="center_layout">
+<div id="header_layout">
+  <div id="center_text">Viv&iacute; la experiencia SinQRtel!</div>
+	<div id="counter" class="counter">
+	<!--countdown-->
+		<div>
+			<div class="counter_digit_spacer">&nbsp;</div>
+			<div id="counter_holder_0" class="counter_digit_holder counter_9">&nbsp;</div>
+			<div id="counter_holder_1" class="counter_digit_holder counter_9">&nbsp;</div>
+			<div class="counter_digit_spacer">&nbsp;</div>
+			<div id="counter_holder_2" class="counter_digit_holder counter_9">&nbsp;</div>
+			<div id="counter_holder_3" class="counter_digit_holder counter_9">&nbsp;</div>
+			<div class="counter_digit_spacer">&nbsp;</div>
+			<div id="counter_holder_4" class="counter_digit_holder counter_9">&nbsp;</div>
+			<div id="counter_holder_5" class="counter_digit_holder counter_9">&nbsp;</div>
+			<div class="counter_digit_spacer">&nbsp;</div>
+			<div id="counter_holder_6" class="counter_digit_holder counter_9">&nbsp;</div>
+			<div id="counter_holder_7" class="counter_digit_holder counter_9">&nbsp;</div>
+		</div>
+		<div>
+			<div class="counter_digit_spacer">&nbsp;</div>
+			<div class="counter_label_holder counter_days">&nbsp;</div>
+			<div class="counter_digit_spacer">&nbsp;</div>
+			<div class="counter_label_holder counter_hours">&nbsp;</div>
+			<div class="counter_digit_spacer">&nbsp;</div>
+			<div class="counter_label_holder counter_minutes">&nbsp;</div>
+			<div class="counter_digit_spacer">&nbsp;</div>
+			<div class="counter_label_holder counter_seconds">&nbsp;</div>
+		</div>
+	</div>
+	<div id="main_image">
+		<div id="fb_like_top" class="fb-like" data-href="www.sinqrtel.com" data-send="true" data-layout="button_count" data-width="150" data-action="recommend"></div>
+		<div>
+		  <img src="bk2.png"/>
+		  <div id="registerdiv">
+			<div id="catcher">Incrib&iacute;te a la versi&oacute;n beta privada con tu email</div>
+			<input id="email" type="text" autocomplete="off" value=""/>
+			<div class="spacer5px">&nbsp;</div>
+			<div id="signin_button">Pedir invitaci&oacute;n</div>
+			<div class="spacer5px">&nbsp;</div>
+			<div id="already_signed">
+			  Gracias por registrarte!<BR/>
+			  &Eacute;ste pedido es procesado personalmente.<BR/>
+			  Nos contactaremos a la brevedad invit&aacute;ndote a participar.<BR/>
+			</div>
+			<div class="spacer5px">&nbsp;</div>
+			<div>
+			  <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://www.sinqrtel.com" data-text="Me inscrib&iacute; a #SinQRtel en" data-count="horizontal">Tweet</a>
+			  <div id="twit">
+			  Avisale a tus amigos
+			  </div>
+			</div>
+		  </div>
+		</div>
+	</div>
+	<div id="footer_layout">
+		<div id="fb_like_bottom" class="fb-like" data-href="www.sinqrtel.com" data-send="true" data-show-faces="true" data-width="800" data-action="recommend"></div>
+	</div>
+</div>
+</div>
+
+<script>
+function updateCountdown(yr,m,d){
+	var difference = ( new Date( 2011, 11-1, 15, 0, 0, 0 ).getTime() - new Date().getTime() );
+	if ( difference < 0 ) difference = 0;
+	var seconds = Math.floor(difference / 1000) % 60;
+	var minutes = Math.floor(difference / 60000 ) % 60; //1000 / 60
+	var hours = Math.floor(difference / 3600000 ) % 24; //1000 / 60 / 60
+	var days = Math.floor(difference / 86400000 ); //1000 / 60 / 60 / 24
+
+	var digits = new Array (
+		Math.floor(days/10), days % 10,
+		Math.floor(hours/10), hours % 10,
+		Math.floor(minutes/10),	minutes % 10,
+		Math.floor(seconds/10), seconds % 10
+	);
+
+	for (d=0;d<=7;d++) {
+		$("#counter_holder_" + d).removeClass().addClass("counter_digit_holder counter_" + digits[d] );
+		var sum=0;
+		for (dat=d;dat<=7;dat++) {
+			sum=sum+digits[dat];
+		}
+		if (difference > 0 && d<7 && sum==0) {
+			$("#counter_holder_" + d).effect("shake", { direction: "down", distance: 10, times: 1 }, 100 );
+		}
+	}
+}
+
+function shakeTwit() {
+  var dir = (Math.random() <= 0.5 ? "down" : "left");
+
+  $("#twit").effect("shake", { direction: dir, distance: 5, times: Math.floor(Math.random() * 3) + 1  }, Math.floor(Math.random() * 50) + 50 );
+}
+
+function shakeCounter() {
+	var element = Math.floor(Math.random()*8);
+	var dir = "down";//(Math.random() <= 0.5 ? "down" : "left");
+
+	$("#counter_holder_" + element).effect("shake", { direction: dir, distance: 2, times: Math.floor(Math.random() * 3) + 1  }, Math.floor(Math.random() * 50) + 50 );
+}
+$(document).ready(function() {
+  window.setInterval(updateCountdown, 1000);
+  window.setInterval(shakeCounter, Math.random() * 5000 + 5000 );
+  if ( localStorage["signedup"] != null && localStorage["signedup"].length > 0 ) {
+	$("#already_signed").text("Te tenemos registrado con esto(s) email: " + localStorage["signedup"].split("|").join(" ") );
+	$("#already_signed").show('slow');
+	window.setInterval(shakeTwit, Math.random() * 2000 + 2000 );
+  }
+  $("#signin_button").click( function () {
+	  $("#signin_button").hide();
+	  $("#already_signed").show();
+	  if ( localStorage["signedup"] == null ) {
+		localStorage["signedup"] = $("#email").val();
+	  } else {
+		localStorage["signedup"] = localStorage["signedup"].concat( "|" + $("#email").val() );
+	  }
+	  invokeRequest( $("#email").val() );
+	  window.setInterval(shakeTwit, Math.random() * 2000 + 2000 );
+	});
+  $("#email").keyup( function() {
+	if ( this.value.length > 6 ) {
+	  if ( /\b[a-z0-9._%-]+@[a-z0-9.-]+\.[a-z]{2,4}\b/i.test( this.value ) ) {
+		$("#email").removeClass("invalid").addClass("valid");
+		$("#signin_button").show('slow');
+	  } else {
+		$("#email").removeClass("valid").addClass("invalid");
+		$("#signin_button").hide('slow');
+	  }
+	}
+  });
+  $("#email").keyup();
+});
+
+</script>
+</body></html>
