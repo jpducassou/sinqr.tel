@@ -1,0 +1,83 @@
+<html>
+<head>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+<script type="text/JavaScript" src="cloud-carousel.1.0.5.min.js"></script>
+<script>
+$(document).ready(function(){
+	$("#content_carousel").CloudCarousel(
+		{
+			minScale: 0.60,
+			xPos: 180,
+			yPos: 30,
+			yRadius: 45,
+			xRadius: 160,
+			reflHeight: 50,
+			reflOpacity: 0.3,
+			reflGap: 5,
+			autoRotate: 'right',
+			autoRotateDelay: 5000,
+			buttonLeft: $("#left-but"),
+			buttonRight: $("#right-but"),
+		}
+	);
+	$("#sinqrtel_what").mouseenter( function () {
+		$(".sinqrtel_explained").hide();
+		$("#sinqrtel_what_text").show();
+	});
+	$("#sinqrtel_download").mouseenter( function () {
+		$(".sinqrtel_explained").hide();
+		$("#sinqrtel_download_text").show();
+	});
+	$("#sinqrtel_how").mouseenter( function () {
+		$(".sinqrtel_explained").hide();
+		$("#sinqrtel_how_text").show();
+	});
+});
+
+</script>
+<style type="text/css">
+#left-but {
+	float: left;
+}
+#right-but {
+	float: right;
+}
+.sinqrtel_explained {
+	display: none;
+}
+</style>
+</head>
+<body>
+	<div id = "content_carousel" style="width:380px; height:440px;background:#000;overflow:visible;">
+		<img id="sinqrtel_what" class="cloudcarousel" src="iphone.png" alt="" title="Es un juego urbano donde podes acceder a descuentos y beneficios, marcando puntos por toda la ciudad.<BR/>..suma puntos y gana premios, cuanto mas participas mas puntos acumulas....<BR/>Animate a "taggear" sinqrtel!&iquest;qu&eacute; es SinQRtel?"/>
+		<img id="sinqrtel_download" class="cloudcarousel" src="nexus.png" alt="Descargas" title="Descargas"/>
+		<img id="sinqrtel_how" class="cloudcarousel" src="samsung.png" alt="&iquest;c&oacute;mo jugar?" title="&iquest;c&oacute;mo jugar?"/>
+		<input id="left-but"  type="button" value="Izq" />
+		<input id="right-but" type="button" value="Der" />
+	</div>
+	<div id="sinqrtel_explained_container">
+		<div class="sinqrtel_explained" id="sinqrtel_what_text">
+			Es un juego urbano donde podes acceder a descuentos y beneficios, marcando puntos por toda la ciudad.<BR/>..suma puntos y gana premios,  cuanto mas participas mas puntos acumulas....<BR/>Animate a "taggear" sinqrtel !
+		</div>
+		<div class="sinqrtel_explained" id="sinqrtel_download_text">
+			Recomendamos usar <a href="http://get.beetagg.com/">BeeTagg QR Reader<a><BR/>
+			Accediendo directamente a http://get.beetagg.com/ o haciendo click desde el navegador de tu tel&eacute;fono encontrar&aacute;s un link para bajar la aplicaci&oacute;n que corresponde para tu equipo.<BR/>
+			Si ya tienen un lector de c&oacute;digos QR preferido puedes usarlo sin problemas.<BR/>
+			Para probarlo pueder acceder a esta misma p&aacute;gina desde tu navegador y taggear este QR con tu tel&eacute;fono<BR/>
+			<img src="http://goo.gl/9ojyb.qr" width="150" height="150">
+		</div>
+		<div class="sinqrtel_explained" id="sinqrtel_how_text">
+			El objetivo del Juego es sumar puntos para ganar premios.<BR/>
+			Sumas puntos cada vez que "taggeas" (marc&aacute;s con tu lector de c&oacute;digos QR) los c&oacute;digos que encontrar&aacute;s por la ciudad.<BR/>
+			Distintas formas de sumar puntos<BR/>
+			Waypoints: Son afiches en soportes de la v&iacute;a p&uacute;blica, que aparte de hacerte sumar puntos, te permitir&aacute;n acceder a beneficios y descuentos otrorgados por nuestros sponsors.<BR/>
+			Taggeo de usuarios y tagbacks: Cada usuario recibir&aacute; una remera con un codigo QR &uacute;nico que lo identificar&aacute;. Cada vez que taggees a alguien, o seas taggeado estar&aacute;s sumando puntos.<BR/>
+			Podr&aacute;n conseguir puntos extra si la persona a la que taggeas, devuelve el tagg (contrataggeo o tagback) en el d&iacute;a.<BR/>
+			Cada usuario tendr&aacute; un minisite con su perfil de juego, all&iacute; estar&aacute;n sus datos y estad&iacute;sticas de juego....  Tendr&aacute;s opci&oacute;n de permitirle ver tu perfil a quien taggees o quien lo solicite taggeandote.<BR/>
+			Podr&aacute;s interactuar con otras redes sociales, haciendo difusi&oacute;n de promociones o waypoints que vayas descubriendo.... Record&aacute; que toda acci&oacute;n de juego, te permite sumar puntos y estar mas cerca de los premios.<BR/>
+			Con el correr de los d&iacute;as iremos subiendo mas alternativas de juego, reglas completas, tablas de puntuaci&oacute;n y listado de premios a los cuales podr&aacute;s acceder.<BR/>
+			Estas por comenzar a vivir una aventura apasionante.... Te animas a vivirla SinQRtel ?
+		</div>
+	</div>
+</body>
+</html>
