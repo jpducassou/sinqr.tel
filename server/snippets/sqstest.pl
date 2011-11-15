@@ -27,9 +27,9 @@ if ( defined $msg ) {
   }
 
   # Delete the message
-#  unless ( $q->DeleteMessage($msg->ReceiptHandle()) ) {
-#	print "Delete failed\n";
-#  }
+ # unless ( $q->DeleteMessage($msg->ReceiptHandle()) ) {
+	#print "Delete failed\n";
+  #}
 } else {
   print "No message visible right now\n";
 }
