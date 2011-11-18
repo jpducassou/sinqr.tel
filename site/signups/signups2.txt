@@ -1,0 +1,15 @@
+nicomaxpaez@hotmail.com
+        SenderId=AIDAJSVGWJCCTCCUUIRT2|SentTimestamp=1321361516624|ApproximateRe
+ceiveCount=2|ApproximateFirstReceiveTimestamp=1321493699419
+alifernandez_87@hotmail.com
+        SenderId=AIDAJSVGWJCCTCCUUIRT2|SentTimestamp=1321580665147|ApproximateRe
+ceiveCount=1|ApproximateFirstReceiveTimestamp=1321628828613
+pat-demi@hotmail.com
+        SenderId=AIDAJSVGWJCCTCCUUIRT2|SentTimestamp=1321490739192|ApproximateRe
+ceiveCount=2|ApproximateFirstReceiveTimestamp=1321493706852
+herclaxxi@gmail.com
+        SenderId=AIDAJSVGWJCCTCCUUIRT2|SentTimestamp=1321560963018|ApproximateRe
+ceiveCount=1|ApproximateFirstReceiveTimestamp=1321628835164
+nicomaxpaez@hotmail.com
+        SenderId=AIDAJSVGWJCCTCCUUIRT2|SentTimestamp=1321361516624|ApproximateRe
+ceiveCount=3|ApproximateFirstReceiveTimestamp=1321493699419
