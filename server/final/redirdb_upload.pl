@@ -5,7 +5,7 @@ use JSON::XS;
 use Amazon::S3;
 
 #configuracion
-my $min_keys = 3; #minimo de claves en hash para considerar que está ok
+my $min_keys = 3; #minimo de claves en hash para considerar que estÃ¡ ok
 my $access_key = 'AKIAIC2DBRTIUKHMGASQ'; # AWS Access Key ID
 my $secret_key = '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'; # AWS Secret Key
 #no tan configuracion
@@ -51,6 +51,4 @@ if ( scalar keys ( %redirs ) >= $min_keys ) {
         acl_short           => 'public-read',
       }
   );
-
-  print;
 }

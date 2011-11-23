@@ -310,7 +310,7 @@ $(document).ready(function() {
 		});
 	});
 
-	if ( redirs[window.location.hash].length > 0 ) {
+	if ( redirs[window.location.hash] !== undefined ) {
 		window.location = redirs[window.location.hash];
 	}
 
