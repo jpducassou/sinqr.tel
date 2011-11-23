@@ -16,6 +16,26 @@ _gaq.push(['_trackPageview']);
   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 })();
 </script>
+<script>
+	google.load("jquery", "1.7.0");
+
+function tryReady () {
+	if (typeof jQuery !== 'undefined') {
+		window.clearInterval( jquery_load_interval );
+		var redirs = {};
+		$.getJSON('redir.json', function(data) {
+			$.each(data, function(key, val) {
+				redirs[key] = val;
+			});
+			console.log( redirs[window.location.hash] );
+			if ( redirs[window.location.hash] !== undefined ) {
+				window.location = redirs[window.location.hash];
+			}
+		});
+	}
+}
+var jquery_load_interval = window.setInterval( tryReady, 25 );
+</script>
 <style type="text/css">
 .counter {
 	float: left;
@@ -254,23 +274,7 @@ body {
 	<div id="fb_like_bottom" class="fb-like" data-href="www.sinqrtel.com" data-send="true" data-colorscheme="dark" data-show-faces="true" data-width="800" data-action="recommend"></div>
 </div>
 <script>
-google.load("jquery", "1.7.0");
 google.load("jqueryui", "1.8.16");
-function tryReady () {
-  if (typeof $ !== "undefined") {
-		window.clearInterval( jquery_load_interval );
-    var redirs = {};
-		$.getJSON('redir.json', function(data) {
-			$.each(data, function(key, val) {
-				redirs[key] = val;
-			});
-		});
-
-		if ( redirs[window.location.hash] !== undefined ) {
-			window.location = redirs[window.location.hash];
-		}
-	}}
-var jquery_load_interval = window.setInterval(tryReady, 50);
 </script>
 <script type="text/javascript" src="http://platform.twitter.com/widgets.js"></script>
 <script type="text/javascript" src="js/cloud-carousel.1.0.5.min.js"></script>
