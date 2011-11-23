@@ -307,7 +307,6 @@ $(document).ready(function() {
 	$.getJSON('redir.json', function(data) {
 		$.each(data, function(key, val) {
 			redirs[key] = val;
-			alert( key + ":" + val );
 		});
 	});
 
