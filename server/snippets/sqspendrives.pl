@@ -5,8 +5,8 @@ use Amazon::SQS::Simple;
 #AWS Private
 my $access_key = 'AKIAIC2DBRTIUKHMGASQ'; # Your AWS Access Key ID
 my $secret_key = '2Ofh3ICjeKpxeWBV2KGmKJ4co4WoeGtpumiiGEPX'; # Your AWS Secret Key
-#my $queue_uri = 'https://queue.amazonaws.com/041722291456/sinqrtel_public'; #public queue uri
-my $queue_uri = 'https://queue.amazonaws.com/041722291456/sinqrtel_pendrives'; #public queue uri
+my $queue_uri = 'https://queue.amazonaws.com/041722291456/sinqrtel_public'; #public queue uri
+#my $queue_uri = 'https://queue.amazonaws.com/041722291456/sinqrtel_pendrives'; #public queue uri
 
 #AWS Public
 my $public_access_key = 'AKIAJZDRZUXVHSK3G6LA';
@@ -26,8 +26,8 @@ while ( my @msg = $q->ReceiveMessage( 'AttributeName.1' => 'All' , MaxNumberOfMe
     #  print "\t" . join("|", map {$_->{Name} . '=' . $_->{Value}} @{$msg->{Attribute}} );
     #}
     #  Delete the message
-    #unless ( $q->DeleteMessage($msg->ReceiptHandle()) ) {
-    #print "Delete failed\n";
-    #}
+    unless ( $q->DeleteMessage($msg->ReceiptHandle()) ) {
+      print "Delete failed\n";
+    }
   }
 }

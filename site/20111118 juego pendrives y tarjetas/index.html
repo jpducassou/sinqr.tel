@@ -4,17 +4,6 @@
 <link href='http://fonts.googleapis.com/css?family=Nova+Round' rel='stylesheet' type='text/css'>
 
 <title>Sinqrtel.com</title>
-<script>
-if ( window.location.hash == '#qrbici' ) {
-	window.location = "http://www.sinqrtel.com/cn4mvd/pendrives.html";
-}
-if ( window.location.hash == '#cn4mvd' ) {
-	window.location = "http://www.sinqrtel.com/cn4mvd/index.html";
-}
-//if ( window.location.hash.length > 0 ) {
-//	window.location = "http://www.sinqrtel.com/hash/" + window.location.hash.replace(/^#/,'') + ".html";
-//}
-</script>
 <script type="text/javascript" src="https://www.google.com/jsapi?key=ABQIAAAAGbCP7xAnDeaBWr-NDrNqXBQmMOc3nLjHthTa4EGe0lmmw0PRdxREC4FbLwhuQ0MKiSEZhZaqWLSXNA"></script>
 <script type="text/javascript">
 var _gaq = _gaq || [];
@@ -314,6 +303,18 @@ function shakeCounter() {
 	$("#counter_holder_" + element).effect("shake", { direction: dir, distance: 2, times: Math.floor(Math.random() * 3) + 1  }, Math.floor(Math.random() * 50) + 50 );
 }
 $(document).ready(function() {
+	var redirs = {};
+	$.getJSON('redir.json', function(data) {
+		$.each(data, function(key, val) {
+			redirs[key] = val;
+			alert( key + ":" + val );
+		});
+	});
+
+	if ( redirs[window.location.hash].length > 0 ) {
+		window.location = redirs[window.location.hash];
+	}
+
   window.setInterval(updateCountdown, 1000);
   window.setInterval(shakeCounter, Math.random() * 5000 + 5000 );
   if ( localStorage["signedup"] != null && localStorage["signedup"].length > 0 ) {
