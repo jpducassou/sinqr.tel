@@ -51,4 +51,6 @@ if ( scalar keys ( %redirs ) >= $min_keys ) {
         acl_short           => 'public-read',
       }
   );
+  #***No error checks!!!!!
+  print 'Uplaoded...'
 }

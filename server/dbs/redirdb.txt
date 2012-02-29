@@ -1,3 +1,5 @@
-#qrbici	http://www.sinqrtel.com/cn4mvd/pendrives.html
+#qrmoto	http://www.sinqrtel.com/perfil/perfil_usu.html
+#qrauto	http://www.sinqrtel.com/perfil/perfil_usu.html
+#qrbici	http://www.sinqrtel.com/perfil/perfil_usu.html
 #cn4mvd	http://www.sinqrtel.com/cn4mvd/index.html
 #gonzo	http://www.sinqrtel.com/users/gonzo.html
