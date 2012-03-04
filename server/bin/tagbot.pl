@@ -68,10 +68,46 @@ sub _get_attributes {
     ItemName   => $item_name,
   });
 
-  my $attribute_list = $response->getGetAttributesResult->getAttribute;
-  print $_->getName ? ($_->getName, ' - ', $_->getValue, "\n") : ''
+  my $attribute_list = $response -> getGetAttributesResult -> getAttribute;
+
+	my $attributes;
+	$attributes -> { $_ -> getName } = $_ -> getValue
     for @$attribute_list;
+
+	return $attributes;
 }
+
+sub _put_attributes {
+  my ($sdb, $domain_name, $item_name, $attributes, $expected) = @_;
+
+	$attributes = _hash_to_attributes($attributes, 'Replace', 1);
+warn Dumper($attributes);
+
+  my $response = $sdb -> putAttributes({
+    DomainName => $domain_name,
+    ItemName   => $item_name,
+    Attribute  => $attributes,
+		Expected   => { 'Name' => 'timestamp', 'Value' => $expected, 'Exists' => 'true' },
+  });
+}
+
+sub _hash_to_attributes {
+  my ($values, $condition_name, $condition_value) = @_;
+
+  my @attributes = ();
+
+  for my $name ( keys %$values ) {
+    my $value = $values -> { $name };
+
+    push @attributes, {
+      Name                      => $name,
+      Value                     => $value,
+      ($condition_value ? ($condition_name => $condition_value ? 'true' : '') : ()),
+    };
+  }
+  return \@attributes;
+}
+
 
 
 # ============================================================================
@@ -103,6 +139,8 @@ sub main {
 
 	my $sdb_domain_name = $config -> {'default.sdb_domain_name'};;
 
+	my $tag_value = $config -> {'default.tag_value'};;
+
 	# ==========================================================================
 	# Get tag score chart from S3
 	# ==========================================================================
@@ -116,10 +154,15 @@ sub main {
 	my $sdb = new Amazon::SimpleDB::Client( $aws_access_key, $aws_secret_key );
 	my $item_name = 'fb0000';
 
-	_get_attributes($sdb, $sdb_domain_name, $item_name);
-
+	my $attributes = _get_attributes($sdb, $sdb_domain_name, $item_name);
+	warn Dumper($attributes);
+	my $new_attributes = {
+		'score'     => $attributes -> {'score'} + $tag_value,
+		'timestamp' => '00000',
+	};
 
 	# Update score from simpledb
+	_put_attributes($sdb, $sdb_domain_name, $item_name, $new_attributes, $attributes -> {'timestamp'});
 
 }
 
