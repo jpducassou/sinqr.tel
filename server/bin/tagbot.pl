@@ -14,7 +14,9 @@ use Data::Dumper;
 sub get_messages {
 
 	my $config = {};
-	my $config_file = 'tagbot.cfg';
+	my $config_file = $0; $config_file =~ s/\.([^\.]+)$/\.cfg/;
+	die("No config file $config_file!") unless -f $config_file;
+
 	Config::Simple -> import_from($config_file, $config) || die 'cannot find config file.';
 
 	# AWS SQS info
