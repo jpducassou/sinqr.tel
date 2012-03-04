@@ -17,8 +17,6 @@ sub get_messages {
 	my $config_file = 'tagbot.cfg';
 	Config::Simple -> import_from($config_file, $config) || die 'cannot find config file.';
 
-warn Dumper($config);
-
 	# AWS SQS info
 	my $sqs_access_key = $config -> {'default.sqs_access_key'}; # Your AWS Access Key ID
 	my $sqs_secret_key = $config -> {'default.sqs_secret_key'}; # Your AWS Secret Key
