@@ -4,24 +4,26 @@ use strict;
 use JSON::XS;
 use Amazon::S3;
 use Config::Simple;
+use IO::File;
 
 my $config = {}; #must be empty hash for Config::Simple
 my $config_file = $0; $config_file =~ s/\.([^\.]+)$/\.cfg/;
 die("No config file $config_file!") unless -f $config_file;
 Config::Simple->import_from( $config_file, $config);
 
+die("No redir database at " . $config->{redirdb_file}) unless -f $config->{redirdb_file};
+
 my %redirs;
 
-open( REDIRDB, '..\dbs\redirdb.txt');
-
-while ( <REDIRDB> ) {
+my $redirdb = IO::File->new( $config->{redirdb_file}, q{<} ); #open redirdb for red
+while ( <$redirdb> ) {
   if ( $_ =~ /^(#\w+)\s+(.+)$/ ) {
     print "Repeated: $1!\n" if ( defined $redirs{$1} );
     $redirs{$1} = $2;
   }
 }
 
-close( REDIRDB );
+$redirdb->close;
 
 print 'Got ' . scalar keys ( %redirs ) . ' redirs' . "\n";
 
