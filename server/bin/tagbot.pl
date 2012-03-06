@@ -28,39 +28,33 @@ sub _get_queue {
 
 }
 
-sub _get_message {
-
+sub _get_messages {
 	my ($queue, $number_of_messages, $visibility_timeout) = @_;
-
-	# Retrieve a message
-	my $msg = $queue -> ReceiveMessage(
-		'AttributeName.1'     => 'All' ,
+	#my @messages;
+	
+	# Retrieve messages
+	my @messages = $queue -> ReceiveMessage(
+		'AttributeName.1'     => 'SentTimestamp' ,
 		'MaxNumberOfMessages' => $number_of_messages,
 		'VisibilityTimeout'   => $visibility_timeout
 	);
 
-	if ( defined $msg ) {
-
-		# my $timestamp;
-		# my $body = $msg -> MessageBody();
-
-		print $msg -> MessageBody() . "\n";
-		if ( defined $msg -> {Attribute} ) {
-			print "\t" . join("|", map {$_->{Name} . '=' . $_->{Value}} @{$msg->{Attribute}} );
+	if ( @messages ) {
+		# check final array format
+		foreach my $message ( @messages ) {
+			# die on unknown message formats
+			die("SQS unexpected message format") unless
+				defined $message -> MessageBody() &&
+				defined $message -> {Attribute} -> {Name} &&
+				$message -> {Attribute} -> {Name} eq 'SentTimestamp' &&
+				$message -> {Attribute} -> {Value} =~ /^\d+$/
 		}
-		print "\n";
-
-		# Delete the message
-		# unless ( $q->DeleteMessage( $msg -> ReceiptHandle() ) ) {
-		# 	print "Delete failed\n";
-		# }
-	} else {
-		print "No message visible right now\n";
 	}
-
+	
+	return \@messages;
 }
 
-sub _get_attributes {
+sub _get_score {
   my ($sdb, $domain_name, $item_name) = @_;
 
   my $response = $sdb -> getAttributes({
@@ -77,18 +71,21 @@ sub _get_attributes {
 	return $attributes;
 }
 
-sub _put_attributes {
-  my ($sdb, $domain_name, $item_name, $attributes, $expected) = @_;
+sub _put_attributes_conditional {
+  my ($sdb, $domain_name, $item_name, $attributes, $expected_timestamp) = @_;
 
 	$attributes = _hash_to_attributes($attributes, 'Replace', 1);
-warn Dumper($attributes);
-
-  my $response = $sdb -> putAttributes({
-    DomainName => $domain_name,
-    ItemName   => $item_name,
-    Attribute  => $attributes,
-		Expected   => { 'Name' => 'timestamp', 'Value' => $expected, 'Exists' => 'true' },
-  });
+	
+	warn Dumper($attributes);
+	
+	my $response = $sdb -> putAttributes({
+		DomainName => $domain_name,
+		ItemName   => $item_name,
+		Attribute  => $attributes,
+		Expected   => { 'Name' => 'timestamp', 'Value' => $expected_timestamp, 'Exists' => ( defined $expected_timestamp ? 'true' : 'false' ) },
+	});
+	
+	return $response;
 }
 
 sub _hash_to_attributes {
@@ -108,6 +105,29 @@ sub _hash_to_attributes {
   return \@attributes;
 }
 
+sub _message_to_tag_hash {
+	my ( $message, $config ) = @_;
+	
+	my $tag;
+	my ( $message_version, $message_format_v1);
+	
+	#*move to config file
+	if ( $message -> MessageBody() =~ /^v(\d+)/ ) {
+		my ( $version, $from, $to ) = ( $1, undef, undef );
+		if ( $version == 1 ) {
+			#*move to config file
+			$message -> MessageBody() =~ /^(v1)\|([^\|]*)\|([^\|]*)$/;
+			$tag->{from} = $2; $tag->{to} = $3; $tag->{timestamp} = $message -> {Attribute} -> {Value};
+			$tag->{tag_value} = $config -> {'default.tag_value'};
+		} else {
+			die("Unsupported message version for ReceiptHandle" . $message->ReceiptHandle());
+		}
+	} else {
+		die("Message format unspected, no version info")
+	}
+	
+	return $tag;
+}
 
 
 # ============================================================================
@@ -116,7 +136,6 @@ sub _hash_to_attributes {
 # ============================================================================
 
 sub main {
-
 	# ==========================================================================
 	# Get config
 	# ==========================================================================
@@ -125,6 +144,11 @@ sub main {
 	die("No config file $config_file!") unless -f $config_file;
 
 	Config::Simple -> import_from($config_file, $config) || die 'cannot find config file.';
+	
+	die("No queue_uri in config file") unless defined $config -> {'default.queue_uri'} && $config -> {'default.queue_uri'} =~ /queue\.amazonaws\.com/;
+	die("No score_domain_name in config file") unless defined $config -> {'default.score_domain_name'} &&  $config -> {'default.score_domain_name'} =~ /\w+/;
+	die("No tag_value in config file") unless defined $config -> {'default.tag_value'} && $config -> {'default.tag_value'} > 0;
+	die("No single_message_timeout in config file") unless defined $config -> {'default.single_message_timeout'} && $config -> {'default.single_message_timeout'} > 0;
 
 	# ==========================================================================
 	# ==========================================================================
@@ -133,13 +157,11 @@ sub main {
 	my $aws_secret_key = $config -> {'default.aws_secret_key'}; # Your AWS Secret Key
 	my $queue_uri      = $config -> {'default.queue_uri'}; # public queue uri
 
-	# Params
-	my $visibility_timeout = 1;
-	my $number_of_messages = 1;
-
-	my $sdb_domain_name = $config -> {'default.sdb_domain_name'};;
-
-	my $tag_value = $config -> {'default.tag_value'};;
+	# =====
+	#*These should go to GetOpt::Long and default config
+	# =====
+	my $message_number = $config -> {'default.message_number'} || 1; #how much messages to get on a single request
+	#*$config -> {'default.single_message_timeout'} should be configurable, change required from config file
 
 	# ==========================================================================
 	# Get tag score chart from S3
@@ -148,22 +170,42 @@ sub main {
 	# ==========================================================================
 	# Get message from SQS
 	# ==========================================================================
-	# get_messages();
+	
+	# Define visibility timeout according to number of messages + a maximum of one extra message timeout
+	my $visibility_timeout = $message_number * $config -> {'default.single_message_timeout'} + int(rand($config -> {'default.single_message_timeout'}));
+	my $score_domain_name  = $config -> {'default.score_domain_name'};
 
-	# Get user info from simple db
-	my $sdb = new Amazon::SimpleDB::Client( $aws_access_key, $aws_secret_key );
-	my $item_name = 'fb0000';
+	my $queue = _get_queue( $aws_access_key, $aws_secret_key, $queue_uri );
+	
+	my $messages = _get_messages( $queue, $message_number, $visibility_timeout );
 
-	my $attributes = _get_attributes($sdb, $sdb_domain_name, $item_name);
-	warn Dumper($attributes);
-	my $new_attributes = {
-		'score'     => $attributes -> {'score'} + $tag_value,
-		'timestamp' => '00000',
-	};
-
-	# Update score from simpledb
-	_put_attributes($sdb, $sdb_domain_name, $item_name, $new_attributes, $attributes -> {'timestamp'});
-
+	if ( defined $messages && ref $messages eq 'ARRAY' && @$messages ) {
+		my $sdb = new Amazon::SimpleDB::Client( $aws_access_key, $aws_secret_key );
+		#process received messages
+		foreach my $message ( @$messages ) {
+			my $tag = _message_to_tag_hash( $message, $config );
+			my $item_name = $tag->{from};
+			
+			my $stored_correctly_on_sdb = 0;
+			do {
+				my $score = _get_score( $sdb, $score_domain_name, $item_name );
+				#keep old time stamp for conditional put
+				my $old_timestamp = $score -> {timestamp};
+		
+				warn Dumper( $score );
+				
+				#update attributes inplace so as not to kill attributes that do not get updates!
+					
+				#add tag value to score
+				$score -> {score} += $tag -> {tag_value};
+				#update timestamp
+				$score -> {timestamp} = $tag -> {timestamp};
+				# Update score to simpledb
+				$stored_correctly_on_sdb = _put_attributes_conditional($sdb, $score_domain_name, $item_name, $score, $old_timestamp);
+				print "Retrying on $item_name do to timestamp skew\n" unless $stored_correctly_on_sdb;
+			} until ( $stored_correctly_on_sdb );
+		}
+	}
 }
 
 # ============================================================================
