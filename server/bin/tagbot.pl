@@ -41,14 +41,7 @@ sub _get_message {
 
 	if ( defined $msg ) {
 
-		# my $timestamp;
-		# my $body = $msg -> MessageBody();
-
-		print $msg -> MessageBody() . "\n";
-		if ( defined $msg -> {Attribute} ) {
-			print "\t" . join("|", map {$_->{Name} . '=' . $_->{Value}} @{$msg->{Attribute}} );
-		}
-		print "\n";
+		return $msg;
 
 		# Delete the message
 		# unless ( $q->DeleteMessage( $msg -> ReceiptHandle() ) ) {
@@ -56,7 +49,19 @@ sub _get_message {
 		# }
 	} else {
 		print "No message visible right now\n";
+		return undef;
 	}
+
+}
+
+sub _dump_msg {
+	my $msg = shift;
+
+	print $msg -> MessageBody() . "\n";
+	if ( defined $msg -> {Attribute} ) {
+		print "\t" . join('|', map {$_ -> {Name} . '=' . $_ -> {Value}} @{$msg -> {Attribute}} );
+	}
+	print "\n";
 
 }
 
@@ -70,17 +75,19 @@ sub _get_attributes {
 
   my $attribute_list = $response -> getGetAttributesResult -> getAttribute;
 
+	# return _list_to_hash($attribute_list);
 	my $attributes;
 	$attributes -> { $_ -> getName } = $_ -> getValue
-    for @$attribute_list;
+		for @$attribute_list;
 
 	return $attributes;
+
 }
 
 sub _put_attributes {
   my ($sdb, $domain_name, $item_name, $attributes, $expected) = @_;
 
-	$attributes = _hash_to_attributes($attributes, 'Replace', 1);
+	$attributes = _hash_to_list($attributes, 'Replace', 1);
 warn Dumper($attributes);
 
   my $response = $sdb -> putAttributes({
@@ -91,7 +98,7 @@ warn Dumper($attributes);
   });
 }
 
-sub _hash_to_attributes {
+sub _hash_to_list {
   my ($values, $condition_name, $condition_value) = @_;
 
   my @attributes = ();
@@ -100,19 +107,28 @@ sub _hash_to_attributes {
     my $value = $values -> { $name };
 
     push @attributes, {
-      Name                      => $name,
-      Value                     => $value,
+      Name  => $name,
+      Value => $value,
       ($condition_value ? ($condition_name => $condition_value ? 'true' : '') : ()),
     };
   }
   return \@attributes;
 }
 
+sub _list_to_hash {
+	my $attribute_list = shift;
+
+	my $attributes;
+	$attributes -> { $_ -> {'Name'} } = $_ -> {'Value'}
+    for @$attribute_list;
+
+	return $attributes;
+
+}
 
 
 # ============================================================================
-
-
+# MAIN
 # ============================================================================
 
 sub main {
@@ -126,7 +142,6 @@ sub main {
 
 	Config::Simple -> import_from($config_file, $config) || die 'cannot find config file.';
 
-	# ==========================================================================
 	# ==========================================================================
 	# AWS SQS info
 	my $aws_access_key = $config -> {'default.aws_access_key'}; # Your AWS Access Key ID
@@ -142,27 +157,45 @@ sub main {
 	my $tag_value = $config -> {'default.tag_value'};;
 
 	# ==========================================================================
-	# Get tag score chart from S3
+	# Get SQS queue
 	# ==========================================================================
+	my $queue = _get_queue($aws_access_key, $aws_secret_key, $queue_uri) || die 'Cannot get SQS queue';
+
+	# ==========================================================================
+	# Get simpledb handler
+	# ==========================================================================
+	my $sdb = new Amazon::SimpleDB::Client( $aws_access_key, $aws_secret_key );
 
 	# ==========================================================================
 	# Get message from SQS
 	# ==========================================================================
-	# get_messages();
+	my $msg = _get_message($queue, $number_of_messages, $visibility_timeout);
 
-	# Get user info from simple db
-	my $sdb = new Amazon::SimpleDB::Client( $aws_access_key, $aws_secret_key );
-	my $item_name = 'fb0000';
+	my $sqs_attributes = _list_to_hash($msg -> {Attribute});
+	my $timestamp = $sqs_attributes -> {'SentTimestamp'};
+	my $body = $msg -> MessageBody();
 
-	my $attributes = _get_attributes($sdb, $sdb_domain_name, $item_name);
-	warn Dumper($attributes);
-	my $new_attributes = {
-		'score'     => $attributes -> {'score'} + $tag_value,
-		'timestamp' => '00000',
-	};
+	# _dump_msg($msg);
+	if ( $body =~ /v1\|((fb|tw)(\w+))\|((fb|tw|wp)(\w+))/ ) {
+		my $origin = $1;
+		my $destin = $4;
+		warn "TAG from:$origin to:$destin";
 
-	# Update score from simpledb
-	_put_attributes($sdb, $sdb_domain_name, $item_name, $new_attributes, $attributes -> {'timestamp'});
+		# Get user info from simple db
+		my $sdb_attributes = _get_attributes($sdb, $sdb_domain_name, $origin);
+		warn 'SDB:'.Dumper($sdb_attributes);
+
+		my $new_attributes = {
+			'score'     => $sdb_attributes -> {'score'} + $tag_value,
+			'timestamp' => $timestamp,
+		};
+
+		# Update score from simpledb
+		_put_attributes($sdb, $sdb_domain_name, $origin, $new_attributes, $sdb_attributes -> {'timestamp'});
+
+	} else {
+		warn "SQS message format unrecognized.";
+	}
 
 }
 
