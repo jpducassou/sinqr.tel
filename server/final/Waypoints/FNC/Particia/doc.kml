@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:gx="http://www.google.com/kml/ext/2.2" xmlns:kml="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom">
+<Document>
+	<name>Sodre.kmz</name>
+	<visibility>0</visibility>
+	<open>1</open>
+	<Style id="sn_blue-pushpin">
+		<IconStyle>
+			<scale>0.6</scale>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/blue-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+		<LabelStyle>
+			<scale>0</scale>
+		</LabelStyle>
+	</Style>
+	<StyleMap id="blue">
+		<Pair>
+			<key>normal</key>
+			<styleUrl>#sn_blue-pushpin</styleUrl>
+		</Pair>
+		<Pair>
+			<key>highlight</key>
+			<styleUrl>#sh_grn-pushpin</styleUrl>
+		</Pair>
+	</StyleMap>
+	<Style id="sh_grn-pushpin">
+		<IconStyle>
+			<Icon>
+				<href>http://maps.google.com/mapfiles/kml/pushpin/grn-pushpin.png</href>
+			</Icon>
+			<hotSpot x="20" y="2" xunits="pixels" yunits="pixels"/>
+		</IconStyle>
+	</Style>
+	<Folder>
+		<name>Sodre</name>
+		<visibility>0</visibility>
+		<open>1</open>
+		<Placemark>
+			<name>18 de Julio y Facultad (entre Fac. y E. Acevedo A Exte) ID 3661</name>
+			<visibility>0</visibility>
+			<description><![CDATA[<table width="400" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+			  <td align="left">
+				<img align="left" src="http://200.40.101.166/id/3661.jpg" alt="18 de Julio y Facultad (entre Fac. y E. Acevedo A Exte)" width=400>
+			  </td>
+			</tr>
+		  </table>]]></description>
+			<styleUrl>#blue</styleUrl>
+			<Point>
+				<coordinates>-56.176278820753,-34.9023619082604,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>18 de Julio y Joaquin Requena 2076 (entre J Requena y M.C. Interio) ID 1579</name>
+			<visibility>0</visibility>
+			<description><![CDATA[<table width="400" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+			  <td align="left">
+				<img align="left" src="http://200.40.101.166/id/1579.jpg" alt="18 de Julio y Joaquin Requena 2076 (entre J Requena y M.C. Interio)" width=400>
+			  </td>
+			</tr>
+		  </table>]]></description>
+			<styleUrl>#blue</styleUrl>
+			<Point>
+				<coordinates>-56.16993366626019,-34.8998750614122,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>18 de Julio y Magallanes (entre Maga. y Minas Plaza Exte) ID 3727</name>
+			<visibility>0</visibility>
+			<description><![CDATA[<table width="400" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+			  <td align="left">
+				<img align="left" src="http://200.40.101.166/id/3727.jpg" alt="18 de Julio y Magallanes (entre Maga. y Minas Plaza Exte)" width=400>
+			  </td>
+			</tr>
+		  </table>]]></description>
+			<styleUrl>#blue</styleUrl>
+			<Point>
+				<coordinates>-56.17991135781049,-34.9035947867264,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>18 de Julio y Tacuarembo 1573 (entre Tacua. y C. Roxlo Exteri) ID 3371</name>
+			<visibility>0</visibility>
+			<description><![CDATA[<table width="400" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+			  <td align="left">
+				<img align="left" src="http://200.40.101.166/id/3371.jpg" alt="18 de Julio y Tacuarembo 1573 (entre Tacua. y C. Roxlo Exteri)" width=400>
+			  </td>
+			</tr>
+		  </table>]]></description>
+			<styleUrl>#blue</styleUrl>
+			<Point>
+				<coordinates>-56.1820155601796,-34.9044295380251,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Arocena y Gabriel Otero 1600 (Interior) ID 945</name>
+			<visibility>0</visibility>
+			<description><![CDATA[<table width="400" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+			  <td align="left">
+				<img align="left" src="http://200.40.101.166/id/945.jpg" alt="Arocena y Gabriel Otero 1600 (Interior)" width=400>
+			  </td>
+			</tr>
+		  </table>]]></description>
+			<styleUrl>#blue</styleUrl>
+			<Point>
+				<coordinates>-56.05692001545711,-34.8880587593375,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Avda. Brasil y Libertad 2744 (Exterior) ID 3763</name>
+			<visibility>0</visibility>
+			<description><![CDATA[<table width="400" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+			  <td align="left">
+				<img align="left" src="http://200.40.101.166/id/3763.jpg" alt="Avda. Brasil y Libertad 2744 (Exterior)" width=400>
+			  </td>
+			</tr>
+		  </table>]]></description>
+			<styleUrl>#blue</styleUrl>
+			<Point>
+				<coordinates>-56.1546732394026,-34.9087240047474,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Avda. Italia y Centenario 2753 (Exterior) Norte ID 2551</name>
+			<visibility>0</visibility>
+			<description><![CDATA[<table width="400" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+			  <td align="left">
+				<img align="left" src="http://200.40.101.166/id/2551.jpg" alt="Avda. Italia y Centenario 2753 (Exterior) Norte" width=400>
+			  </td>
+			</tr>
+		  </table>]]></description>
+			<styleUrl>#blue</styleUrl>
+			<Point>
+				<coordinates>-56.1547901230725,-34.8909067338111,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Avda. Italia y Luis A. De Herrera 3105 (Exterior) ID 3773</name>
+			<visibility>0</visibility>
+			<description><![CDATA[<table width="400" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+			  <td align="left">
+				<img align="left" src="http://200.40.101.166/id/3773.jpg" alt="Avda. Italia y Luis A. De Herrera 3105 (Exterior)" width=400>
+			  </td>
+			</tr>
+		  </table>]]></description>
+			<styleUrl>#blue</styleUrl>
+			<Point>
+				<coordinates>-56.1471893193809,-34.8882927445783,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Avda. Italia y Presidente Batlle 2497 (Exterior) ID 3206</name>
+			<visibility>0</visibility>
+			<description><![CDATA[<table width="400" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+			  <td align="left">
+				<img align="left" src="http://200.40.101.166/id/3206.jpg" alt="Avda. Italia y Presidente Batlle 2497 (Exterior)" width=400>
+			  </td>
+			</tr>
+		  </table>]]></description>
+			<styleUrl>#blue</styleUrl>
+			<Point>
+				<coordinates>-56.1617136602898,-34.8934434431188,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Bvar. Artigas y 18 de Julio (Fte Pereira Rossell Interior) ID 1609</name>
+			<visibility>0</visibility>
+			<description><![CDATA[<table width="400" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+			  <td align="left">
+				<img align="left" src="http://200.40.101.166/id/1609.jpg" alt="Bvar. Artigas y 18 de Julio (Fte Pereira Rossell Interior)" width=400>
+			  </td>
+			</tr>
+		  </table>]]></description>
+			<styleUrl>#blue</styleUrl>
+			<Point>
+				<coordinates>-56.16406410831469,-34.8990954187738,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Bvar. Artigas y Benito Nardone 515 (Exterior) ID 3244</name>
+			<visibility>0</visibility>
+			<description><![CDATA[<table width="400" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+			  <td align="left">
+				<img align="left" src="http://200.40.101.166/id/3244.jpg" alt="Bvar. Artigas y Benito Nardone 515 (Exterior)" width=400>
+			  </td>
+			</tr>
+		  </table>]]></description>
+			<styleUrl>#blue</styleUrl>
+			<Point>
+				<coordinates>-56.1619874568749,-34.9192797385762,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Bvar. Artigas y Canelones 1205 (Interior) ID 902</name>
+			<visibility>0</visibility>
+			<description><![CDATA[<table width="400" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+			  <td align="left">
+				<img align="left" src="http://200.40.101.166/id/902.jpg" alt="Bvar. Artigas y Canelones 1205 (Interior)" width=400>
+			  </td>
+			</tr>
+		  </table>]]></description>
+			<styleUrl>#blue</styleUrl>
+			<Point>
+				<coordinates>-56.1635836617062,-34.9065403633265,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Bvar. Artigas y Caribes 2245 (Exterior) ID 2731</name>
+			<visibility>0</visibility>
+			<description><![CDATA[<table width="400" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+			  <td align="left">
+				<img align="left" src="http://200.40.101.166/id/2731.jpg" alt="Bvar. Artigas y Caribes 2245 (Exterior)" width=400>
+			  </td>
+			</tr>
+		  </table>]]></description>
+			<styleUrl>#blue</styleUrl>
+			<Point>
+				<coordinates>-56.1666159159874,-34.8815923826098,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Bvar. Artigas y Chana 1339 (Exterior) ID 3429</name>
+			<visibility>0</visibility>
+			<description><![CDATA[<table width="400" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+			  <td align="left">
+				<img align="left" src="http://200.40.101.166/id/3429.jpg" alt="Bvar. Artigas y Chana 1339 (Exterior)" width=400>
+			  </td>
+			</tr>
+		  </table>]]></description>
+			<styleUrl>#blue</styleUrl>
+			<Point>
+				<coordinates>-56.16391653896321,-34.9039366690427,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Bvar. Artigas y Garibaldi (Automotora Interior) ID 1510</name>
+			<visibility>0</visibility>
+			<description><![CDATA[<table width="400" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+			  <td align="left">
+				<img align="left" src="http://200.40.101.166/id/1510.jpg" alt="Bvar. Artigas y Garibaldi (Automotora Interior)" width=400>
+			  </td>
+			</tr>
+		  </table>]]></description>
+			<styleUrl>#blue</styleUrl>
+			<Point>
+				<coordinates>-56.1663034737238,-34.8843585461539,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Colonia y German Barbato (Interior) ID 827</name>
+			<visibility>0</visibility>
+			<description><![CDATA[<table width="400" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+			  <td align="left">
+				<img align="left" src="http://200.40.101.166/id/827.jpg" alt="Colonia y German Barbato (Interior)" width=400>
+			  </td>
+			</tr>
+		  </table>]]></description>
+			<styleUrl>#blue</styleUrl>
+			<Point>
+				<coordinates>-56.185701136824,-34.9047428401405,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Constituyente y Minas 1688 (Exterior) ID 3816</name>
+			<visibility>0</visibility>
+			<description><![CDATA[<table width="400" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+			  <td align="left">
+				<img align="left" src="http://200.40.101.166/id/3816.jpg" alt="Constituyente y Minas 1688 (Exterior)" width=400>
+			  </td>
+			</tr>
+		  </table>]]></description>
+			<styleUrl>#blue</styleUrl>
+			<Point>
+				<coordinates>-56.1796746224124,-34.906487729916,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Constituyente y Tacuarembo 1566 (Interior) ID 943</name>
+			<visibility>0</visibility>
+			<description><![CDATA[<table width="400" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+			  <td align="left">
+				<img align="left" src="http://200.40.101.166/id/943.jpg" alt="Constituyente y Tacuarembo 1566 (Interior)" width=400>
+			  </td>
+			</tr>
+		  </table>]]></description>
+			<styleUrl>#blue</styleUrl>
+			<Point>
+				<coordinates>-56.18159279634919,-34.9062211270991,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Gonzalo Ramirez y Ejido (Exterior) Sur ID 3639</name>
+			<visibility>0</visibility>
+			<description><![CDATA[<table width="400" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+			  <td align="left">
+				<img align="left" src="http://200.40.101.166/id/3639.jpg" alt="Gonzalo Ramirez y Ejido (Exterior) Sur" width=400>
+			  </td>
+			</tr>
+		  </table>]]></description>
+			<styleUrl>#blue</styleUrl>
+			<Point>
+				<coordinates>-56.1855488384203,-34.9124064911377,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Gonzalo Ramirez y Jackson (Interior) Norte ID 2016</name>
+			<visibility>0</visibility>
+			<description><![CDATA[<table width="400" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+			  <td align="left">
+				<img align="left" src="http://200.40.101.166/id/2016.jpg" alt="Gonzalo Ramirez y Jackson (Interior) Norte" width=400>
+			  </td>
+			</tr>
+		  </table>]]></description>
+			<styleUrl>#blue</styleUrl>
+			<Point>
+				<coordinates>-56.17230731256881,-34.9117599802068,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Libertador y Valparaiso 1763 (Interior) ID 962</name>
+			<visibility>0</visibility>
+			<description><![CDATA[<table width="400" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+			  <td align="left">
+				<img align="left" src="http://200.40.101.166/id/962.jpg" alt="Libertador y Valparaiso 1763 (Interior)" width=400>
+			  </td>
+			</tr>
+		  </table>]]></description>
+			<styleUrl>#blue</styleUrl>
+			<Point>
+				<coordinates>-56.1905581023997,-34.8983459684517,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Mercedes y Rio Negro (Exterior) ID 3599</name>
+			<visibility>0</visibility>
+			<description><![CDATA[<table width="400" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+			  <td align="left">
+				<img align="left" src="http://200.40.101.166/id/3599.jpg" alt="Mercedes y Rio Negro (Exterior)" width=400>
+			  </td>
+			</tr>
+		  </table>]]></description>
+			<styleUrl>#blue</styleUrl>
+			<Point>
+				<coordinates>-56.1938133651483,-34.9045895249853,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Mercedes y Terminal Rio Branco 942 (Interior) ID 1443</name>
+			<visibility>0</visibility>
+			<description><![CDATA[<table width="400" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+			  <td align="left">
+				<img align="left" src="http://200.40.101.166/id/1443.jpg" alt="Mercedes y Terminal Rio Branco 942 (Interior)" width=400>
+			  </td>
+			</tr>
+		  </table>]]></description>
+			<styleUrl>#blue</styleUrl>
+			<Point>
+				<coordinates>-56.1960660877887,-34.9048028272315,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Palacio Legislativo y Yatay (Exterior) ID 3267</name>
+			<visibility>0</visibility>
+			<description><![CDATA[<table width="400" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+			  <td align="left">
+				<img align="left" src="http://200.40.101.166/id/3267.jpg" alt="Palacio Legislativo y Yatay (Exterior)" width=400>
+			  </td>
+			</tr>
+		  </table>]]></description>
+			<styleUrl>#blue</styleUrl>
+			<Point>
+				<coordinates>-56.1863123702937,-34.8904906187637,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Paysandu y Libertador (Exterior) ID 2742</name>
+			<visibility>0</visibility>
+			<description><![CDATA[<table width="400" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+			  <td align="left">
+				<img align="left" src="http://200.40.101.166/id/2742.jpg" alt="Paysandu y Libertador (Exterior)" width=400>
+			  </td>
+			</tr>
+		  </table>]]></description>
+			<styleUrl>#blue</styleUrl>
+			<Point>
+				<coordinates>-56.1762924158372,-34.9010003936281,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Paysandu y Rondeau 1144 (Exterior) ID 3271</name>
+			<visibility>0</visibility>
+			<description><![CDATA[<table width="400" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+			  <td align="left">
+				<img align="left" src="http://200.40.101.166/id/3271.jpg" alt="Paysandu y Rondeau 1144 (Exterior)" width=400>
+			  </td>
+			</tr>
+		  </table>]]></description>
+			<styleUrl>#blue</styleUrl>
+			<Point>
+				<coordinates>-56.19180843158799,-34.9025473226582,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Rambla y Luis A. De Herrera (Banco Comercial Exterior) ID 3705</name>
+			<visibility>0</visibility>
+			<description><![CDATA[<table width="400" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+			  <td align="left">
+				<img align="left" src="http://200.40.101.166/id/3705.jpg" alt="Rambla y Luis A. De Herrera (Banco Comercial Exterior)" width=400>
+			  </td>
+			</tr>
+		  </table>]]></description>
+			<styleUrl>#blue</styleUrl>
+			<Point>
+				<coordinates>-56.1352440241058,-34.9097505269817,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Rivera y Julio Cesar (Plaza Exterior) ID 3326</name>
+			<visibility>0</visibility>
+			<description><![CDATA[<table width="400" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+			  <td align="left">
+				<img align="left" src="http://200.40.101.166/id/3326.jpg" alt="Rivera y Julio Cesar (Plaza Exterior)" width=400>
+			  </td>
+			</tr>
+		  </table>]]></description>
+			<styleUrl>#blue</styleUrl>
+			<Point>
+				<coordinates>-56.1410945371418,-34.9018929245846,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Rivera y Llambi 2996 (Exterior) Norte ID 3252</name>
+			<visibility>0</visibility>
+			<description><![CDATA[<table width="400" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+			  <td align="left">
+				<img align="left" src="http://200.40.101.166/id/3252.jpg" alt="Rivera y Llambi 2996 (Exterior) Norte" width=400>
+			  </td>
+			</tr>
+		  </table>]]></description>
+			<styleUrl>#blue</styleUrl>
+			<Point>
+				<coordinates>-56.1506703565727,-34.9030783570379,0</coordinates>
+			</Point>
+		</Placemark>
+		<Placemark>
+			<name>Rivera y T. Tesanos impar (A Exterior) ID 4240</name>
+			<visibility>0</visibility>
+			<description><![CDATA[<table width="400" cellpadding="0" cellspacing="0" border="0">
+			<tr>
+			  <td align="left">
+				<img align="left" src="http://200.40.101.166/id/4240.jpg" alt="Rivera y T. Tesanos impar (A Exterior)" width=400>
+			  </td>
+			</tr>
+		  </table>]]></description>
+			<styleUrl>#blue</styleUrl>
+			<Point>
+				<coordinates>-56.13220504084161,-34.8996686087556,0</coordinates>
+			</Point>
+		</Placemark>
+	</Folder>
+</Document>
+</kml>
