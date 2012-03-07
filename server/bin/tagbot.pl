@@ -3,6 +3,7 @@
 # ============================================================================
 use strict;
 use warnings;
+use Carp;
 
 # ============================================================================
 use Config::Simple;
@@ -15,22 +16,19 @@ use Amazon::SimpleDB::Client;
 
 # ============================================================================
 sub _get_queue {
-
 	my ($aws_access_key, $aws_secret_key, $queue_uri) = @_;
 
 	# Create an SQS object
 	my $sqs = new Amazon::SQS::Simple( $aws_access_key, $aws_secret_key );
 
-	# Get Existing queue by endpoint
+	# Get existing queue by endpoint
 	my $q = $sqs -> GetQueue( $queue_uri );
 
 	return $q;
-
 }
 
 sub _get_messages {
 	my ($queue, $number_of_messages, $visibility_timeout) = @_;
-	#my @messages;
 	
 	# Retrieve messages
 	my @messages = $queue -> ReceiveMessage(
@@ -40,7 +38,7 @@ sub _get_messages {
 	);
 
 	if ( @messages ) {
-		# check final array format
+		# check final array format for XML::Simple convertion problems...
 		foreach my $message ( @messages ) {
 			# die on unknown message formats
 			die("SQS unexpected message format") unless
@@ -52,6 +50,12 @@ sub _get_messages {
 	}
 	
 	return \@messages;
+}
+
+sub _delete_message {
+	my ( $queue, $message ) = @_;
+	
+	$queue -> DeleteMessage( $message -> ReceiptHandle() );
 }
 
 sub _get_score {
@@ -74,16 +78,41 @@ sub _get_score {
 sub _put_attributes_conditional {
   my ($sdb, $domain_name, $item_name, $attributes, $expected_timestamp) = @_;
 
-	$attributes = _hash_to_attributes($attributes, 'Replace', 1);
+	my $request_attributes = _hash_to_attributes($attributes, 'Replace', 1);
 	
-	warn Dumper($attributes);
-	
-	my $response = $sdb -> putAttributes({
+	my $request = {
 		DomainName => $domain_name,
 		ItemName   => $item_name,
-		Attribute  => $attributes,
-		Expected   => { 'Name' => 'timestamp', 'Value' => $expected_timestamp, 'Exists' => ( defined $expected_timestamp ? 'true' : 'false' ) },
-	});
+		Attribute  => $request_attributes,
+	};
+	
+	#only expect timestamp for values $item_names that exist (and have a timestamp > 0)
+	if ( $expected_timestamp > 0) {
+		$request->{Expected} = { 'Name' => 'timestamp', 'Value' => $expected_timestamp, 'Exists' => 'true'};
+	}
+	
+	warn Dumper( $request );
+	
+	my $response = 1;
+	eval {
+		$sdb -> putAttributes( $request );
+	};
+	#get exceptions
+	my $ex = $@;
+	if ($ex) {
+		require Amazon::SimpleDB::Exception;
+		if (ref $ex eq "Amazon::SimpleDB::Exception") {
+			if ($ex->{_errorCode} eq 'ConditionalCheckFailed') {
+				$response = 0;
+			} else {
+				#unknown error, we are unworthy of this cpu time
+				croack $@;
+			}
+		} else {
+			#unknown exception type, this is really bad...
+			croack $@;
+		}
+	}
 	
 	return $response;
 }
@@ -112,11 +141,11 @@ sub _message_to_tag_hash {
 	my ( $message_version, $message_format_v1);
 	
 	#*move to config file
-	if ( $message -> MessageBody() =~ /^v(\d+)/ ) {
+	if ( $message -> MessageBody() =~ /^v(\d+)\|/ ) {
 		my ( $version, $from, $to ) = ( $1, undef, undef );
 		if ( $version == 1 ) {
 			#*move to config file
-			$message -> MessageBody() =~ /^(v1)\|([^\|]*)\|([^\|]*)$/;
+			$message -> MessageBody() =~ /^(v1)\|((?:fb|tw)(?:\w+))\|((?:fb|tw|wp)(?:\w+))$/;
 			$tag->{from} = $2; $tag->{to} = $3; $tag->{timestamp} = $message -> {Attribute} -> {Value};
 			$tag->{tag_value} = $config -> {'default.tag_value'};
 		} else {
@@ -179,8 +208,10 @@ sub main {
 	
 	my $messages = _get_messages( $queue, $message_number, $visibility_timeout );
 
-	if ( defined $messages && ref $messages eq 'ARRAY' && @$messages ) {
+	#process messages if we have a non empty array
+	if ( defined $messages && @$messages ) {
 		my $sdb = new Amazon::SimpleDB::Client( $aws_access_key, $aws_secret_key );
+		
 		#process received messages
 		foreach my $message ( @$messages ) {
 			my $tag = _message_to_tag_hash( $message, $config );
@@ -189,20 +220,29 @@ sub main {
 			my $stored_correctly_on_sdb = 0;
 			do {
 				my $score = _get_score( $sdb, $score_domain_name, $item_name );
-				#keep old time stamp for conditional put
-				my $old_timestamp = $score -> {timestamp};
-		
+				#keep old time stamp for conditional put (could be undef and must be checked)
+			
 				warn Dumper( $score );
 				
-				#update attributes inplace so as not to kill attributes that do not get updates!
-					
-				#add tag value to score
-				$score -> {score} += $tag -> {tag_value};
-				#update timestamp
-				$score -> {timestamp} = $tag -> {timestamp};
+				#initialize for non existent users, avoid warnings
+				$score -> {score} = 0 unless defined $score -> {score};
+				$score -> {timestamp} = 0 unless defined $score -> {timestamp};
+				
+				#cerate attributes to replace
+				my $new_score = {
+					#add tag value to score					
+					'score'	=> $score -> {score} + $tag -> {tag_value},
+					#add tag value to score
+					'timestamp'	=> $tag -> {timestamp},
+				};
 				# Update score to simpledb
-				$stored_correctly_on_sdb = _put_attributes_conditional($sdb, $score_domain_name, $item_name, $score, $old_timestamp);
-				print "Retrying on $item_name do to timestamp skew\n" unless $stored_correctly_on_sdb;
+				$stored_correctly_on_sdb = _put_attributes_conditional($sdb, $score_domain_name, $item_name, $new_score, $score->{timestamp});
+				if ( $stored_correctly_on_sdb ) {
+					_delete_message( $queue, $message );
+					print "Ready!\n";
+				} else {
+					warn "Retrying on $item_name do to timestamp skew";
+				}
 			} until ( $stored_correctly_on_sdb );
 		}
 	}
