@@ -64,8 +64,12 @@ sub upload {
     #skip waypoints that do not have a tag or end with a $
     next if $waypoint->{visibility} eq '0';
     #score:15\nother:C->{score=>15,other:C}
-    my $description = { map split(/:/, $_ ),split(/\n/, $waypoint->{description}) };
-    
+    my $description = {};
+    foreach my $line ( split(/\n/, $waypoint->{description} ) ) {
+      $line =~ /^\s*(\S*)\s*:\s*(\S*)\s*/;
+      $description->{$1} = $2 if ( defined $2 );
+    }
+   
     my $waypoint_data = {
       name=>$waypoint->{name},
       coordinates=>$waypoint->{Point}->{coordinates},
@@ -89,7 +93,7 @@ sub get_kml {
   #skip unreadable
   die("Broken zip file") unless $status == AZ_OK;
   my ( $kml ) = XMLin( $xml_contents,
-                      NormaliseSpace => 2,
+                      NormaliseSpace => 1,
                       KeyAttr => {'Placemark'=>undef}, #disable folding on Plaecmark->name!
                       #ValueAttr => {'polygon'=>'coordinates'},
                       ForceArray => ['Placemark'],
