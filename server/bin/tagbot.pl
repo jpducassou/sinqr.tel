@@ -131,11 +131,11 @@ sub _message_to_tag_hash {
 
 
 # ============================================================================
-
-
+# MAIN
 # ============================================================================
 
 sub main {
+
 	# ==========================================================================
 	# Get config
 	# ==========================================================================
@@ -163,28 +163,37 @@ sub main {
 	my $message_number = $config -> {'default.message_number'} || 1; #how much messages to get on a single request
 	#*$config -> {'default.single_message_timeout'} should be configurable, change required from config file
 
+	# Define visibility timeout according to number of messages + a maximum of one extra message timeout
+	my $visibility_timeout = $message_number * $config -> {'default.single_message_timeout'} + int(rand($config -> {'default.single_message_timeout'}));
+	my $score_domain_name  = $config -> {'default.score_domain_name'};
+
 	# ==========================================================================
 	# Get tag score chart from S3
 	# ==========================================================================
 
 	# ==========================================================================
-	# Get message from SQS
+	# Get SQS queue
 	# ==========================================================================
-	
-	# Define visibility timeout according to number of messages + a maximum of one extra message timeout
-	my $visibility_timeout = $message_number * $config -> {'default.single_message_timeout'} + int(rand($config -> {'default.single_message_timeout'}));
-	my $score_domain_name  = $config -> {'default.score_domain_name'};
-
 	my $queue = _get_queue( $aws_access_key, $aws_secret_key, $queue_uri );
 	
+	# ==========================================================================
+	# Get Simpledb handler
+	# ==========================================================================
+	my $sdb = new Amazon::SimpleDB::Client( $aws_access_key, $aws_secret_key );
+
+	# ==========================================================================
+	# Get message from SQS
+	# ==========================================================================
 	my $messages = _get_messages( $queue, $message_number, $visibility_timeout );
 
 	if ( defined $messages && ref $messages eq 'ARRAY' && @$messages ) {
-		my $sdb = new Amazon::SimpleDB::Client( $aws_access_key, $aws_secret_key );
-		#process received messages
+
+		# process received messages
 		foreach my $message ( @$messages ) {
 			my $tag = _message_to_tag_hash( $message, $config );
 			my $item_name = $tag->{from};
+
+warn 'item_name: ' . $item_name;
 			
 			my $stored_correctly_on_sdb = 0;
 			do {
@@ -196,9 +205,9 @@ sub main {
 				
 				#update attributes inplace so as not to kill attributes that do not get updates!
 					
-				#add tag value to score
+				# add tag value to score
 				$score -> {score} += $tag -> {tag_value};
-				#update timestamp
+				# update timestamp
 				$score -> {timestamp} = $tag -> {timestamp};
 				# Update score to simpledb
 				$stored_correctly_on_sdb = _put_attributes_conditional($sdb, $score_domain_name, $item_name, $score, $old_timestamp);
