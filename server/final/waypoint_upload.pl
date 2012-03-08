@@ -8,6 +8,7 @@ use Archive::Zip qw( :ERROR_CODES :CONSTANTS );
 use Config::Simple;
 use Getopt::Long;
 use File::Find;
+use File::Spec;
 use JSON::XS;
 
 my $config = {};
@@ -18,6 +19,8 @@ GetOptions (
   "path=s" => \$config->{waypoint_path},
   );
 
+$config->{rel_identifier_separator} = '|'; #should never change. Affects Waypoints designators...
+
 die "No waypoint path $config->{waypoint_path}" unless defined $config->{waypoint_path} && -d $config->{waypoint_path};
 
 find( \&waypoint_file, $config->{waypoint_path} );
@@ -25,23 +28,55 @@ find( \&waypoint_file, $config->{waypoint_path} );
 sub waypoint_file {
   my $filename = $_;
   my $file_fullpath = $File::Find::name;
+  my $dir = $File::Find::dir;
   
   if ( $filename =~ $config->{waypoint_filename_regex} ) {
     if ( !-f $file_fullpath . $config->{upload_postfix} ||
         (stat( $file_fullpath ))[9] > (stat( $file_fullpath . $config->{upload_postfix}))[9] ) {
       #this file needs updating online
-      upload( $filename, $file_fullpath );
+      upload( $file_fullpath );
     }
   }
 }
 
 sub upload {
-  my ($filename, $file_fullpath) = @_;
+  my ( $file_fullpath ) = @_;
+  my ( $volume, $dir, $filename ) = File::Spec->splitpath( $file_fullpath );
+  #./Waypoints/Client/Product -> Client|Product|Campaign.kmz
+  my ( $rel_identifier) = join( $config->{rel_identifier_separator} ,
+                               File::Spec->splitdir( File::Spec->abs2rel( $dir, $config->{waypoint_path}) ),
+                               $filename);
   
   my $kml = get_kml( $file_fullpath );
   
-  print $kml
+  #store waypoints with identifier=>JSON content
+  my $waypoints;
   
+  print $kml;
+  
+  #support single Folder of waypoints per file
+  warn "Weird kml format that will not be uploaded in $file_fullpath"
+    unless defined $kml->{Document} && ref $kml->{Document}->{Folder} eq 'HASH' &&
+    ref $kml->{Document}->{Folder}->{Placemark} eq 'ARRAY';
+  
+  #go into placemarks
+  foreach my $waypoint ( @{$kml->{Document}->{Folder}->{Placemark}} ) {
+    #skip waypoints that do not have a tag or end with a $
+    next if $waypoint->{visibility} eq '0';
+    #score:15\nother:C->{score=>15,other:C}
+    my $description = { map split(/:/, $_ ),split(/\n/, $waypoint->{description}) };
+    
+    my $waypoint_data = {
+      name=>$waypoint->{name},
+      coordinates=>$waypoint->{Point}->{coordinates},
+      properties=>$description,
+    };
+    #$json_text = JSON->new->utf8->encode($perl_scalar)
+    #$waypoints->{} 
+    print $waypoint;
+  }
+  
+#Then sha that for WP number
 }
 
 sub get_kml {
@@ -55,16 +90,14 @@ sub get_kml {
   die("Broken zip file") unless $status == AZ_OK;
   my ( $kml ) = XMLin( $xml_contents,
                       NormaliseSpace => 2,
-                      #KeyAttr => {'polygon'=>'name'},
+                      KeyAttr => {'Placemark'=>undef}, #disable folding on Plaecmark->name!
                       #ValueAttr => {'polygon'=>'coordinates'},
-                      #ForceArray => qr/display|polygon/,
+                      ForceArray => ['Placemark'],
                       );
   return $kml;
 }
 
-use File::Spec;
-#get path with $rel_path = File::Spec->abs2rel( $path, $base ) ;
-#Then sha that for WP number
+
 
 #
 #my $clipboard;
