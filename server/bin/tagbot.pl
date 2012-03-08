@@ -151,8 +151,8 @@ sub main {
 	die("No single_message_timeout in config file") unless defined $config -> {'default.single_message_timeout'} && $config -> {'default.single_message_timeout'} > 0;
 
 	# ==========================================================================
-	# ==========================================================================
 	# AWS SQS info
+	# ==========================================================================
 	my $aws_access_key = $config -> {'default.aws_access_key'}; # Your AWS Access Key ID
 	my $aws_secret_key = $config -> {'default.aws_secret_key'}; # Your AWS Secret Key
 	my $queue_uri      = $config -> {'default.queue_uri'}; # public queue uri
@@ -209,6 +209,9 @@ warn 'item_name: ' . $item_name;
 				$score -> {score} += $tag -> {tag_value};
 				# update timestamp
 				$score -> {timestamp} = $tag -> {timestamp};
+				# mark as dirty
+				$score -> {_dirty} = 1;
+
 				# Update score to simpledb
 				$stored_correctly_on_sdb = _put_attributes_conditional($sdb, $score_domain_name, $item_name, $score, $old_timestamp);
 				print "Retrying on $item_name do to timestamp skew\n" unless $stored_correctly_on_sdb;
