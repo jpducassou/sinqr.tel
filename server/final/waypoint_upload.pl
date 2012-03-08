@@ -75,9 +75,13 @@ sub upload {
       coordinates=>$waypoint->{Point}->{coordinates},
       properties=>$description,
     };
-    #$json_text = JSON->new->utf8->encode($perl_scalar)
-    #$waypoints->{} 
-    print $waypoint;
+    
+    use Digest::SHA;
+    my $digest = Digest::SHA->new('sha1');
+    #sha1_hex( 'Client|Product|Campaign.kmz|Waypoint 1' )
+    my $unique_identifier = $digest->sha1_hex( $rel_identifier . $config->{rel_identifier_separator} . $waypoint_data->{name});
+
+    $waypoints-> { $unique_identifier } = JSON::XS->new->utf8->encode( $waypoint_data );
   }
   
 #Then sha that for WP number
