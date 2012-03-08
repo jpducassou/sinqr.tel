@@ -14,6 +14,9 @@ use Amazon::SQS::Simple;
 use Amazon::SimpleDB::Client;
 
 # ============================================================================
+use Sinqrtel::SDB;
+
+# ============================================================================
 sub _get_queue {
 
 	my ($aws_access_key, $aws_secret_key, $queue_uri) = @_;
@@ -31,7 +34,7 @@ sub _get_queue {
 sub _get_messages {
 	my ($queue, $number_of_messages, $visibility_timeout) = @_;
 	#my @messages;
-	
+
 	# Retrieve messages
 	my @messages = $queue -> ReceiveMessage(
 		'AttributeName.1'     => 'SentTimestamp' ,
@@ -50,67 +53,16 @@ sub _get_messages {
 				$message -> {Attribute} -> {Value} =~ /^\d+$/
 		}
 	}
-	
+
 	return \@messages;
-}
-
-sub _get_score {
-  my ($sdb, $domain_name, $item_name) = @_;
-
-  my $response = $sdb -> getAttributes({
-    DomainName => $domain_name,
-    ItemName   => $item_name,
-  });
-
-  my $attribute_list = $response -> getGetAttributesResult -> getAttribute;
-
-	my $attributes;
-	$attributes -> { $_ -> getName } = $_ -> getValue
-    for @$attribute_list;
-
-	return $attributes;
-}
-
-sub _put_attributes_conditional {
-  my ($sdb, $domain_name, $item_name, $attributes, $expected_timestamp) = @_;
-
-	$attributes = _hash_to_attributes($attributes, 'Replace', 1);
-	
-	warn Dumper($attributes);
-	
-	my $response = $sdb -> putAttributes({
-		DomainName => $domain_name,
-		ItemName   => $item_name,
-		Attribute  => $attributes,
-		Expected   => { 'Name' => 'timestamp', 'Value' => $expected_timestamp, 'Exists' => ( defined $expected_timestamp ? 'true' : 'false' ) },
-	});
-	
-	return $response;
-}
-
-sub _hash_to_attributes {
-  my ($values, $condition_name, $condition_value) = @_;
-
-  my @attributes = ();
-
-  for my $name ( keys %$values ) {
-    my $value = $values -> { $name };
-
-    push @attributes, {
-      Name                      => $name,
-      Value                     => $value,
-      ($condition_value ? ($condition_name => $condition_value ? 'true' : '') : ()),
-    };
-  }
-  return \@attributes;
 }
 
 sub _message_to_tag_hash {
 	my ( $message, $config ) = @_;
-	
+
 	my $tag;
 	my ( $message_version, $message_format_v1);
-	
+
 	#*move to config file
 	if ( $message -> MessageBody() =~ /^v(\d+)/ ) {
 		my ( $version, $from, $to ) = ( $1, undef, undef );
@@ -125,7 +77,7 @@ sub _message_to_tag_hash {
 	} else {
 		die("Message format unspected, no version info")
 	}
-	
+
 	return $tag;
 }
 
@@ -144,7 +96,7 @@ sub main {
 	die("No config file $config_file!") unless -f $config_file;
 
 	Config::Simple -> import_from($config_file, $config) || die 'cannot find config file.';
-	
+
 	die("No queue_uri in config file") unless defined $config -> {'default.queue_uri'} && $config -> {'default.queue_uri'} =~ /queue\.amazonaws\.com/;
 	die("No score_domain_name in config file") unless defined $config -> {'default.score_domain_name'} &&  $config -> {'default.score_domain_name'} =~ /\w+/;
 	die("No tag_value in config file") unless defined $config -> {'default.tag_value'} && $config -> {'default.tag_value'} > 0;
@@ -175,7 +127,7 @@ sub main {
 	# Get SQS queue
 	# ==========================================================================
 	my $queue = _get_queue( $aws_access_key, $aws_secret_key, $queue_uri );
-	
+
 	# ==========================================================================
 	# Get Simpledb handler
 	# ==========================================================================
@@ -193,18 +145,17 @@ sub main {
 			my $tag = _message_to_tag_hash( $message, $config );
 			my $item_name = $tag->{from};
 
-warn 'item_name: ' . $item_name;
-			
+			warn 'item_name: ' . $item_name;
+
 			my $stored_correctly_on_sdb = 0;
 			do {
-				my $score = _get_score( $sdb, $score_domain_name, $item_name );
+				my $score = get_attributes( $sdb, $score_domain_name, $item_name );
 				#keep old time stamp for conditional put
 				my $old_timestamp = $score -> {timestamp};
-		
+
 				warn Dumper( $score );
-				
-				#update attributes inplace so as not to kill attributes that do not get updates!
-					
+
+				# update attributes inplace so as not to kill attributes that do not get updates!
 				# add tag value to score
 				$score -> {score} += $tag -> {tag_value};
 				# update timestamp
@@ -213,7 +164,7 @@ warn 'item_name: ' . $item_name;
 				$score -> {_dirty} = 1;
 
 				# Update score to simpledb
-				$stored_correctly_on_sdb = _put_attributes_conditional($sdb, $score_domain_name, $item_name, $score, $old_timestamp);
+				$stored_correctly_on_sdb = put_attributes_conditional($sdb, $score_domain_name, $item_name, $score, $old_timestamp);
 				print "Retrying on $item_name do to timestamp skew\n" unless $stored_correctly_on_sdb;
 			} until ( $stored_correctly_on_sdb );
 		}
