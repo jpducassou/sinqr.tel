@@ -19,6 +19,7 @@ Config::Simple->import_from( $config_file, $config);
 GetOptions (
   "kmz_path=s"      =>  \$config->{kmz_path},
   "waypoint_path=s" =>  \$config->{waypoint_path},
+  "secure"          =>  \$config->{secure},
   );
 
 check_options ( $config );
@@ -145,7 +146,6 @@ sub kmz_to_json {
   }
   
   return $waypoints;
-#Then sha that for WP number
 }
 
 sub get_kml {
