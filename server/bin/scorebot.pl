@@ -92,11 +92,11 @@ sub main {
 	foreach my $item (@$result_list) {
 		warn Dumper($item);
 
-		my $item_name;
-		my $old_timestamp;
+		my $item_name = $item -> [0];
+		my $old_timestamp = $item -> [1] -> {'timestamp'} || next; # do not consider items without timestamp
 
 		# Update simpledb as no _dirty
-		# put_attributes_conditional($sdb, $sdb_domain_name, $item_name, { _dirty => 0 }, $old_timestamp);
+		put_attributes_conditional($sdb, $sdb_domain_name, $item_name, { _dirty => 0 }, $old_timestamp);
 
 		# Update S3
 
