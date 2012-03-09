@@ -29,7 +29,7 @@ sub _get_queue {
 
 sub _get_messages {
 	my ($queue, $number_of_messages, $visibility_timeout) = @_;
-	
+
 	# Retrieve messages
 	my @messages = $queue -> ReceiveMessage(
 		'AttributeName.1'     => 'SentTimestamp' ,
@@ -48,13 +48,13 @@ sub _get_messages {
 				$message -> {Attribute} -> {Value} =~ /^\d+$/
 		}
 	}
-	
+
 	return \@messages;
 }
 
 sub _delete_message {
 	my ( $queue, $message ) = @_;
-	
+
 	$queue -> DeleteMessage( $message -> ReceiptHandle() );
 }
 
@@ -79,20 +79,20 @@ sub _put_attributes_conditional {
   my ($sdb, $domain_name, $item_name, $attributes, $expected_timestamp) = @_;
 
 	my $request_attributes = _hash_to_attributes($attributes, 'Replace', 1);
-	
+
 	my $request = {
 		DomainName => $domain_name,
 		ItemName   => $item_name,
 		Attribute  => $request_attributes,
 	};
-	
+
 	#only expect timestamp for values $item_names that exist (and have a timestamp > 0)
 	if ( $expected_timestamp > 0) {
 		$request->{Expected} = { 'Name' => 'timestamp', 'Value' => $expected_timestamp, 'Exists' => 'true'};
 	}
-	
+
 	warn Dumper( $request );
-	
+
 	my $response = 1;
 	eval {
 		$sdb -> putAttributes( $request );
@@ -113,7 +113,7 @@ sub _put_attributes_conditional {
 			croack $@;
 		}
 	}
-	
+
 	return $response;
 }
 
@@ -136,10 +136,10 @@ sub _hash_to_attributes {
 
 sub _message_to_tag_hash {
 	my ( $message, $config ) = @_;
-	
+
 	my $tag;
 	my ( $message_version, $message_format_v1);
-	
+
 	#*move to config file
 	if ( $message -> MessageBody() =~ /^v(\d+)\|/ ) {
 		my ( $version, $from, $to ) = ( $1, undef, undef );
@@ -154,7 +154,7 @@ sub _message_to_tag_hash {
 	} else {
 		die("Message format unspected, no version info")
 	}
-	
+
 	return $tag;
 }
 
@@ -173,15 +173,15 @@ sub main {
 	die("No config file $config_file!") unless -f $config_file;
 
 	Config::Simple -> import_from($config_file, $config) || die 'cannot find config file.';
-	
+
 	die("No queue_uri in config file") unless defined $config -> {'default.queue_uri'} && $config -> {'default.queue_uri'} =~ /queue\.amazonaws\.com/;
 	die("No score_domain_name in config file") unless defined $config -> {'default.score_domain_name'} &&  $config -> {'default.score_domain_name'} =~ /\w+/;
 	die("No tag_value in config file") unless defined $config -> {'default.tag_value'} && $config -> {'default.tag_value'} > 0;
 	die("No single_message_timeout in config file") unless defined $config -> {'default.single_message_timeout'} && $config -> {'default.single_message_timeout'} > 0;
 
 	# ==========================================================================
-	# ==========================================================================
 	# AWS SQS info
+	# ==========================================================================
 	my $aws_access_key = $config -> {'default.aws_access_key'}; # Your AWS Access Key ID
 	my $aws_secret_key = $config -> {'default.aws_secret_key'}; # Your AWS Secret Key
 	my $queue_uri      = $config -> {'default.queue_uri'}; # public queue uri
@@ -193,47 +193,48 @@ sub main {
 	#*$config -> {'default.single_message_timeout'} should be configurable, change required from config file
 
 	# ==========================================================================
-	# Get tag score chart from S3
+	# Get SimpleDB handler
 	# ==========================================================================
+	my $sdb = new Amazon::SimpleDB::Client( $aws_access_key, $aws_secret_key );
 
 	# ==========================================================================
 	# Get message from SQS
 	# ==========================================================================
-	
 	# Define visibility timeout according to number of messages + a maximum of one extra message timeout
 	my $visibility_timeout = $message_number * $config -> {'default.single_message_timeout'} + int(rand($config -> {'default.single_message_timeout'}));
 	my $score_domain_name  = $config -> {'default.score_domain_name'};
 
 	my $queue = _get_queue( $aws_access_key, $aws_secret_key, $queue_uri );
-	
+
 	my $messages = _get_messages( $queue, $message_number, $visibility_timeout );
 
 	#process messages if we have a non empty array
 	if ( defined $messages && @$messages ) {
-		my $sdb = new Amazon::SimpleDB::Client( $aws_access_key, $aws_secret_key );
-		
+
 		#process received messages
 		foreach my $message ( @$messages ) {
 			my $tag = _message_to_tag_hash( $message, $config );
 			my $item_name = $tag->{from};
-			
+
 			my $stored_correctly_on_sdb = 0;
 			do {
 				my $score = _get_score( $sdb, $score_domain_name, $item_name );
 				#keep old time stamp for conditional put (could be undef and must be checked)
-			
+
 				warn Dumper( $score );
-				
+
 				#initialize for non existent users, avoid warnings
 				$score -> {score} = 0 unless defined $score -> {score};
 				$score -> {timestamp} = 0 unless defined $score -> {timestamp};
-				
-				#cerate attributes to replace
+
+				# create attributes to replace
 				my $new_score = {
-					#add tag value to score					
+					# add tag value to score
 					'score'	=> $score -> {score} + $tag -> {tag_value},
-					#add tag value to score
+					# add tag value to score
 					'timestamp'	=> $tag -> {timestamp},
+					# mark as dirty
+					_dirty => 1,
 				};
 				# Update score to simpledb
 				$stored_correctly_on_sdb = _put_attributes_conditional($sdb, $score_domain_name, $item_name, $new_score, $score->{timestamp});
