@@ -10,20 +10,25 @@ use Getopt::Long;
 use File::Find;
 use File::Spec;
 use JSON::XS;
+use Amazon::S3;
 
 my $config = {};
 my $config_file = $0; $config_file =~ s/\.([^\.]+)$/\.cfg/;
 Config::Simple->import_from( $config_file, $config);
 
 GetOptions (
-  "path=s" => \$config->{waypoint_path},
+  "kmz_path=s"      =>  \$config->{kmz_path},
+  "waypoint_path=s" =>  \$config->{waypoint_path},
+  "secure"          =>  \$config->{secure},
   );
 
-$config->{rel_identifier_separator} = '|'; #should never change. Affects Waypoints designators...
+check_options ( $config );
 
-die "No waypoint path $config->{waypoint_path}" unless defined $config->{waypoint_path} && -d $config->{waypoint_path};
+print "Checking for waypoints to upload...\n";
 
-find( \&waypoint_file, $config->{waypoint_path} );
+find( \&waypoint_file, $config->{kmz_path} );
+
+print "Done uploading waypoints\n";
 
 sub waypoint_file {
   my $filename = $_;
@@ -33,26 +38,82 @@ sub waypoint_file {
   if ( $filename =~ $config->{waypoint_filename_regex} ) {
     if ( !-f $file_fullpath . $config->{upload_postfix} ||
         (stat( $file_fullpath ))[9] > (stat( $file_fullpath . $config->{upload_postfix}))[9] ) {
+      print "Going to update $file_fullpath\n";
       #this file needs updating online
-      upload( $file_fullpath );
+      my $waypoints = kmz_to_json( $file_fullpath );
+      
+      if ( upload( $waypoints ) ) {
+        my $upload_file = IO::File->new( $file_fullpath . $config->{upload_postfix} , q{>});
+        if ( -f $file_fullpath . $config->{upload_postfix} ) {
+          $upload_file->close;
+        } else {
+          die("Could not create upload confirmation file for $file_fullpath");
+        }
+      }
+    } else {
+      print "Skipping upto date $file_fullpath\n";
     }
   }
 }
 
 sub upload {
+  my ( $waypoints ) = @_;
+  
+  #set up Amazon
+  my $s3 = Amazon::S3->new( {
+        aws_access_key_id     => $config->{access_key},
+        aws_secret_access_key => $config->{secret_key},
+        secure                => $config->{secure},
+      }
+  );
+  
+  #select bucket
+  my $bucket = $s3->bucket( $config->{waypoint_bucket} );
+  
+  my @uploaded;
+  
+  foreach my $waypoint_identifier ( keys %{$waypoints} ) {
+    #add bucket:waypoint_path:waypoint_identifier to s3
+    if ( $bucket->add_key(
+          $config->{waypoint_path} . $waypoint_identifier,
+          $waypoints->{$waypoint_identifier},
+          {
+            content_type        => $config->{waypoint_content_type},
+            acl_short           => $config->{waypoint_short_acl},
+          })
+      ) {
+      push @uploaded, $config->{waypoint_path} . $waypoint_identifier;
+    } else {
+      #vail on any error
+      last;
+    }  
+  }
+  
+  #on any error try to revert partial uploads
+  if ( @uploaded < keys %{$waypoints} ) {
+    foreach my $partial_upload ( @uploaded ) {
+      warn "Could not delete partial $partial_upload" unless bucket->delete_key( $partial_upload );
+    }
+  } else {
+    print "Uploaded waypoints " . @uploaded . "\n";
+  }
+  
+  #error if we did not upload the number of waypoints we have
+  return ( @uploaded == keys %{$waypoints} );
+}
+
+sub kmz_to_json {
   my ( $file_fullpath ) = @_;
   my ( $volume, $dir, $filename ) = File::Spec->splitpath( $file_fullpath );
   #./Waypoints/Client/Product -> Client|Product|Campaign.kmz
   my ( $rel_identifier) = join( $config->{rel_identifier_separator} ,
-                               File::Spec->splitdir( File::Spec->abs2rel( $dir, $config->{waypoint_path}) ),
+                               File::Spec->splitdir( File::Spec->abs2rel( $dir, $config->{kmz_path}) ),
                                $filename);
   
   my $kml = get_kml( $file_fullpath );
   
   #store waypoints with identifier=>JSON content
   my $waypoints;
-  
-  print $kml;
   
   #support single Folder of waypoints per file
   warn "Weird kml format that will not be uploaded in $file_fullpath"
@@ -75,12 +136,16 @@ sub upload {
       coordinates=>$waypoint->{Point}->{coordinates},
       properties=>$description,
     };
-    #$json_text = JSON->new->utf8->encode($perl_scalar)
-    #$waypoints->{} 
-    print $waypoint;
+    
+    use Digest::SHA;
+    my $digest = Digest::SHA->new('sha1');
+    #sha1_hex( 'Client|Product|Campaign.kmz|Waypoint 1' )
+    my $unique_identifier = $config->{waypoint_prefix} . $digest->sha1_hex( $rel_identifier . $config->{rel_identifier_separator} . $waypoint_data->{name});
+
+    $waypoints-> { $unique_identifier } = JSON::XS->new->utf8->encode( $waypoint_data );
   }
   
-#Then sha that for WP number
+  return $waypoints;
 }
 
 sub get_kml {
@@ -101,7 +166,21 @@ sub get_kml {
   return $kml;
 }
 
-
+sub check_options {
+  #check config and options
+  die "No kmz_path $config->{kmz_path}" unless defined $config->{kmz_path} && -d $config->{kmz_path};
+  die "No upload_postfix" unless defined $config->{upload_postfix};
+  die "No waypoint_path" unless defined $config->{waypoint_path};
+  die "Bad waypoint_path, should be like objectinfo/, no initital /, with trailing /" unless $config->{waypoint_path} =~ /^[^\/].+?\/$/;
+  die "No waypoint_bucket, should be www.sinqrtel.com" unless defined $config->{waypoint_bucket};
+  die "No waypoint_short_acl, should be public-read" unless defined $config->{waypoint_short_acl};
+  die "No waypoint_content_type, should be application/json" unless defined $config->{waypoint_content_type};
+  die "No waypoint_filename_regex, should find your kmz files" unless defined $config->{waypoint_filename_regex};
+  
+  #it should never change... see config
+  die "Modified rel_identifier_separator, MUST be |" unless $config->{rel_identifier_separator} eq '|';
+  die "Modified waypoint_prefix, should be wp" unless defined $config->{waypoint_prefix};
+}
 
 #
 #my $clipboard;
