@@ -42,16 +42,41 @@ sub get_attributes {
 sub put_attributes_conditional {
   my ($sdb, $domain_name, $item_name, $attributes, $expected_timestamp) = @_;
 
-	$attributes = _hash_to_attributes($attributes, 'Replace', 1);
+	my $request_attributes = _hash_to_attributes($attributes, 'Replace', 1);
 
-	warn Dumper($attributes);
-
-	my $response = $sdb -> putAttributes({
+	my $request = {
 		DomainName => $domain_name,
 		ItemName   => $item_name,
-		Attribute  => $attributes,
-		Expected   => { 'Name' => 'timestamp', 'Value' => $expected_timestamp, 'Exists' => ( defined $expected_timestamp ? 'true' : 'false' ) },
-	});
+		Attribute  => $request_attributes,
+	};
+
+	#only expect timestamp for values $item_names that exist (and have a timestamp > 0)
+	if ( $expected_timestamp > 0) {
+		$request->{Expected} = { 'Name' => 'timestamp', 'Value' => $expected_timestamp, 'Exists' => 'true'};
+	}
+
+	warn Dumper( $request );
+
+	my $response = 1;
+	eval {
+		$sdb -> putAttributes( $request );
+	};
+	#get exceptions
+	my $ex = $@;
+	if ($ex) {
+		require Amazon::SimpleDB::Exception;
+		if (ref $ex eq "Amazon::SimpleDB::Exception") {
+			if ($ex->{_errorCode} eq 'ConditionalCheckFailed') {
+				$response = 0;
+			} else {
+				#unknown error, we are unworthy of this cpu time
+				croack $@;
+			}
+		} else {
+			#unknown exception type, this is really bad...
+			croack $@;
+		}
+	}
 
 	return $response;
 }

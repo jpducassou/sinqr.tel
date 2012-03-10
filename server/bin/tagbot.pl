@@ -15,6 +15,9 @@ use Amazon::SQS::Simple;
 use Amazon::SimpleDB::Client;
 
 # ============================================================================
+use Sinqrtel::SDB;
+
+# ============================================================================
 sub _get_queue {
 	my ($aws_access_key, $aws_secret_key, $queue_uri) = @_;
 
@@ -58,81 +61,6 @@ sub _delete_message {
 	$queue -> DeleteMessage( $message -> ReceiptHandle() );
 }
 
-sub _get_score {
-  my ($sdb, $domain_name, $item_name) = @_;
-
-  my $response = $sdb -> getAttributes({
-    DomainName => $domain_name,
-    ItemName   => $item_name,
-  });
-
-  my $attribute_list = $response -> getGetAttributesResult -> getAttribute;
-
-	my $attributes;
-	$attributes -> { $_ -> getName } = $_ -> getValue
-    for @$attribute_list;
-
-	return $attributes;
-}
-
-sub _put_attributes_conditional {
-  my ($sdb, $domain_name, $item_name, $attributes, $expected_timestamp) = @_;
-
-	my $request_attributes = _hash_to_attributes($attributes, 'Replace', 1);
-
-	my $request = {
-		DomainName => $domain_name,
-		ItemName   => $item_name,
-		Attribute  => $request_attributes,
-	};
-
-	#only expect timestamp for values $item_names that exist (and have a timestamp > 0)
-	if ( $expected_timestamp > 0) {
-		$request->{Expected} = { 'Name' => 'timestamp', 'Value' => $expected_timestamp, 'Exists' => 'true'};
-	}
-
-	warn Dumper( $request );
-
-	my $response = 1;
-	eval {
-		$sdb -> putAttributes( $request );
-	};
-	#get exceptions
-	my $ex = $@;
-	if ($ex) {
-		require Amazon::SimpleDB::Exception;
-		if (ref $ex eq "Amazon::SimpleDB::Exception") {
-			if ($ex->{_errorCode} eq 'ConditionalCheckFailed') {
-				$response = 0;
-			} else {
-				#unknown error, we are unworthy of this cpu time
-				croack $@;
-			}
-		} else {
-			#unknown exception type, this is really bad...
-			croack $@;
-		}
-	}
-
-	return $response;
-}
-
-sub _hash_to_attributes {
-  my ($values, $condition_name, $condition_value) = @_;
-
-  my @attributes = ();
-
-  for my $name ( keys %$values ) {
-    my $value = $values -> { $name };
-
-    push @attributes, {
-      Name                      => $name,
-      Value                     => $value,
-      ($condition_value ? ($condition_name => $condition_value ? 'true' : '') : ()),
-    };
-  }
-  return \@attributes;
-}
 
 sub _message_to_tag_hash {
 	my ( $message, $config ) = @_;
@@ -158,10 +86,8 @@ sub _message_to_tag_hash {
 	return $tag;
 }
 
-
 # ============================================================================
-
-
+# MAIN
 # ============================================================================
 
 sub main {
@@ -204,9 +130,10 @@ sub main {
 	my $visibility_timeout = $message_number * $config -> {'default.single_message_timeout'} + int(rand($config -> {'default.single_message_timeout'}));
 	my $score_domain_name  = $config -> {'default.score_domain_name'};
 
-	my $queue = _get_queue( $aws_access_key, $aws_secret_key, $queue_uri );
+	my $queue = _get_queue( $aws_access_key, $aws_secret_key, $queue_uri ) || die 'Error getting queue';
 
 	my $messages = _get_messages( $queue, $message_number, $visibility_timeout );
+	warn Dumper($messages);
 
 	#process messages if we have a non empty array
 	if ( defined $messages && @$messages ) {
@@ -214,11 +141,11 @@ sub main {
 		#process received messages
 		foreach my $message ( @$messages ) {
 			my $tag = _message_to_tag_hash( $message, $config );
-			my $item_name = $tag->{from};
+			my $item_name = $tag -> {from};
 
 			my $stored_correctly_on_sdb = 0;
 			do {
-				my $score = _get_score( $sdb, $score_domain_name, $item_name );
+				my $score = get_attributes( $sdb, $score_domain_name, $item_name );
 				#keep old time stamp for conditional put (could be undef and must be checked)
 
 				warn Dumper( $score );
@@ -237,9 +164,10 @@ sub main {
 					_dirty => 1,
 				};
 				# Update score to simpledb
-				$stored_correctly_on_sdb = _put_attributes_conditional($sdb, $score_domain_name, $item_name, $new_score, $score->{timestamp});
+				$stored_correctly_on_sdb = put_attributes_conditional($sdb, $score_domain_name, $item_name, $new_score, $score -> {timestamp});
 				if ( $stored_correctly_on_sdb ) {
-					_delete_message( $queue, $message );
+					# Uncomment to realy delete message
+					# _delete_message( $queue, $message );
 					print "Ready!\n";
 				} else {
 					warn "Retrying on $item_name do to timestamp skew";
