@@ -13,7 +13,6 @@ use Data::Dumper;
 use Amazon::SimpleDB::Client;
 use JSON::XS;
 use Amazon::S3;
-use Error qw(:try);
 
 # ============================================================================
 use Sinqrtel::SDB;
@@ -83,6 +82,21 @@ sub main {
 	my $sdb = new Amazon::SimpleDB::Client( $aws_access_key, $aws_secret_key ) || die 'Cannot create sdb client';
 
 	# ==========================================================================
+	# Set up Amazon
+	# ==========================================================================
+	my $s3 = Amazon::S3 -> new({
+		aws_access_key_id     => $config -> {'default.aws_access_key'},
+		aws_secret_access_key => $config -> {'default.aws_secret_key'},
+		secure                => $config -> {'secure'},
+	});
+
+	# ==========================================================================
+	# Select bucket
+	# ==========================================================================
+	my $bucket = $s3 -> bucket( $config -> {'default.score_online_bucket'} );
+	my $score_online_base_uri = $config -> {'default.score_online_base_uri'};
+
+	# ==========================================================================
 	# Get dirty record
 	# ==========================================================================
 	my $query = "select * from $sdb_domain_name where _dirty=\"1\""; # limit sdb_retrieve_limit";
@@ -92,12 +106,33 @@ sub main {
 		warn Dumper($item);
 
 		my $item_name = $item -> [0];
-		my $old_timestamp = $item -> [1] -> {'timestamp'} || next; # do not consider items without timestamp
+		my $item_hash = $item -> [1];
+		my $old_timestamp = $item_hash -> {'timestamp'} || next; # do not consider items without timestamp
 
-		# Update simpledb as no _dirty
-		# put_attributes_conditional($sdb, $sdb_domain_name, $item_name, { _dirty => 0 }, $old_timestamp);
+		# Update simpledb as no _dirty - if it fails, it means someone is updating
+		# put_attributes_conditional($sdb, $sdb_domain_name, $item_name, { _dirty => 0 }, $old_timestamp) || next;
+
+		# Clean "hidden" fields
+		foreach my $key (keys %$item_hash) {
+			delete $item_hash -> {$key} if ($key =~ /^_/);
+		}
+		warn Dumper($item_hash);
 
 		# Update S3
+		my $utf8_encoded_json_text = encode_json $item_hash;
+
+		warn 'Subiendo a: ' . $score_online_base_uri . $item_name . '.json';
+		if ( $bucket -> add_key(
+			$score_online_base_uri . $item_name . '.json',
+			$utf8_encoded_json_text , {
+				content_type        => 'application/json',
+				acl_short           => $config -> {'default.score_acl'},
+			})
+		) {
+			print "Uploaded with no errors\n";
+		} else {
+			print "ERROR UPLOADING!!!\n";
+		}
 
 	}
 
