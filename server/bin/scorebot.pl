@@ -45,8 +45,7 @@ warn 'query ' . $select_expression;
 		});
 		1;
 	} or do {
-		warn $@ -> getMessage();
-		return undef;
+		die $@ -> getMessage();
 	};
 
 	my $item_list = $response -> getSelectResult -> getItem;
@@ -96,7 +95,7 @@ sub main {
 		my $old_timestamp = $item -> [1] -> {'timestamp'} || next; # do not consider items without timestamp
 
 		# Update simpledb as no _dirty
-		put_attributes_conditional($sdb, $sdb_domain_name, $item_name, { _dirty => 0 }, $old_timestamp);
+		# put_attributes_conditional($sdb, $sdb_domain_name, $item_name, { _dirty => 0 }, $old_timestamp);
 
 		# Update S3
 
