@@ -110,7 +110,7 @@ sub main {
 		my $old_timestamp = $item_hash -> {'timestamp'} || next; # do not consider items without timestamp
 
 		# Update simpledb as no _dirty - if it fails, it means someone is updating
-		# put_attributes_conditional($sdb, $sdb_domain_name, $item_name, { _dirty => 0 }, $old_timestamp) || next;
+		put_attributes_conditional($sdb, $sdb_domain_name, $item_name, { _dirty => 0 }, $old_timestamp) || next;
 
 		# Clean "hidden" fields
 		foreach my $key (keys %$item_hash) {
@@ -119,9 +119,13 @@ sub main {
 		warn Dumper($item_hash);
 
 		# Update S3
-		my $utf8_encoded_json_text = encode_json $item_hash;
+		my $utf8_encoded_json_text = encode_json($item_hash);
 
-		warn 'Subiendo a: ' . $score_online_base_uri . $item_name . '.json';
+		warn 'Subiendo a: ' .
+			$config -> {'default.score_online_bucket'} . '.' .
+			$s3 -> host . '/' .
+			$score_online_base_uri . $item_name . '.json';
+
 		if ( $bucket -> add_key(
 			$score_online_base_uri . $item_name . '.json',
 			$utf8_encoded_json_text , {
