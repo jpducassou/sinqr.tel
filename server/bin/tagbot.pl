@@ -19,6 +19,16 @@ use Amazon::SimpleDB::Client;
 use Sinqrtel::SDB;
 
 # ============================================================================
+# Smooth termination
+my $mustend = 0;
+
+sub _catch_sig {
+	my $signame = shift;
+	$mustend = 1;
+}
+
+# ==============================================================================
+
 sub _get_queue {
 	my ($aws_access_key, $aws_secret_key, $queue_uri) = @_;
 
@@ -94,6 +104,12 @@ sub _message_to_tag_hash {
 sub main {
 
 	# ==========================================================================
+	# Register handler for the SIGINT & SIGTERM signal:
+	# ==========================================================================
+	$SIG{INT}  = \&_catch_sig;
+	$SIG{TERM} = \&_catch_sig;
+
+	# ==========================================================================
 	# Get logger
 	# ==========================================================================
 	Log::Log4perl -> easy_init({
@@ -143,49 +159,57 @@ sub main {
 
 	my $queue = _get_queue( $aws_access_key, $aws_secret_key, $queue_uri ) || $logger -> logdie('Error getting queue');
 
-	my $messages = _get_messages( $queue, $message_number, $visibility_timeout );
-	$logger -> debug(Dumper($messages));
+	# ==========================================================================
+	# Do until signal is caught
+	# ==========================================================================
+	while(!$mustend) {
+		my $messages = _get_messages( $queue, $message_number, $visibility_timeout );
 
-	#process messages if we have a non empty array
-	if ( defined $messages && @$messages ) {
+		# Process messages if we have a non empty array
+		if ( defined $messages && @$messages ) {
 
-		#process received messages
-		foreach my $message ( @$messages ) {
-			my $tag = _message_to_tag_hash( $message, $config );
-			my $item_name = $tag -> {from};
+			# Process received messages
+			foreach my $message ( @$messages ) {
 
-			my $stored_correctly_on_sdb = 0;
-			do {
-				my $score = get_attributes( $sdb, $score_domain_name, $item_name );
-				# keep old time stamp for conditional put (could be undef and must be checked)
+				# Log timestamp and body for replay
+				$logger -> info( 'timestamp:[' . $message -> {Attribute} -> {Value} . ']:' . $message -> MessageBody());
 
-				$logger -> debug(Dumper( $score ));
+				my $tag = _message_to_tag_hash( $message, $config );
+				my $item_name = $tag -> {from};
 
-				#initialize for non existent users, avoid warnings
-				$score -> {score} = 0 unless defined $score -> {score};
-				$score -> {timestamp} = 0 unless defined $score -> {timestamp};
+				my $stored_correctly_on_sdb = 0;
+				do {
+					my $score = get_attributes( $sdb, $score_domain_name, $item_name );
+					# keep old time stamp for conditional put (could be undef and must be checked)
 
-				# create attributes to replace
-				my $new_score = {
-					# add tag value to score
-					'score'	=> $score -> {score} + $tag -> {tag_value},
-					# add tag value to score
-					'timestamp'	=> $tag -> {timestamp},
-					# mark as dirty
-					_dirty => 1,
-				};
+					$logger -> debug(Dumper( $score ));
 
-				# Update score to simpledb
-				$stored_correctly_on_sdb = put_attributes_conditional($sdb, $score_domain_name, $item_name, $new_score, $score -> {timestamp});
+					# Initialize for non existent users, avoid warnings
+					$score -> {score} = 0 unless defined $score -> {score};
+					$score -> {timestamp} = 0 unless defined $score -> {timestamp};
 
-				if ( $stored_correctly_on_sdb ) {
-					# Uncomment to realy delete message
-					# _delete_message( $queue, $message );
-					$logger -> info('Message stored in db and deleted from queue');
-				} else {
-					$logger -> logwarn("Retrying on $item_name do to timestamp skew");
-				}
-			} until ( $stored_correctly_on_sdb );
+					# Create attributes to replace
+					my $new_score = {
+						# add tag value to score
+						'score'	=> $score -> {score} + $tag -> {tag_value},
+						# add tag value to score
+						'timestamp'	=> $tag -> {timestamp},
+						# mark as dirty
+						_dirty => 1,
+					};
+
+					# Update score to simpledb
+					$stored_correctly_on_sdb = put_attributes_conditional($sdb, $score_domain_name, $item_name, $new_score, $score -> {timestamp});
+
+					if ( $stored_correctly_on_sdb ) {
+						# Uncomment to realy delete message
+						# _delete_message( $queue, $message );
+						$logger -> info('Message stored in db and deleted from queue');
+					} else {
+						$logger -> logwarn("Retrying on $item_name do to timestamp skew");
+					}
+				} until ( $stored_correctly_on_sdb );
+			}
 		}
 	}
 
