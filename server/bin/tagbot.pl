@@ -8,6 +8,7 @@ use Carp;
 # ============================================================================
 use Config::Simple;
 use Getopt::Long;
+use Log::Log4perl qw/:easy/;
 use Data::Dumper;
 
 # ============================================================================
@@ -15,6 +16,19 @@ use Amazon::SQS::Simple;
 use Amazon::SimpleDB::Client;
 
 # ============================================================================
+use Sinqrtel::SDB;
+
+# ============================================================================
+# Smooth termination
+my $mustend = 0;
+
+sub _catch_sig {
+	my $signame = shift;
+	$mustend = 1;
+}
+
+# ==============================================================================
+
 sub _get_queue {
 	my ($aws_access_key, $aws_secret_key, $queue_uri) = @_;
 
@@ -29,7 +43,7 @@ sub _get_queue {
 
 sub _get_messages {
 	my ($queue, $number_of_messages, $visibility_timeout) = @_;
-	
+
 	# Retrieve messages
 	my @messages = $queue -> ReceiveMessage(
 		'AttributeName.1'     => 'SentTimestamp' ,
@@ -48,98 +62,23 @@ sub _get_messages {
 				$message -> {Attribute} -> {Value} =~ /^\d+$/
 		}
 	}
-	
+
 	return \@messages;
 }
 
 sub _delete_message {
 	my ( $queue, $message ) = @_;
-	
+
 	$queue -> DeleteMessage( $message -> ReceiptHandle() );
 }
 
-sub _get_score {
-  my ($sdb, $domain_name, $item_name) = @_;
-
-  my $response = $sdb -> getAttributes({
-    DomainName => $domain_name,
-    ItemName   => $item_name,
-  });
-
-  my $attribute_list = $response -> getGetAttributesResult -> getAttribute;
-
-	my $attributes;
-	$attributes -> { $_ -> getName } = $_ -> getValue
-    for @$attribute_list;
-
-	return $attributes;
-}
-
-sub _put_attributes_conditional {
-  my ($sdb, $domain_name, $item_name, $attributes, $expected_timestamp) = @_;
-
-	my $request_attributes = _hash_to_attributes($attributes, 'Replace', 1);
-	
-	my $request = {
-		DomainName => $domain_name,
-		ItemName   => $item_name,
-		Attribute  => $request_attributes,
-	};
-	
-	#only expect timestamp for values $item_names that exist (and have a timestamp > 0)
-	if ( $expected_timestamp > 0) {
-		$request->{Expected} = { 'Name' => 'timestamp', 'Value' => $expected_timestamp, 'Exists' => 'true'};
-	}
-	
-	warn Dumper( $request );
-	
-	my $response = 1;
-	eval {
-		$sdb -> putAttributes( $request );
-	};
-	#get exceptions
-	my $ex = $@;
-	if ($ex) {
-		require Amazon::SimpleDB::Exception;
-		if (ref $ex eq "Amazon::SimpleDB::Exception") {
-			if ($ex->{_errorCode} eq 'ConditionalCheckFailed') {
-				$response = 0;
-			} else {
-				#unknown error, we are unworthy of this cpu time
-				croack $@;
-			}
-		} else {
-			#unknown exception type, this is really bad...
-			croack $@;
-		}
-	}
-	
-	return $response;
-}
-
-sub _hash_to_attributes {
-  my ($values, $condition_name, $condition_value) = @_;
-
-  my @attributes = ();
-
-  for my $name ( keys %$values ) {
-    my $value = $values -> { $name };
-
-    push @attributes, {
-      Name                      => $name,
-      Value                     => $value,
-      ($condition_value ? ($condition_name => $condition_value ? 'true' : '') : ()),
-    };
-  }
-  return \@attributes;
-}
 
 sub _message_to_tag_hash {
 	my ( $message, $config ) = @_;
-	
+
 	my $tag;
 	my ( $message_version, $message_format_v1);
-	
+
 	#*move to config file
 	if ( $message -> MessageBody() =~ /^v(\d+)\|/ ) {
 		my ( $version, $from, $to ) = ( $1, undef, undef );
@@ -147,105 +86,135 @@ sub _message_to_tag_hash {
 			#*move to config file
 			$message -> MessageBody() =~ /^(v1)\|((?:fb|tw)(?:\w+))\|((?:fb|tw|wp)(?:\w+))$/;
 			$tag->{from} = $2; $tag->{to} = $3; $tag->{timestamp} = $message -> {Attribute} -> {Value};
-			$tag->{tag_value} = $config -> {'default.tag_value'};
+			$tag->{tag_value} = $config -> {'tag_value'};
 		} else {
 			die("Unsupported message version for ReceiptHandle" . $message->ReceiptHandle());
 		}
 	} else {
 		die("Message format unspected, no version info")
 	}
-	
+
 	return $tag;
 }
 
-
 # ============================================================================
-
-
+# MAIN
 # ============================================================================
 
 sub main {
+
+	# ==========================================================================
+	# Register handler for the SIGINT & SIGTERM signal:
+	# ==========================================================================
+	$SIG{INT}  = \&_catch_sig;
+	$SIG{TERM} = \&_catch_sig;
+
+	# ==========================================================================
+	# Get logger
+	# ==========================================================================
+	Log::Log4perl -> easy_init({
+		level => $INFO,
+		layout => '[%d] [%p] %F, line %L: %m%n',
+	});
+	my $logger = Log::Log4perl -> get_logger();
+	$logger -> info('Starting tagbot.');
+
 	# ==========================================================================
 	# Get config
 	# ==========================================================================
 	my $config = {};
 	my $config_file = $0; $config_file =~ s/\.([^\.]+)$/\.cfg/;
-	die("No config file $config_file!") unless -f $config_file;
+	$logger -> logdie("No config file $config_file!") unless -f $config_file;
+	$logger -> logdie('cannot find config file.') unless Config::Simple -> import_from($config_file, $config);
 
-	Config::Simple -> import_from($config_file, $config) || die 'cannot find config file.';
-	
-	die("No queue_uri in config file") unless defined $config -> {'default.queue_uri'} && $config -> {'default.queue_uri'} =~ /queue\.amazonaws\.com/;
-	die("No score_domain_name in config file") unless defined $config -> {'default.score_domain_name'} &&  $config -> {'default.score_domain_name'} =~ /\w+/;
-	die("No tag_value in config file") unless defined $config -> {'default.tag_value'} && $config -> {'default.tag_value'} > 0;
-	die("No single_message_timeout in config file") unless defined $config -> {'default.single_message_timeout'} && $config -> {'default.single_message_timeout'} > 0;
+	$logger -> logdie('No queue_uri in config file') unless defined $config -> {'queue_uri'} && $config -> {'queue_uri'} =~ /queue\.amazonaws\.com/;
+	$logger -> logdie('No score_domain_name in config file') unless defined $config -> {'score_domain_name'} &&  $config -> {'score_domain_name'} =~ /\w+/;
+	$logger -> logdie('No tag_value in config file') unless defined $config -> {'tag_value'} && $config -> {'tag_value'} > 0;
+	$logger -> logdie('No single_message_timeout in config file') unless defined $config -> {'single_message_timeout'} && $config -> {'single_message_timeout'} > 0;
 
-	# ==========================================================================
 	# ==========================================================================
 	# AWS SQS info
-	my $aws_access_key = $config -> {'default.aws_access_key'}; # Your AWS Access Key ID
-	my $aws_secret_key = $config -> {'default.aws_secret_key'}; # Your AWS Secret Key
-	my $queue_uri      = $config -> {'default.queue_uri'}; # public queue uri
+	# ==========================================================================
+	my $aws_access_key = $config -> {'aws_access_key'}; # Your AWS Access Key ID
+	my $aws_secret_key = $config -> {'aws_secret_key'}; # Your AWS Secret Key
+	my $queue_uri      = $config -> {'queue_uri'};      # public queue uri
 
 	# =====
 	#*These should go to GetOpt::Long and default config
 	# =====
-	my $message_number = $config -> {'default.message_number'} || 1; #how much messages to get on a single request
-	#*$config -> {'default.single_message_timeout'} should be configurable, change required from config file
+	my $message_number = $config -> {'message_number'} || 1; # how many messages to get on a single request
+	#*$config -> {'single_message_timeout'} should be configurable, change required from config file
 
 	# ==========================================================================
-	# Get tag score chart from S3
+	# Get SimpleDB handler
 	# ==========================================================================
+	my $sdb = new Amazon::SimpleDB::Client( $aws_access_key, $aws_secret_key );
 
 	# ==========================================================================
 	# Get message from SQS
 	# ==========================================================================
-	
 	# Define visibility timeout according to number of messages + a maximum of one extra message timeout
-	my $visibility_timeout = $message_number * $config -> {'default.single_message_timeout'} + int(rand($config -> {'default.single_message_timeout'}));
-	my $score_domain_name  = $config -> {'default.score_domain_name'};
+	my $visibility_timeout = $message_number * $config -> {'single_message_timeout'} + int(rand($config -> {'single_message_timeout'}));
+	my $score_domain_name  = $config -> {'score_domain_name'};
 
-	my $queue = _get_queue( $aws_access_key, $aws_secret_key, $queue_uri );
-	
-	my $messages = _get_messages( $queue, $message_number, $visibility_timeout );
+	my $queue = _get_queue( $aws_access_key, $aws_secret_key, $queue_uri ) || $logger -> logdie('Error getting queue');
 
-	#process messages if we have a non empty array
-	if ( defined $messages && @$messages ) {
-		my $sdb = new Amazon::SimpleDB::Client( $aws_access_key, $aws_secret_key );
-		
-		#process received messages
-		foreach my $message ( @$messages ) {
-			my $tag = _message_to_tag_hash( $message, $config );
-			my $item_name = $tag->{from};
-			
-			my $stored_correctly_on_sdb = 0;
-			do {
-				my $score = _get_score( $sdb, $score_domain_name, $item_name );
-				#keep old time stamp for conditional put (could be undef and must be checked)
-			
-				warn Dumper( $score );
-				
-				#initialize for non existent users, avoid warnings
-				$score -> {score} = 0 unless defined $score -> {score};
-				$score -> {timestamp} = 0 unless defined $score -> {timestamp};
-				
-				#cerate attributes to replace
-				my $new_score = {
-					#add tag value to score					
-					'score'	=> $score -> {score} + $tag -> {tag_value},
-					#add tag value to score
-					'timestamp'	=> $tag -> {timestamp},
-				};
-				# Update score to simpledb
-				$stored_correctly_on_sdb = _put_attributes_conditional($sdb, $score_domain_name, $item_name, $new_score, $score->{timestamp});
-				if ( $stored_correctly_on_sdb ) {
-					_delete_message( $queue, $message );
-					print "Ready!\n";
-				} else {
-					warn "Retrying on $item_name do to timestamp skew";
-				}
-			} until ( $stored_correctly_on_sdb );
+	# ==========================================================================
+	# Do until signal is caught
+	# ==========================================================================
+	while(!$mustend) {
+		my $messages = _get_messages( $queue, $message_number, $visibility_timeout );
+
+		# Process messages if we have a non empty array
+		if ( defined $messages && @$messages ) {
+
+			# Process received messages
+			foreach my $message ( @$messages ) {
+
+				# Log timestamp and body for replay
+				$logger -> info( 'timestamp:[' . $message -> {Attribute} -> {Value} . ']:' . $message -> MessageBody());
+
+				my $tag = _message_to_tag_hash( $message, $config );
+				my $item_name = $tag -> {from};
+
+				my $stored_correctly_on_sdb = 0;
+				do {
+					my $score = get_attributes( $sdb, $score_domain_name, $item_name );
+					# keep old time stamp for conditional put (could be undef and must be checked)
+
+					$logger -> debug(Dumper( $score ));
+
+					# Initialize for non existent users, avoid warnings
+					$score -> {score} = 0 unless defined $score -> {score};
+					$score -> {timestamp} = 0 unless defined $score -> {timestamp};
+
+					# Create attributes to replace
+					my $new_score = {
+						# add tag value to score
+						'score'	=> $score -> {score} + $tag -> {tag_value},
+						# add tag value to score
+						'timestamp'	=> $tag -> {timestamp},
+						# mark as dirty
+						_dirty => 1,
+					};
+
+					# Update score to simpledb
+					$stored_correctly_on_sdb = put_attributes_conditional($sdb, $score_domain_name, $item_name, $new_score, $score -> {timestamp});
+
+					if ( $stored_correctly_on_sdb ) {
+						# Uncomment to realy delete message
+						# _delete_message( $queue, $message );
+						$logger -> info('Message stored in db and deleted from queue');
+					} else {
+						$logger -> logwarn("Retrying on $item_name do to timestamp skew");
+					}
+				} until ( $stored_correctly_on_sdb );
+			}
 		}
 	}
+
+	$logger -> info('Ending tagbot.');
+
 }
 
 # ============================================================================
