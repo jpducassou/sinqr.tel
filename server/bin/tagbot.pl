@@ -8,6 +8,7 @@ use Carp;
 # ============================================================================
 use Config::Simple;
 use Getopt::Long;
+use Log::Log4perl qw/:easy/;
 use Data::Dumper;
 
 # ============================================================================
@@ -91,19 +92,29 @@ sub _message_to_tag_hash {
 # ============================================================================
 
 sub main {
+
+	# ==========================================================================
+	# Get logger
+	# ==========================================================================
+	Log::Log4perl -> easy_init({
+		level => $INFO,
+		layout => '[%d] [%p] %F, line %L: %m%n',
+	});
+	my $logger = Log::Log4perl -> get_logger();
+	$logger -> info('Starting tagbot.');
+
 	# ==========================================================================
 	# Get config
 	# ==========================================================================
 	my $config = {};
 	my $config_file = $0; $config_file =~ s/\.([^\.]+)$/\.cfg/;
-	die("No config file $config_file!") unless -f $config_file;
+	$logger -> logdie("No config file $config_file!") unless -f $config_file;
+	$logger -> logdie('cannot find config file.') unless Config::Simple -> import_from($config_file, $config);
 
-	Config::Simple -> import_from($config_file, $config) || die 'cannot find config file.';
-
-	die("No queue_uri in config file") unless defined $config -> {'queue_uri'} && $config -> {'queue_uri'} =~ /queue\.amazonaws\.com/;
-	die("No score_domain_name in config file") unless defined $config -> {'score_domain_name'} &&  $config -> {'score_domain_name'} =~ /\w+/;
-	die("No tag_value in config file") unless defined $config -> {'tag_value'} && $config -> {'tag_value'} > 0;
-	die("No single_message_timeout in config file") unless defined $config -> {'single_message_timeout'} && $config -> {'single_message_timeout'} > 0;
+	$logger -> logdie('No queue_uri in config file') unless defined $config -> {'queue_uri'} && $config -> {'queue_uri'} =~ /queue\.amazonaws\.com/;
+	$logger -> logdie('No score_domain_name in config file') unless defined $config -> {'score_domain_name'} &&  $config -> {'score_domain_name'} =~ /\w+/;
+	$logger -> logdie('No tag_value in config file') unless defined $config -> {'tag_value'} && $config -> {'tag_value'} > 0;
+	$logger -> logdie('No single_message_timeout in config file') unless defined $config -> {'single_message_timeout'} && $config -> {'single_message_timeout'} > 0;
 
 	# ==========================================================================
 	# AWS SQS info
@@ -115,7 +126,7 @@ sub main {
 	# =====
 	#*These should go to GetOpt::Long and default config
 	# =====
-	my $message_number = $config -> {'message_number'} || 1; #how much messages to get on a single request
+	my $message_number = $config -> {'message_number'} || 1; # how many messages to get on a single request
 	#*$config -> {'single_message_timeout'} should be configurable, change required from config file
 
 	# ==========================================================================
@@ -130,10 +141,10 @@ sub main {
 	my $visibility_timeout = $message_number * $config -> {'single_message_timeout'} + int(rand($config -> {'single_message_timeout'}));
 	my $score_domain_name  = $config -> {'score_domain_name'};
 
-	my $queue = _get_queue( $aws_access_key, $aws_secret_key, $queue_uri ) || die 'Error getting queue';
+	my $queue = _get_queue( $aws_access_key, $aws_secret_key, $queue_uri ) || $logger -> logdie('Error getting queue');
 
 	my $messages = _get_messages( $queue, $message_number, $visibility_timeout );
-	warn Dumper($messages);
+	$logger -> debug(Dumper($messages));
 
 	#process messages if we have a non empty array
 	if ( defined $messages && @$messages ) {
@@ -146,9 +157,9 @@ sub main {
 			my $stored_correctly_on_sdb = 0;
 			do {
 				my $score = get_attributes( $sdb, $score_domain_name, $item_name );
-				#keep old time stamp for conditional put (could be undef and must be checked)
+				# keep old time stamp for conditional put (could be undef and must be checked)
 
-				warn Dumper( $score );
+				$logger -> debug(Dumper( $score ));
 
 				#initialize for non existent users, avoid warnings
 				$score -> {score} = 0 unless defined $score -> {score};
@@ -163,18 +174,23 @@ sub main {
 					# mark as dirty
 					_dirty => 1,
 				};
+
 				# Update score to simpledb
 				$stored_correctly_on_sdb = put_attributes_conditional($sdb, $score_domain_name, $item_name, $new_score, $score -> {timestamp});
+
 				if ( $stored_correctly_on_sdb ) {
 					# Uncomment to realy delete message
 					# _delete_message( $queue, $message );
-					print "Ready!\n";
+					$logger -> info('Message stored in db and deleted from queue');
 				} else {
-					warn "Retrying on $item_name do to timestamp skew";
+					$logger -> logwarn("Retrying on $item_name do to timestamp skew");
 				}
 			} until ( $stored_correctly_on_sdb );
 		}
 	}
+
+	$logger -> info('Ending tagbot.');
+
 }
 
 # ============================================================================
