@@ -36,6 +36,7 @@ sub waypoint_file {
   my $dir = $File::Find::dir;
   
   if ( $filename =~ $config->{waypoint_filename_regex} ) {
+    #check if file exists and time of creation. If kmz is newer or confirmation does not exist we must upload
     if ( !-f $file_fullpath . $config->{upload_postfix} ||
         (stat( $file_fullpath ))[9] > (stat( $file_fullpath . $config->{upload_postfix}))[9] ) {
       print "Going to update $file_fullpath\n";
@@ -51,6 +52,7 @@ sub waypoint_file {
         }
       }
     } else {
+      #this file is up to date
       print "Skipping upto date $file_fullpath\n";
     }
   }
