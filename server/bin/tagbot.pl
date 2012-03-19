@@ -75,7 +75,7 @@ sub _message_to_tag_hash {
 			#*move to config file
 			$message -> MessageBody() =~ /^(v1)\|((?:fb|tw)(?:\w+))\|((?:fb|tw|wp)(?:\w+))$/;
 			$tag->{from} = $2; $tag->{to} = $3; $tag->{timestamp} = $message -> {Attribute} -> {Value};
-			$tag->{tag_value} = $config -> {'default.tag_value'};
+			$tag->{tag_value} = $config -> {'tag_value'};
 		} else {
 			die("Unsupported message version for ReceiptHandle" . $message->ReceiptHandle());
 		}
@@ -100,23 +100,23 @@ sub main {
 
 	Config::Simple -> import_from($config_file, $config) || die 'cannot find config file.';
 
-	die("No queue_uri in config file") unless defined $config -> {'default.queue_uri'} && $config -> {'default.queue_uri'} =~ /queue\.amazonaws\.com/;
-	die("No score_domain_name in config file") unless defined $config -> {'default.score_domain_name'} &&  $config -> {'default.score_domain_name'} =~ /\w+/;
-	die("No tag_value in config file") unless defined $config -> {'default.tag_value'} && $config -> {'default.tag_value'} > 0;
-	die("No single_message_timeout in config file") unless defined $config -> {'default.single_message_timeout'} && $config -> {'default.single_message_timeout'} > 0;
+	die("No queue_uri in config file") unless defined $config -> {'queue_uri'} && $config -> {'queue_uri'} =~ /queue\.amazonaws\.com/;
+	die("No score_domain_name in config file") unless defined $config -> {'score_domain_name'} &&  $config -> {'score_domain_name'} =~ /\w+/;
+	die("No tag_value in config file") unless defined $config -> {'tag_value'} && $config -> {'tag_value'} > 0;
+	die("No single_message_timeout in config file") unless defined $config -> {'single_message_timeout'} && $config -> {'single_message_timeout'} > 0;
 
 	# ==========================================================================
 	# AWS SQS info
 	# ==========================================================================
-	my $aws_access_key = $config -> {'default.aws_access_key'}; # Your AWS Access Key ID
-	my $aws_secret_key = $config -> {'default.aws_secret_key'}; # Your AWS Secret Key
-	my $queue_uri      = $config -> {'default.queue_uri'}; # public queue uri
+	my $aws_access_key = $config -> {'aws_access_key'}; # Your AWS Access Key ID
+	my $aws_secret_key = $config -> {'aws_secret_key'}; # Your AWS Secret Key
+	my $queue_uri      = $config -> {'queue_uri'}; # public queue uri
 
 	# =====
 	#*These should go to GetOpt::Long and default config
 	# =====
-	my $message_number = $config -> {'default.message_number'} || 1; #how much messages to get on a single request
-	#*$config -> {'default.single_message_timeout'} should be configurable, change required from config file
+	my $message_number = $config -> {'message_number'} || 1; #how much messages to get on a single request
+	#*$config -> {'single_message_timeout'} should be configurable, change required from config file
 
 	# ==========================================================================
 	# Get SimpleDB handler
@@ -127,8 +127,8 @@ sub main {
 	# Get message from SQS
 	# ==========================================================================
 	# Define visibility timeout according to number of messages + a maximum of one extra message timeout
-	my $visibility_timeout = $message_number * $config -> {'default.single_message_timeout'} + int(rand($config -> {'default.single_message_timeout'}));
-	my $score_domain_name  = $config -> {'default.score_domain_name'};
+	my $visibility_timeout = $message_number * $config -> {'single_message_timeout'} + int(rand($config -> {'single_message_timeout'}));
+	my $score_domain_name  = $config -> {'score_domain_name'};
 
 	my $queue = _get_queue( $aws_access_key, $aws_secret_key, $queue_uri ) || die 'Error getting queue';
 

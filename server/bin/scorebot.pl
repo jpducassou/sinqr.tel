@@ -70,11 +70,11 @@ sub main {
 	# ==========================================================================
 	# AWS SQS info
 	# ==========================================================================
-	my $aws_access_key = $config -> {'default.aws_access_key'}; # Your AWS Access Key ID
-	my $aws_secret_key = $config -> {'default.aws_secret_key'}; # Your AWS Secret Key
+	my $aws_access_key = $config -> {'aws_access_key'}; # Your AWS Access Key ID
+	my $aws_secret_key = $config -> {'aws_secret_key'}; # Your AWS Secret Key
 
-	my $sdb_domain_name    = $config -> {'default.sdb_domain_name'};
-	my $sdb_retrieve_limit = $config -> {'default.sdb_retrieve_limit'};
+	my $sdb_domain_name    = $config -> {'sdb_domain_name'};
+	my $sdb_retrieve_limit = $config -> {'sdb_retrieve_limit'};
 
 	# ==========================================================================
 	# Get Simpledb handler
@@ -85,16 +85,16 @@ sub main {
 	# Set up Amazon
 	# ==========================================================================
 	my $s3 = Amazon::S3 -> new({
-		aws_access_key_id     => $config -> {'default.aws_access_key'},
-		aws_secret_access_key => $config -> {'default.aws_secret_key'},
+		aws_access_key_id     => $config -> {'aws_access_key'},
+		aws_secret_access_key => $config -> {'aws_secret_key'},
 		secure                => $config -> {'secure'},
 	});
 
 	# ==========================================================================
 	# Select bucket
 	# ==========================================================================
-	my $bucket = $s3 -> bucket( $config -> {'default.score_online_bucket'} );
-	my $score_online_base_uri = $config -> {'default.score_online_base_uri'};
+	my $bucket = $s3 -> bucket( $config -> {'score_online_bucket'} );
+	my $score_online_base_uri = $config -> {'score_online_base_uri'};
 
 	# ==========================================================================
 	# Get dirty record
@@ -110,7 +110,7 @@ sub main {
 		my $old_timestamp = $item_hash -> {'timestamp'} || next; # do not consider items without timestamp
 
 		# Update simpledb as no _dirty - if it fails, it means someone is updating
-		put_attributes_conditional($sdb, $sdb_domain_name, $item_name, { _dirty => 0 }, $old_timestamp) || next;
+		# put_attributes_conditional($sdb, $sdb_domain_name, $item_name, { _dirty => 0 }, $old_timestamp) || next;
 
 		# Clean "hidden" fields
 		foreach my $key (keys %$item_hash) {
@@ -122,7 +122,7 @@ sub main {
 		my $utf8_encoded_json_text = encode_json($item_hash);
 
 		warn 'Subiendo a: ' .
-			$config -> {'default.score_online_bucket'} . '.' .
+			$config -> {'score_online_bucket'} . '.' .
 			$s3 -> host . '/' .
 			$score_online_base_uri . $item_name . '.json';
 
@@ -130,7 +130,7 @@ sub main {
 			$score_online_base_uri . $item_name . '.json',
 			$utf8_encoded_json_text , {
 				content_type        => 'application/json',
-				acl_short           => $config -> {'default.score_acl'},
+				acl_short           => $config -> {'score_acl'},
 			})
 		) {
 			print "Uploaded with no errors\n";
