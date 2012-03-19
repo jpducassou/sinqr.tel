@@ -24,7 +24,10 @@ my $mustend = 0;
 
 sub _catch_sig {
 	my $signame = shift;
-	$mustend = 1;
+	
+	if ( $signame eq 'INT' || $signame eq 'TERM' ) {
+		$mustend = 1;
+	}
 }
 
 # ==============================================================================
@@ -143,8 +146,7 @@ sub main {
 	#*These should go to GetOpt::Long and default config
 	# =====
 	my $message_number = $config -> {'message_number'} || 1; # how many messages to get on a single request
-	#*$config -> {'single_message_timeout'} should be configurable, change required from config file
-
+	
 	# ==========================================================================
 	# Get SimpleDB handler
 	# ==========================================================================
@@ -210,6 +212,9 @@ sub main {
 					}
 				} until ( $stored_correctly_on_sdb );
 			}
+		} else {
+			# sleep for a couple of secs when we get out of messages
+			sleep $config -> {'sleep_no_messages'}
 		}
 	}
 
