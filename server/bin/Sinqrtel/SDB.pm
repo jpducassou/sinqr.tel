@@ -19,7 +19,7 @@ require Exporter;
 use vars qw($VERSION @ISA @EXPORT);
 
 @ISA = qw(Exporter);
-@EXPORT = qw(get_attributes put_attributes_conditional);
+@EXPORT = qw(get_attributes put_attributes_conditional select_attributes);
 
 
 # ============================================================================
@@ -82,6 +82,30 @@ sub put_attributes_conditional {
 	return $response;
 }
 
+sub select_attributes {
+  my ($sdb, $select_expression, $next_token) = @_;
+
+	my $response;
+
+	eval {
+		$response = $sdb -> select({
+			SelectExpression                        => $select_expression,
+			($next_token        ? (NextToken        => $next_token)          : ()),
+		});
+		1;
+	} or do {
+		die $@ -> getMessage();
+	};
+
+	my $item_list = $response -> getSelectResult -> getItem;
+
+	my @result = map { [ $_ -> getName, _attributes_to_hash($_ -> getAttribute)  ]  } @$item_list;
+	return \@result;
+
+}
+
+# ============================================================================
+
 sub _hash_to_attributes {
   my ($values, $condition_name, $condition_value) = @_;
 
@@ -97,6 +121,18 @@ sub _hash_to_attributes {
     };
   }
   return \@attributes;
+}
+
+sub _attributes_to_hash {
+
+  my $attribute_list = shift;
+
+	my $attributes;
+	$attributes -> { $_ -> getName } = $_ -> getValue
+    for @$attribute_list;
+
+	return $attributes;
+
 }
 
 # ============================================================================

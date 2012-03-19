@@ -137,7 +137,7 @@ sub main {
 	# ==========================================================================
 	my $aws_access_key = $config -> {'aws_access_key'}; # Your AWS Access Key ID
 	my $aws_secret_key = $config -> {'aws_secret_key'}; # Your AWS Secret Key
-	my $queue_uri      = $config -> {'queue_uri'}; # public queue uri
+	my $queue_uri      = $config -> {'queue_uri'};      # public queue uri
 
 	# =====
 	#*These should go to GetOpt::Long and default config

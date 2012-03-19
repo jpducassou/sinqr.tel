@@ -18,44 +18,9 @@ use Amazon::S3;
 use Sinqrtel::SDB;
 
 # ============================================================================
-sub _attributes_to_hash {
-
-  my $attribute_list = shift;
-
-	my $attributes;
-	$attributes -> { $_ -> getName } = $_ -> getValue
-    for @$attribute_list;
-
-	return $attributes;
-
-}
-
-sub _select {
-  my ($sdb, $select_expression, $next_token) = @_;
-
-warn 'query ' . $select_expression;
-
-	my $response;
-
-	eval {
-		$response = $sdb -> select({
-			SelectExpression                        => $select_expression,
-			($next_token        ? (NextToken        => $next_token)          : ()),
-		});
-		1;
-	} or do {
-		die $@ -> getMessage();
-	};
-
-	my $item_list = $response -> getSelectResult -> getItem;
-
-	my @result = map { [ $_ -> getName, _attributes_to_hash($_ -> getAttribute)  ]  } @$item_list;
-	return \@result;
-
-}
-
-
+# MAIN
 # ============================================================================
+
 sub main {
 
 	# ==========================================================================
@@ -100,7 +65,7 @@ sub main {
 	# Get dirty record
 	# ==========================================================================
 	my $query = "select * from $sdb_domain_name where _dirty=\"1\""; # limit sdb_retrieve_limit";
-	my $result_list = _select($sdb, $query);
+	my $result_list = select_attributes($sdb, $query);
 
 	foreach my $item (@$result_list) {
 		warn Dumper($item);
