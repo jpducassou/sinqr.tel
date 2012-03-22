@@ -88,7 +88,7 @@ sub upload {
     } else {
       #vail on any error
       last;
-    }  
+    }
   }
   
   #on any error try to revert partial uploads
@@ -124,26 +124,43 @@ sub kmz_to_json {
   
   #go into placemarks
   foreach my $waypoint ( @{$kml->{Document}->{Folder}->{Placemark}} ) {
-    #skip waypoints that do not have a tag or end with a $
-    next if $waypoint->{visibility} eq '0';
-    #score:15\nother:C->{score=>15,other:C}
+    #skip waypoints that do not have a checkmark on Google Earth or end with a $
+    print "Processing $waypoint->{name}\n";
+    if ( $waypoint->{visibility} eq '0' || $waypoint->{name} =~ /\$$/ ) {
+      print "Skipping invisible $waypoint->{name}\n";
+      next;
+    }
+    #score:15\nother:C->{score=>15,other=>C}
     my $description = {};
     foreach my $line ( split(/\n/, $waypoint->{description} ) ) {
-      $line =~ /^\s*(\S*)\s*:\s*(\S*)\s*/;
+      next unless $line =~ /^\s*(\S*?)\s*:\s*(\S*)\s*$/;
       $description->{$1} = $2 if ( defined $2 );
     }
-   
+    
+    use Digest::SHA;
+    my $digest = Digest::SHA->new('sha1');
+    #sha1_hex( 'Client|Product|Campaign.kmz|Waypoint 1' )
+    my $unique_identifier = $config->{waypoint_prefix} . $digest->sha1_hex( $rel_identifier . $config->{rel_identifier_separator} . $waypoint->{name});
+    
     my $waypoint_data = {
+      id=>$unique_identifier,
       name=>$waypoint->{name},
       coordinates=>$waypoint->{Point}->{coordinates},
       properties=>$description,
     };
     
-    use Digest::SHA;
-    my $digest = Digest::SHA->new('sha1');
-    #sha1_hex( 'Client|Product|Campaign.kmz|Waypoint 1' )
-    my $unique_identifier = $config->{waypoint_prefix} . $digest->sha1_hex( $rel_identifier . $config->{rel_identifier_separator} . $waypoint_data->{name});
-
+    #refactor uri from properties to plain
+    if ( defined $waypoint_data->{properties}->{uri} ) {
+      $waypoint_data->{uri} = $waypoint_data->{properties}->{uri};
+      delete $waypoint_data->{properties}->{uri};
+    }
+    
+    #check we have a nice waypoint
+    warn "Waypoint name not recommended" unless $waypoint_data->{name} =~ /\w[\d\w\s]+/;
+    warn "Waypoint coordinates misformed" unless $waypoint_data->{coordinates} =~ /\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*/;
+    warn "Waypoint uri (from properties->uri) misformed" unless $waypoint_data->{uri} =~ /^\S+\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}\/\S*?$/;
+    warn "Waypoint properties->score misformed" unless $waypoint_data->{properties}->{score} =~ /^[+-]?\d+$/;
+   
     $waypoints-> { $unique_identifier } = JSON::XS->new->utf8->encode( $waypoint_data );
   }
   
@@ -161,7 +178,10 @@ sub get_kml {
   die("Broken zip file") unless $status == AZ_OK;
   my ( $kml ) = XMLin( $xml_contents,
                       NormaliseSpace => 1,
-                      KeyAttr => {'Placemark'=>undef}, #disable folding on Plaecmark->name!
+                      KeyAttr => {
+                                  'Placemark'=>undef
+                                  
+                                  }, #disable folding on Plaecmark->name!
                       #ValueAttr => {'polygon'=>'coordinates'},
                       ForceArray => ['Placemark'],
                       );
