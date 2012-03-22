@@ -5,14 +5,7 @@ use LWP::Simple;
 
 my $api_key = '';
 my $google  = WWW::Google::URLShortener->new($api_key);
-print $google->shorten_url('http://www.yahoo.com');
-
-  use WWW::Shorten::Googl;
-  use WWW::Shorten 'Googl';
-
-my $short_url = makeashorterlink('http://www.google.com');
-
-print $short_url;
+my $short_url = $google->shorten_url('http://www.yahoo.com');
 
 my $png = get($short_url . '.qr');
 

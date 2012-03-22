@@ -1,16 +1,22 @@
 use strict;
 use utf8;
 
-use XML::Simple;
-use Data::Dumper;
-use Clipboard;
-use Archive::Zip qw( :ERROR_CODES :CONSTANTS );
+# config related
 use Config::Simple;
 use Getopt::Long;
+
+# mostly traverse and kmz related
 use File::Find;
 use File::Spec;
+use Archive::Zip qw( :ERROR_CODES :CONSTANTS );
+use XML::Simple;
+
+# Amazon S3 related
 use JSON::XS;
 use Amazon::S3;
+
+# Waypoint related
+use WWW::Google::URLShortener;
 
 my $config = {};
 my $config_file = $0; $config_file =~ s/\.([^\.]+)$/\.cfg/;
@@ -29,6 +35,8 @@ print "Checking for waypoints to upload...\n";
 find( \&waypoint_file, $config->{kmz_path} );
 
 print "Done uploading waypoints\n";
+
+1;
 
 sub waypoint_file {
   my $filename = $_;
@@ -122,6 +130,8 @@ sub kmz_to_json {
     unless defined $kml->{Document} && ref $kml->{Document}->{Folder} eq 'HASH' &&
     ref $kml->{Document}->{Folder}->{Placemark} eq 'ARRAY';
   
+  #prepare to shorten some uris
+  my $googl  = WWW::Google::URLShortener->new( $config->{google_api_key} );
   #go into placemarks
   foreach my $waypoint ( @{$kml->{Document}->{Folder}->{Placemark}} ) {
     #skip waypoints that do not have a checkmark on Google Earth or end with a $
@@ -142,23 +152,20 @@ sub kmz_to_json {
     #sha1_hex( 'Client|Product|Campaign.kmz|Waypoint 1' )
     my $unique_identifier = $config->{waypoint_prefix} . $digest->sha1_hex( $rel_identifier . $config->{rel_identifier_separator} . $waypoint->{name});
     
+    #shorten something like http://www.sinqrtel.com/#wpca4545f334234d465e
+    my $waypoint_uri = $googl->shorten_url( $config->{waypoint_landing_path} . $unique_identifier );
+    
     my $waypoint_data = {
       id=>$unique_identifier,
       name=>$waypoint->{name},
+      uri=>$waypoint_uri,
       coordinates=>$waypoint->{Point}->{coordinates},
       properties=>$description,
     };
     
-    #refactor uri from properties to plain
-    if ( defined $waypoint_data->{properties}->{uri} ) {
-      $waypoint_data->{uri} = $waypoint_data->{properties}->{uri};
-      delete $waypoint_data->{properties}->{uri};
-    }
-    
     #check we have a nice waypoint
     warn "Waypoint name not recommended" unless $waypoint_data->{name} =~ /\w[\d\w\s]+/;
     warn "Waypoint coordinates misformed" unless $waypoint_data->{coordinates} =~ /\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*/;
-    warn "Waypoint uri (from properties->uri) misformed" unless $waypoint_data->{uri} =~ /^\S+\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}\/\S*?$/;
     warn "Waypoint properties->score misformed" unless $waypoint_data->{properties}->{score} =~ /^[+-]?\d+$/;
    
     $waypoints-> { $unique_identifier } = JSON::XS->new->utf8->encode( $waypoint_data );
