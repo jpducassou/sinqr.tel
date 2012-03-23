@@ -173,9 +173,9 @@ sub kmz_to_json {
     #check we have a nice waypoint
     warn "Waypoint name not recommended" unless $waypoint_data->{name} =~ /\w[\d\w\s]+/;
     warn "Waypoint coordinates misformed" unless $waypoint->{Point}->{coordinates} =~ /\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*/;
-    warn "Waypoint coordinates->lon misformed" unless $waypoint_data->{coordinates}->{lon} =~ /^[+-]?\d+$/;
-    warn "Waypoint coordinates->lat misformed" unless $waypoint_data->{coordinates}->{lat} =~ /^[+-]?\d+$/;
-    warn "Waypoint coordinates->alt misformed" unless $waypoint_data->{coordinates}->{alt} =~ /^[+-]?\d+$/;
+    warn "Waypoint coordinates->lon misformed" unless $waypoint_data->{coordinates}->{lon} =~ /^[+-]?\d+\.?\d*$/;
+    warn "Waypoint coordinates->lat misformed" unless $waypoint_data->{coordinates}->{lat} =~ /^[+-]?\d+\.?\d*$/;
+    warn "Waypoint coordinates->alt misformed" unless $waypoint_data->{coordinates}->{alt} =~ /^[+-]?\d+\.?\d*$/;
     warn "Waypoint properties->score misformed" unless $waypoint_data->{properties}->{score} =~ /^[+-]?\d+$/;
     
     #more complex checks...
