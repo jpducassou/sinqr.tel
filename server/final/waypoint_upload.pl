@@ -155,19 +155,36 @@ sub kmz_to_json {
     #shorten something like http://www.sinqrtel.com/#wpca4545f334234d465e
     my $waypoint_uri = $googl->shorten_url( $config->{waypoint_landing_path} . $unique_identifier );
     
+    #split coordinates
+    my ($waypoint_lon, $waypoint_lat, $waypoint_alt) = split(/,/, $waypoint->{Point}->{coordinates});
+    
     my $waypoint_data = {
       id=>$unique_identifier,
       name=>$waypoint->{name},
       uri=>$waypoint_uri,
-      coordinates=>$waypoint->{Point}->{coordinates},
+      coordinates=>{
+        lon=>$waypoint_lon,
+        lat=>$waypoint_lat,
+        alt=>$waypoint_alt,
+      },
       properties=>$description,
     };
     
     #check we have a nice waypoint
     warn "Waypoint name not recommended" unless $waypoint_data->{name} =~ /\w[\d\w\s]+/;
-    warn "Waypoint coordinates misformed" unless $waypoint_data->{coordinates} =~ /\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*/;
+    warn "Waypoint coordinates misformed" unless $waypoint->{Point}->{coordinates} =~ /\-?\d+\.?\d*,\-?\d+\.?\d*,\-?\d+\.?\d*/;
+    warn "Waypoint coordinates->lon misformed" unless $waypoint_data->{coordinates}->{lon} =~ /^[+-]?\d+$/;
+    warn "Waypoint coordinates->lat misformed" unless $waypoint_data->{coordinates}->{lat} =~ /^[+-]?\d+$/;
+    warn "Waypoint coordinates->alt misformed" unless $waypoint_data->{coordinates}->{alt} =~ /^[+-]?\d+$/;
     warn "Waypoint properties->score misformed" unless $waypoint_data->{properties}->{score} =~ /^[+-]?\d+$/;
-   
+    
+    #more complex checks...
+    warn "Waypoint coordinates->lon not from Uruguay..." unless $waypoint_data->{coordinates}->{lon} > $config->{waypoint_max_lon} || $waypoint_data->{coordinates}->{lon} < $config->{waypoint_min_lon};
+    warn "Waypoint coordinates->lat not from Uruguay..." unless $waypoint_data->{coordinates}->{lat} > $config->{waypoint_max_lat} || $waypoint_data->{coordinates}->{lat} < $config->{waypoint_min_lat};
+    warn "Waypoint coordinates->alt below sea level..." unless $waypoint_data->{coordinates}->{alt} < 0;
+    warn "Waypoint coordinates->alt too high..." unless $waypoint_data->{coordinates}->{alt} > $config->{coordinates_max_alt};
+    warn "Waypoint properties->score misformed" unless $waypoint_data->{properties}->{score} =~ /^\d+$/;
+    
     $waypoints-> { $unique_identifier } = JSON::XS->new->utf8->encode( $waypoint_data );
   }
   
