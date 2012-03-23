@@ -129,6 +129,8 @@ sub main {
 	my $config_file = $0; $config_file =~ s/\.([^\.]+)$/\.cfg/;
 	$logger -> logdie("No config file $config_file!") unless -f $config_file;
 	$logger -> logdie('cannot find config file.') unless Config::Simple -> import_from($config_file, $config);
+	
+	$logger -> logwarn("THIS IS A NO DELETE RUN, no messages are deleted, SCORES ARE COMPUTED!") if ( $config -> {'no_delete_run'} );
 
 	$logger -> logdie('No queue_uri in config file') unless defined $config -> {'queue_uri'} && $config -> {'queue_uri'} =~ /queue\.amazonaws\.com/;
 	$logger -> logdie('No score_domain_name in config file') unless defined $config -> {'score_domain_name'} &&  $config -> {'score_domain_name'} =~ /\w+/;
@@ -204,8 +206,8 @@ sub main {
 					$stored_correctly_on_sdb = put_attributes_conditional($sdb, $score_domain_name, $item_name, $new_score, $score -> {timestamp});
 
 					if ( $stored_correctly_on_sdb ) {
-						# Uncomment to realy delete message
-						# _delete_message( $queue, $message );
+						# set $config -> {'no_delete_run'} to false to have messages deleted
+						_delete_message( $queue, $message ) unless ( $config -> {'no_delete_run'} );
 						$logger -> info('Message stored in db and deleted from queue');
 					} else {
 						$logger -> logwarn("Retrying on $item_name do to timestamp skew");
@@ -219,7 +221,6 @@ sub main {
 	}
 
 	$logger -> info('Ending tagbot.');
-
 }
 
 # ============================================================================
