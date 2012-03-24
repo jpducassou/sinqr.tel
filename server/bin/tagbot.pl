@@ -160,6 +160,8 @@ sub main {
 	# Define visibility timeout according to number of messages + a maximum of one extra message timeout
 	my $visibility_timeout = $message_number * $config -> {'single_message_timeout'} + int(rand($config -> {'single_message_timeout'}));
 	my $score_domain_name  = $config -> {'score_domain_name'};
+	my $interactions_domain_name = $config -> {'interactions_domain_name'};
+	my $interactions_cooldown = $config -> {'interactions_cool_down'};
 
 	my $queue = _get_queue( $aws_access_key, $aws_secret_key, $queue_uri ) || $logger -> logdie('Error getting queue');
 
@@ -180,39 +182,55 @@ sub main {
 
 				my $tag = _message_to_tag_hash( $message, $config );
 				my $item_name = $tag -> {from};
+				my $interaction_item_name = $tag -> {from} . '|' . $tag -> {to};
 
 				my $stored_correctly_on_sdb = 0;
-				do {
-					my $score = get_attributes( $sdb, $score_domain_name, $item_name );
-					# keep old time stamp for conditional put (could be undef and must be checked)
-
-					$logger -> debug(Dumper( $score ));
-
-					# Initialize for non existent users, avoid warnings
-					$score -> {score} = 0 unless defined $score -> {score};
-					$score -> {timestamp} = 0 unless defined $score -> {timestamp};
-
-					# Create attributes to replace
-					my $new_score = {
-						# add tag value to score
-						'score'	=> $score -> {score} + $tag -> {tag_value},
-						# add tag value to score
-						'timestamp'	=> $tag -> {timestamp},
-						# mark as dirty
-						_dirty => 1,
-					};
-
-					# Update score to simpledb
-					$stored_correctly_on_sdb = put_attributes_conditional($sdb, $score_domain_name, $item_name, $new_score, $score -> {timestamp});
-
-					if ( $stored_correctly_on_sdb ) {
-						# set $config -> {'no_delete_run'} to false to have messages deleted
-						_delete_message( $queue, $message ) unless ( $config -> {'no_delete_run'} );
-						$logger -> info('Message stored in db and deleted from queue');
-					} else {
-						$logger -> logwarn("Retrying on $item_name do to timestamp skew");
-					}
-				} until ( $stored_correctly_on_sdb );
+				
+				my $last_interaction = get_attributes( $sdb, $interactions_domain_name, $interaction_item_name );
+				
+				if ( defined $last_interaction -> {timestamp} && $tag -> {timestamp} <= $last_interaction -> {timestamp} + $config -> {interactions_cool_down} ) {
+					do {
+						my $score = get_attributes( $sdb, $score_domain_name, $item_name );
+						# keep old time stamp for conditional put (could be undef and must be checked)
+	
+						$logger -> debug(Dumper( $score ));
+	
+						# Initialize for non existent users, avoid warnings
+						$score -> {score} = 0 unless defined $score -> {score};
+						$score -> {timestamp} = 0 unless defined $score -> {timestamp};
+	
+						# Create attributes to replace
+						my $new_score = {
+							# add tag value to score
+							'score'	=> $score -> {score} + $tag -> {tag_value},
+							# add tag value to score
+							'timestamp'	=> $tag -> {timestamp},
+							# mark as dirty
+							_dirty => 1,
+						};
+	
+						# Update score to simpledb
+						$stored_correctly_on_sdb = put_attributes($sdb, $score_domain_name, $item_name, $new_score,
+																				#expect timestamp not to change from last check
+																				{
+																				 'Name' => 'timestamp',
+																				 'Value' => $score -> {timestamp},
+																				 'Exists' => 'true'
+																			 });
+	
+						if ( $stored_correctly_on_sdb ) {
+							# set $config -> {'no_delete_run'} to false to have messages deleted
+							_delete_message( $queue, $message ) unless ( $config -> {'no_delete_run'} );
+							$logger -> info('Message stored in db and deleted from queue');
+						} else {
+							$logger -> logwarn("Retrying on $item_name do to timestamp skew");
+						}
+					} until ( $stored_correctly_on_sdb );
+					#set las interaction time
+					put_attributes($sdb, $interactions_domain_name, $interaction_item_name, {timestamp=>$tag->{timestamp}});
+				} else {
+					$logger -> logwarn("Dismissed tag within cooldown period for $item_name");
+				}
 			}
 		} else {
 			# sleep for a couple of secs when we get out of messages
