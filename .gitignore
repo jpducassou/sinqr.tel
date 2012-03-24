@@ -1,10 +1,13 @@
 # Ignore the following files/folders withing this proyect:
 *.bak
 *.old
+*.ppt
+*.mpg
 
 # Komodo proyect files
 # v 5.x
 *.kpf
 # v 6.x
 *.komodoproject
+
 
