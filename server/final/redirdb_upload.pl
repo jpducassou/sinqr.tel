@@ -3,52 +3,65 @@
 use strict;
 use JSON::XS;
 use Amazon::S3;
+use Config::Simple;
+use IO::File;
 
-#configuracion
-my $min_keys = 3; #minimo de claves en hash para considerar que está ok
-my $access_key = 'AKIAIC2DBRTIUKHMGASQ'; # AWS Access Key ID
-my $secret_key = '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'; # AWS Secret Key
-#no tan configuracion
-my $redir_online_bucket = 'www.sinqrtel.com';
-my $redir_online_uri = 'redir.json';
-my $redir_acl = '';
+#calculate config file name
+my $config = {}; #must be empty hash for Config::Simple
+my $config_file = $0; $config_file =~ s/\.([^\.]+)$/\.cfg/;
+die("No config file $config_file!") unless -f $config_file;
 
-#realmente no es configuracion
-my $redir_content_type = 'application/json';
+#read config file
+Config::Simple->import_from( $config_file, $config);
+die("No redir database at " . $config->{redirdb_file}) unless -f $config->{redirdb_file};
 
 my %redirs;
 
-open( REDIRDB, '..\dbs\redirdb.txt');
+#read file to hash
+#*could be better, stream to file line by line and use S3 add_key_file which also streams
+my $redirdb = IO::File->new( $config->{redirdb_file}, q{<} ); #open redirdb for red
 
-while ( <REDIRDB> ) {
+while ( <$redirdb> ) {
   if ( $_ =~ /^(#\w+)\s+(.+)$/ ) {
+    #warn on repeated redirs, use last definition
     print "Repeated: $1!\n" if ( defined $redirs{$1} );
     $redirs{$1} = $2;
   }
 }
 
-close( REDIRDB );
+$redirdb->close;
 
+#account for available keys
 print 'Got ' . scalar keys ( %redirs ) . ' redirs' . "\n";
 
 my $utf8_encoded_json_text = encode_json \%redirs;
 
-if ( scalar keys ( %redirs ) >= $min_keys ) {
+#check if we have a reasonable number of keys
+if ( scalar keys ( %redirs ) >= $config->{min_keys} ) {
   print 'Uploading to S3...' . "\n";
 
+  #set up Amazon
   my $s3 = Amazon::S3->new( {
-        aws_access_key_id     => $access_key,
-        aws_secret_access_key => $secret_key,
-        secure                => 0,
+        aws_access_key_id     => $config->{access_key},
+        aws_secret_access_key => $config->{secret_key},
+        secure                => $config->{secure},
       }
   );
 
-  my $bucket = $s3->bucket( $redir_online_bucket );
+  #select bucket
+  my $bucket = $s3->bucket( $config->{redir_online_bucket} );
 
-  $bucket->add_key(
-      $redir_online_uri, $utf8_encoded_json_text , {
-        content_type        => $redir_content_type,
-        acl_short           => 'public-read',
-      }
-  );
+  #create file with redirs as JSON map
+  if ( $bucket->add_key(
+      $config->{redir_online_uri}, $utf8_encoded_json_text , {
+        content_type        => $config->{redir_content_type},
+        acl_short           => $config->{redir_acl},
+      })
+    ) {
+    print "Uploaded with no errors\n";
+  } else {
+    print "ERROR UPLOADING!!!\n";
+  }
+} else {
+  print "ERROR, NOT ENOUGH KEYS. CHECK FILE\n"
 }

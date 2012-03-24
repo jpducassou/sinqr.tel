@@ -1,16 +1,42 @@
 <html>
 <head>
 <title>JS Tests</title>
+<script type="text/javascript" src="https://www.google.com/jsapi?key=ABQIAAAAGbCP7xAnDeaBWr-NDrNqXBQmMOc3nLjHthTa4EGe0lmmw0PRdxREC4FbLwhuQ0MKiSEZhZaqWLSXNA"></script>
+<script type="text/javascript" src="../library/sqrt_basics.js"></script>
 </head>
 <body>
-  <script>
+  <h1>Tests!</h1>
+  <script type="text/javascript">
+  google.load("jquery","1.7.0");
+  </script>
+  <script type="text/javascript">
     var arr = new Array();
     arr=arr.concat("Sample text put".match(/\w+/g));
     alert( arr );
 var parents = ["Jani", "Tove"];
 var children = ["Cecilie", "Lone"];
 var family = parents.concat(children);
-document.write(family);
+document.write( family + "<BR>");
+document.write( window.location.pathname + "<BR>");
+//document.write( window.location.hash + "<BR>");
+//window.location.hash = "#" + "Nelson!";
+document.write( window.location.hash + "<BR>");
+var score = new Array;
+if ( window.location.hash == "#resetScore" ) {
+  score = [ [1330701794, 10], [1330700794,10], [1330700790,5] ];
+  sqrt_addLocalScore( score, 6, 1330700000 );
+} elsif {
+  score = localStorage.getObject( 'score' );
+  if ( score == undefined ) {
+    score = [ [1330701794, 10], [1330700794,10], [1330700790,5], [1330700000,6] ];
+  }
+}
+document.write( "unsort: " + JSON.stringify(score) + "<BR>");
+document.writeln( "sort: " + JSON.stringify(score.sort(sortTimeStamps)) + "<BR>");
 
-  </script>
+document.writeln( sqrt_getTimeStamp() + "<BR>");
+document.writeln( "Sum:" + sqrt_sumAndUpdateScoresToTimeStamp( score, 1330700794 ) )
+sqrt_storeScore( score );
+
+</script>
 </body>
