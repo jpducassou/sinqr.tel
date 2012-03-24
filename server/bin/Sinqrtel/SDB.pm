@@ -6,7 +6,7 @@ package Sinqrtel::SDB;
 # ============================================================================
 use strict;
 use warnings;
-use Carp;
+use Carp qw( croak );
 
 # ============================================================================
 use Data::Dumper;
@@ -19,7 +19,7 @@ require Exporter;
 use vars qw($VERSION @ISA @EXPORT);
 
 @ISA = qw(Exporter);
-@EXPORT = qw(get_attributes put_attributes_conditional select_attributes);
+@EXPORT = qw(get_attributes put_attributes select_attributes);
 
 
 # ============================================================================
@@ -48,9 +48,9 @@ sub get_attributes {
 	if ($ex) {
 		require Amazon::SimpleDB::Exception;
 		if (ref $ex eq "Amazon::SimpleDB::Exception") {
-			croack $@;
+			croak $@;
 		} else {
-			croack $@;
+			croak $@;
 		}
 	}
 
@@ -76,7 +76,6 @@ sub put_attributes {
 	warn Dumper( $request );
 
 	my $response = 1;
-	my $condition_failed = 0;
 	eval {
 		$sdb -> putAttributes( $request );
 	};
@@ -88,18 +87,17 @@ sub put_attributes {
 			if ($ex->{_errorCode} eq 'ConditionalCheckFailed') {
 				#just in case we check for more states in the future
 				$response = 0;
-				$condition_failed = 1;
 			} else {
-				#unknown error, we are unworthy of this cpu time
-				croack $@;
+				#unknown exception type, this is shamefull...
+				croak $@;
 			}
 		} else {
-			#unknown exception type, this is really bad...
-			croack $@;
+			#unknown error, we are unworthy of this cpu time
+			croak $@;
 		}
 	}
 
-	return ( $response, $condition_failed );
+	return $response;
 }
 
 sub select_attributes {

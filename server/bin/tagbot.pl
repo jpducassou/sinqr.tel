@@ -187,8 +187,11 @@ sub main {
 				my $stored_correctly_on_sdb = 0;
 				
 				my $last_interaction = get_attributes( $sdb, $interactions_domain_name, $interaction_item_name );
+				# create a timestamp when missing to avoid undefined values
+				$last_interaction -> {timestamp} = $last_interaction -> {timestamp} || 0;
 				
-				if ( defined $last_interaction -> {timestamp} && $tag -> {timestamp} <= $last_interaction -> {timestamp} + $config -> {interactions_cool_down} ) {
+				# add points if tag not within cool down period
+				if ( $tag -> {timestamp} >= $last_interaction -> {timestamp} + $config -> {interactions_cool_down} ) {
 					do {
 						my $score = get_attributes( $sdb, $score_domain_name, $item_name );
 						# keep old time stamp for conditional put (could be undef and must be checked)
@@ -196,8 +199,9 @@ sub main {
 						$logger -> debug(Dumper( $score ));
 	
 						# Initialize for non existent users, avoid warnings
-						$score -> {score} = 0 unless defined $score -> {score};
-						$score -> {timestamp} = 0 unless defined $score -> {timestamp};
+						$score -> {score} = $score -> {score} || 0;
+						# this makes code very readable...
+						my $returning_user = defined $score -> {timestamp}; 
 	
 						# Create attributes to replace
 						my $new_score = {
@@ -209,14 +213,15 @@ sub main {
 							_dirty => 1,
 						};
 	
-						# Update score to simpledb
-						$stored_correctly_on_sdb = put_attributes($sdb, $score_domain_name, $item_name, $new_score,
-																				#expect timestamp not to change from last check
-																				{
-																				 'Name' => 'timestamp',
-																				 'Value' => $score -> {timestamp},
-																				 'Exists' => 'true'
-																			 });
+						# default to new users...
+						my $expected = { 'Name' => 'timestamp', 'Exists' => 0 };
+						# expect timestamp not to change from last check if returning
+						if ( $returning_user) {
+							$expected = { 'Name' => 'timestamp', 'Value' => $score -> {timestamp}, 'Exists' => 1 }
+						}
+						
+						# Update score to simpledb conditionally for existing users
+						$stored_correctly_on_sdb = put_attributes($sdb, $score_domain_name, $item_name, $new_score, $expected );
 	
 						if ( $stored_correctly_on_sdb ) {
 							# set $config -> {'no_delete_run'} to false to have messages deleted
@@ -226,10 +231,11 @@ sub main {
 							$logger -> logwarn("Retrying on $item_name do to timestamp skew");
 						}
 					} until ( $stored_correctly_on_sdb );
-					#set las interaction time
+					#set last interaction time
 					put_attributes($sdb, $interactions_domain_name, $interaction_item_name, {timestamp=>$tag->{timestamp}});
 				} else {
-					$logger -> logwarn("Dismissed tag within cooldown period for $item_name");
+					_delete_message( $queue, $message ) unless ( $config -> {'no_delete_run'} );
+					$logger -> logwarn("Dismissed tag within cool down period for $item_name");
 				}
 			}
 		} else {
