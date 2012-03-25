@@ -24,7 +24,7 @@ my $mustend = 0;
 
 sub _catch_sig {
 	my $signame = shift;
-	
+
 	if ( $signame eq 'INT' || $signame eq 'TERM' ) {
 		$mustend = 1;
 	}
@@ -47,6 +47,8 @@ sub _get_queue {
 sub _get_messages {
 	my ($queue, $number_of_messages, $visibility_timeout) = @_;
 
+	my $logger = Log::Log4perl -> get_logger();
+
 	# Retrieve messages
 	my @messages = $queue -> ReceiveMessage(
 		'AttributeName.1'     => 'SentTimestamp' ,
@@ -58,7 +60,7 @@ sub _get_messages {
 		# check final array format for XML::Simple convertion problems...
 		foreach my $message ( @messages ) {
 			# die on unknown message formats
-			die("SQS unexpected message format") unless
+			$logger -> logdie("SQS unexpected message format") unless
 				defined $message -> MessageBody() &&
 				defined $message -> {Attribute} -> {Name} &&
 				$message -> {Attribute} -> {Name} eq 'SentTimestamp' &&
@@ -88,10 +90,10 @@ sub _message_to_tag_hash {
 		if ( $version == 1 ) {
 			#*move to config file
 			$message -> MessageBody() =~ /^(v1)\|((?:fb|tw)(?:\w+))\|((?:fb|tw|wp)(?:\w+))$/;
-			$tag->{from} = $2; $tag->{to} = $3; $tag->{timestamp} = $message -> {Attribute} -> {Value};
-			$tag->{tag_value} = $config -> {'tag_value'};
+			$tag -> {from} = $2; $tag -> {to} = $3; $tag -> {timestamp} = $message -> {Attribute} -> {Value};
+			$tag -> {tag_value} = $config -> {'tag_value'};
 		} else {
-			die("Unsupported message version for ReceiptHandle" . $message->ReceiptHandle());
+			die("Unsupported message version for ReceiptHandle" . $message -> ReceiptHandle());
 		}
 	} else {
 		die("Message format unspected, no version info")
@@ -146,7 +148,7 @@ sub main {
 	#*These should go to GetOpt::Long and default config
 	# =====
 	my $message_number = $config -> {'message_number'} || 1; # how many messages to get on a single request
-	
+
 	# ==========================================================================
 	# Get SimpleDB handler
 	# ==========================================================================
