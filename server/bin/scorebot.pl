@@ -94,7 +94,12 @@ sub main {
 	# ==========================================================================
 	# Query for dirty records
 	# ==========================================================================
-	my $query = "select * from $sdb_domain_name where _dirty=\"1\""; # limit sdb_retrieve_limit";
+	my $query;
+	if ( $config -> {'force_full_update'} ) {
+		$query = "select * from $sdb_domain_name where _dirty=\"1\""; # limit sdb_retrieve_limit";
+	} else {
+		$query = "select * from $sdb_domain_name"; # limit sdb_retrieve_limit";	
+	}
 	$logger -> debug('Using: ' . $query);
 
 	# ==========================================================================
@@ -114,6 +119,7 @@ sub main {
 			unless ( $config -> {'no_delete_run'} ) {
 				put_attributes($sdb, $sdb_domain_name, $item_name,
 					{ _dirty => 0 }, { 'Name' => 'timestamp', 'Value' => $old_timestamp, 'Exists' => 1 });
+				# just skip if someone else changed it...
 				next;
 			}
 
