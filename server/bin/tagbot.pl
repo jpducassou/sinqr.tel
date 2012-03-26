@@ -20,6 +20,7 @@ use Sinqrtel::SDB;
 
 # ============================================================================
 # Smooth termination
+# ============================================================================
 my $mustend = 0;
 
 sub _catch_sig {
@@ -30,8 +31,7 @@ sub _catch_sig {
 	}
 }
 
-# ==============================================================================
-
+# ============================================================================
 sub _get_queue {
 	my ($aws_access_key, $aws_secret_key, $queue_uri) = @_;
 
@@ -131,7 +131,7 @@ sub main {
 	my $config_file = $0; $config_file =~ s/\.([^\.]+)$/\.cfg/;
 	$logger -> logdie("No config file $config_file!") unless -f $config_file;
 	$logger -> logdie('cannot find config file.') unless Config::Simple -> import_from($config_file, $config);
-	
+
 	$logger -> logwarn("THIS IS A NO DELETE RUN, no messages are deleted, SCORES ARE COMPUTED!") if ( $config -> {'no_delete_run'} );
 
 	$logger -> logdie('No queue_uri in config file') unless defined $config -> {'queue_uri'} && $config -> {'queue_uri'} =~ /queue\.amazonaws\.com/;
@@ -187,24 +187,24 @@ sub main {
 				my $interaction_item_name = $tag -> {from} . '|' . $tag -> {to};
 
 				my $stored_correctly_on_sdb = 0;
-				
+
 				my $last_interaction = get_attributes( $sdb, $interactions_domain_name, $interaction_item_name );
 				# create a timestamp when missing to avoid undefined values
 				$last_interaction -> {timestamp} = $last_interaction -> {timestamp} || 0;
-				
+
 				# add points if tag not within cool down period
 				if ( $tag -> {timestamp} >= $last_interaction -> {timestamp} + $config -> {interactions_cool_down} ) {
 					do {
 						my $score = get_attributes( $sdb, $score_domain_name, $item_name );
 						# keep old time stamp for conditional put (could be undef and must be checked)
-	
+
 						$logger -> debug(Dumper( $score ));
-	
+
 						# Initialize for non existent users, avoid warnings
 						$score -> {score} = $score -> {score} || 0;
 						# this makes code very readable...
-						my $returning_user = defined $score -> {timestamp}; 
-	
+						my $returning_user = defined $score -> {timestamp};
+
 						# Create attributes to replace
 						my $new_score = {
 							# add tag value to score
@@ -214,17 +214,17 @@ sub main {
 							# mark as dirty
 							_dirty => 1,
 						};
-	
+
 						# default to new users...
 						my $expected = { 'Name' => 'timestamp', 'Exists' => 0 };
 						# expect timestamp not to change from last check if returning
 						if ( $returning_user) {
 							$expected = { 'Name' => 'timestamp', 'Value' => $score -> {timestamp}, 'Exists' => 1 }
 						}
-						
+
 						# Update score to simpledb conditionally for existing users
 						$stored_correctly_on_sdb = put_attributes($sdb, $score_domain_name, $item_name, $new_score, $expected );
-	
+
 						if ( $stored_correctly_on_sdb ) {
 							# set $config -> {'no_delete_run'} to false to have messages deleted
 							_delete_message( $queue, $message ) unless ( $config -> {'no_delete_run'} );
@@ -242,7 +242,7 @@ sub main {
 			}
 		} else {
 			# sleep for a couple of secs when we get out of messages
-			sleep $config -> {'sleep_no_messages'}
+			sleep($config -> {'sleep_no_messages'} || 10);
 		}
 	}
 

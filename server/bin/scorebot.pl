@@ -7,6 +7,7 @@ use warnings;
 # ============================================================================
 use Config::Simple;
 use Getopt::Long;
+use Log::Log4perl qw/:easy/;
 use Data::Dumper;
 
 # ============================================================================
@@ -18,10 +19,38 @@ use Amazon::S3;
 use Sinqrtel::SDB;
 
 # ============================================================================
+# Smooth termination
+# ============================================================================
+my $mustend = 0;
+
+sub _catch_sig {
+	my $signame = shift;
+
+	if ( $signame eq 'INT' || $signame eq 'TERM' ) {
+		$mustend = 1;
+	}
+}
+
+# ============================================================================
 # MAIN
 # ============================================================================
-
 sub main {
+
+	# ==========================================================================
+	# Register handler for the SIGINT & SIGTERM signal:
+	# ==========================================================================
+	$SIG{INT}  = \&_catch_sig;
+	$SIG{TERM} = \&_catch_sig;
+
+	# ==========================================================================
+	# Get logger
+	# ==========================================================================
+	Log::Log4perl -> easy_init({
+		level => $INFO,
+		layout => '[%d] [%p] %F, line %L: %m%n',
+	});
+	my $logger = Log::Log4perl -> get_logger();
+	$logger -> info('Starting scorebot.');
 
 	# ==========================================================================
 	# Get config
@@ -62,48 +91,60 @@ sub main {
 	my $score_online_base_uri = $config -> {'score_online_base_uri'};
 
 	# ==========================================================================
-	# Get dirty record
+	# Query for dirty records
 	# ==========================================================================
 	my $query = "select * from $sdb_domain_name where _dirty=\"1\""; # limit sdb_retrieve_limit";
-	my $result_list = select_attributes($sdb, $query);
+	$logger -> debug('Using: ' . $query);
 
-	foreach my $item (@$result_list) {
-		warn Dumper($item);
+	# ==========================================================================
+	# Get dirty record
+	# ==========================================================================
+	while(!$mustend) {
+		my $result_list = select_attributes($sdb, $query);
 
-		my $item_name = $item -> [0];
-		my $item_hash = $item -> [1];
-		my $old_timestamp = $item_hash -> {'timestamp'} || next; # do not consider items without timestamp
+		foreach my $item (@$result_list) {
+			# warn Dumper($item);
 
-		# Update simpledb as no _dirty - if it fails, it means someone is updating
-		# put_attributes_conditional($sdb, $sdb_domain_name, $item_name, { _dirty => 0 }, $old_timestamp) || next;
+			my $item_name = $item -> [0];
+			my $item_hash = $item -> [1];
+			my $old_timestamp = $item_hash -> {'timestamp'} || next; # do not consider items without timestamp
 
-		# Clean "hidden" fields
-		foreach my $key (keys %$item_hash) {
-			delete $item_hash -> {$key} if ($key =~ /^_/);
+			# Update simpledb as no _dirty - if it fails, it means someone is updating
+			# put_attributes_conditional($sdb, $sdb_domain_name, $item_name, { _dirty => 0 }, $old_timestamp) || next;
+
+			# Clean "hidden" fields
+			foreach my $key (keys %$item_hash) {
+				delete $item_hash -> {$key} if ($key =~ /^_/);
+			}
+
+			# Update S3
+			my $utf8_encoded_json_text = encode_json($item_hash);
+
+			my $uri = $score_online_base_uri . $item_name . '.json';
+
+			# full path would be $config -> {'score_online_bucket'} . '.' . $s3 -> host . '/' .	$uri
+			$logger -> info("Uploading '$uri'");
+
+			if ( $bucket -> add_key(
+				$uri,
+				$utf8_encoded_json_text , {
+					content_type        => 'application/json',
+					acl_short           => $config -> {'score_acl'},
+				})
+			) {
+				$logger -> info("Uploaded '$uri' with no errors");
+			} else {
+				$logger -> error("Error uploading '$uri'");
+			}
+
 		}
-		warn Dumper($item_hash);
 
-		# Update S3
-		my $utf8_encoded_json_text = encode_json($item_hash);
-
-		warn 'Subiendo a: ' .
-			$config -> {'score_online_bucket'} . '.' .
-			$s3 -> host . '/' .
-			$score_online_base_uri . $item_name . '.json';
-
-		if ( $bucket -> add_key(
-			$score_online_base_uri . $item_name . '.json',
-			$utf8_encoded_json_text , {
-				content_type        => 'application/json',
-				acl_short           => $config -> {'score_acl'},
-			})
-		) {
-			print "Uploaded with no errors\n";
-		} else {
-			print "ERROR UPLOADING!!!\n";
-		}
+		# sleep for a couple of secs when we get out of messages
+		sleep($config -> {'sleep_no_messages'} || 10);
 
 	}
+
+	$logger -> info('Ending scorebot.');
 
 }
 
