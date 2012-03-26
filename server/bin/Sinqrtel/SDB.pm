@@ -7,6 +7,7 @@ package Sinqrtel::SDB;
 use strict;
 use warnings;
 use Carp qw( croak );
+use Log::Log4perl qw/:easy/;
 
 # ============================================================================
 use Data::Dumper;
@@ -25,6 +26,8 @@ use vars qw($VERSION @ISA @EXPORT);
 # ============================================================================
 sub get_attributes {
   my ($sdb, $domain_name, $item_name) = @_;
+
+	my $logger = Log::Log4perl -> get_logger();
 	my $attributes;
 
 	eval {
@@ -32,25 +35,25 @@ sub get_attributes {
 			DomainName => $domain_name,
 			ItemName   => $item_name,
 		});
-		
+
 		my $attribute_list;
-		
+
 		if ( defined $response ) {
 			$attribute_list = $response -> getGetAttributesResult -> getAttribute;
 		}
-	
+
 		if ( ref $attribute_list eq 'ARRAY' ) {
 			$attributes -> { $_ -> getName } = $_ -> getValue for @$attribute_list;
 		}
 	};
-	#get exceptions
+	# Get the exceptions
 	my $ex = $@;
 	if ($ex) {
 		require Amazon::SimpleDB::Exception;
 		if (ref $ex eq "Amazon::SimpleDB::Exception") {
-			croak $@;
+			$logger -> logcarp($@);
 		} else {
-			croak $@;
+			$logger -> logcarp($@);
 		}
 	}
 
@@ -60,6 +63,7 @@ sub get_attributes {
 sub put_attributes {
   my ($sdb, $domain_name, $item_name, $attributes, $expected) = @_;
 
+	my $logger = Log::Log4perl -> get_logger();
 	my $request_attributes = _hash_to_attributes($attributes, 'Replace', 1);
 
 	my $request = {
@@ -70,30 +74,30 @@ sub put_attributes {
 
 	#only expect timestamp for values $item_names that exist (and have a timestamp > 0)
 	if ( defined $expected ) {
-		$request->{Expected} = $expected;
+		$request -> {Expected} = $expected;
 	}
 
-	warn Dumper( $request );
+	# warn Dumper( $request );
 
 	my $response = 1;
 	eval {
 		$sdb -> putAttributes( $request );
 	};
-	#get exceptions
+	# Get the exceptions
 	my $ex = $@;
 	if ($ex) {
 		require Amazon::SimpleDB::Exception;
-		if (ref $ex eq "Amazon::SimpleDB::Exception") {
-			if ($ex->{_errorCode} eq 'ConditionalCheckFailed') {
-				#just in case we check for more states in the future
+		if (ref $ex eq 'Amazon::SimpleDB::Exception') {
+			if ($ex -> {_errorCode} eq 'ConditionalCheckFailed') {
+				# Just in case we check for more states in the future
 				$response = 0;
 			} else {
-				#unknown exception type, this is shamefull...
-				croak $@;
+				# Unknown exception type, this is shamefull...
+				$logger -> logcarp($@);
 			}
 		} else {
 			#unknown error, we are unworthy of this cpu time
-			croak $@;
+			$logger -> logcarp($@);
 		}
 	}
 
@@ -103,6 +107,7 @@ sub put_attributes {
 sub select_attributes {
   my ($sdb, $select_expression, $next_token) = @_;
 
+	my $logger = Log::Log4perl -> get_logger();
 	my $response;
 
 	eval {
@@ -112,7 +117,7 @@ sub select_attributes {
 		});
 		1;
 	} or do {
-		die $@ -> getMessage();
+		$logger -> logdie($@ -> getMessage());
 	};
 
 	my $item_list = $response -> getSelectResult -> getItem;
