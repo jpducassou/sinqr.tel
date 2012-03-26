@@ -112,8 +112,8 @@ sub main {
 
 			# Update simpledb as no _dirty - if it fails, it means someone is updating
 			unless ( $config -> {'no_delete_run'} ) {
-				put_attributes_conditional($sdb, $sdb_domain_name, $item_name,
-					{ _dirty => 0 }, $old_timestamp);
+				put_attributes($sdb, $sdb_domain_name, $item_name,
+					{ _dirty => 0 }, { 'Name' => 'timestamp', 'Value' => $old_timestamp, 'Exists' => 1 });
 				next;
 			}
 

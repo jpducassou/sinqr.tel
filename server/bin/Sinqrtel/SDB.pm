@@ -72,7 +72,7 @@ sub put_attributes {
 		Attribute  => $request_attributes,
 	};
 
-	#only expect timestamp for values $item_names that exist (and have a timestamp > 0)
+	#only expect something if we where told to)
 	if ( defined $expected ) {
 		$request -> {Expected} = $expected;
 	}
