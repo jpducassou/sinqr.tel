@@ -57,9 +57,10 @@ sub main {
 	# ==========================================================================
 	my $config = {};
 	my $config_file = $0; $config_file =~ s/\.([^\.]+)$/\.cfg/;
-	die("No config file $config_file!") unless -f $config_file;
+	$logger -> logdie("No config file $config_file!") unless -f $config_file;
+	$logger -> logdie('cannot find config file.') unless Config::Simple -> import_from($config_file, $config);
 
-	Config::Simple -> import_from($config_file, $config) || die 'cannot find config file.';
+	$logger -> logwarn("THIS IS A NO DELETE RUN, scores are not marked as clean!") if ( $config -> {'no_delete_run'} );
 
 	# ==========================================================================
 	# AWS SQS info
@@ -110,7 +111,11 @@ sub main {
 			my $old_timestamp = $item_hash -> {'timestamp'} || next; # do not consider items without timestamp
 
 			# Update simpledb as no _dirty - if it fails, it means someone is updating
-			# put_attributes_conditional($sdb, $sdb_domain_name, $item_name, { _dirty => 0 }, $old_timestamp) || next;
+			unless ( $config -> {'no_delete_run'} ) {
+				put_attributes_conditional($sdb, $sdb_domain_name, $item_name,
+					{ _dirty => 0 }, $old_timestamp);
+				next;
+			}
 
 			# Clean "hidden" fields
 			foreach my $key (keys %$item_hash) {

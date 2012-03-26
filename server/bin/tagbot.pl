@@ -234,7 +234,7 @@ sub main {
 						}
 					} until ( $stored_correctly_on_sdb );
 					#set last interaction time
-					put_attributes($sdb, $interactions_domain_name, $interaction_item_name, {timestamp=>$tag->{timestamp}});
+					put_attributes($sdb, $interactions_domain_name, $interaction_item_name, {timestamp => $tag -> {timestamp}});
 				} else {
 					_delete_message( $queue, $message ) unless ( $config -> {'no_delete_run'} );
 					$logger -> logwarn("Dismissed tag within cool down period for $item_name");
