@@ -12,7 +12,7 @@ use Data::Dumper;
 
 # ============================================================================
 use Amazon::SimpleDB::Client;
-use JSON::XS;
+use JSON;
 use Amazon::S3;
 
 # ============================================================================
@@ -94,7 +94,12 @@ sub main {
 	# ==========================================================================
 	# Query for dirty records
 	# ==========================================================================
-	my $query = "select * from $sdb_domain_name where _dirty=\"1\""; # limit sdb_retrieve_limit";
+	my $query;
+	if ( $config -> {'force_full_update'} ) {
+		$query = "select * from $sdb_domain_name where _dirty=\"1\""; # limit sdb_retrieve_limit";
+	} else {
+		$query = "select * from $sdb_domain_name"; # limit sdb_retrieve_limit";	
+	}
 	$logger -> debug('Using: ' . $query);
 
 	# ==========================================================================
@@ -112,8 +117,9 @@ sub main {
 
 			# Update simpledb as no _dirty - if it fails, it means someone is updating
 			unless ( $config -> {'no_delete_run'} ) {
-				put_attributes_conditional($sdb, $sdb_domain_name, $item_name,
-					{ _dirty => 0 }, $old_timestamp);
+				put_attributes($sdb, $sdb_domain_name, $item_name,
+					{ _dirty => 0 }, { 'Name' => 'timestamp', 'Value' => $old_timestamp, 'Exists' => 1 });
+				# just skip if someone else changed it...
 				next;
 			}
 
@@ -125,7 +131,8 @@ sub main {
 			# Update S3
 			my $utf8_encoded_json_text = encode_json($item_hash);
 
-			my $uri = $score_online_base_uri . $item_name . '.json';
+			#no .json esxtension
+			my $uri = $score_online_base_uri . $item_name;
 
 			# full path would be $config -> {'score_online_bucket'} . '.' . $s3 -> host . '/' .	$uri
 			$logger -> info("Uploading '$uri'");

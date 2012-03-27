@@ -17,6 +17,8 @@ use Amazon::SimpleDB::Client;
 
 # ============================================================================
 use Sinqrtel::SDB;
+use LWP::Simple::WithCache;
+use JSON;
 
 # ============================================================================
 # Smooth termination
@@ -77,6 +79,23 @@ sub _delete_message {
 	$queue -> DeleteMessage( $message -> ReceiptHandle() );
 }
 
+#get waypoint from S3 and return score or 0 for a gracefull fail with cached requests to save 50% bandwidth
+sub _get_wp_score {
+	my ( $waypoint_uri ) = @_;
+	my $score;
+	
+	#get waypoint data from S3
+	my $waypoint_json = LWP::Simple::WithCache->get( $waypoint_uri );
+	#fail gracefully
+	if ( defined $waypoint_json ) {
+		my $waypoint = JSON->new->utf8->decode( $waypoint_json );
+		$score = $waypoint -> {score};
+	} else {
+		$score = 0;
+	}
+	
+	return $score;
+}
 
 sub _message_to_tag_hash {
 	my ( $message, $config ) = @_;
@@ -91,7 +110,17 @@ sub _message_to_tag_hash {
 			#*move to config file
 			$message -> MessageBody() =~ /^(v1)\|((?:fb|tw)(?:\w+))\|((?:fb|tw|wp)(?:\w+))$/;
 			$tag -> {from} = $2; $tag -> {to} = $3; $tag -> {timestamp} = $message -> {Attribute} -> {Value};
-			$tag -> {tag_value} = $config -> {'tag_value'};
+			#check if we are tagging waypoints
+			if ( $tag -> {to} =~ /^wp/ ) {
+				$tag -> {tag_value} = _get_wp_score(
+											$config -> {'score_uri_protocol'} .
+											$config -> {'score_online_bucket'} . '/' .
+											$config -> {'score_online_base_uri'} .
+											$tag -> {to}
+				);
+			} else {
+				$tag -> {tag_value} = $config -> {'tag_value'};
+			}
 		} else {
 			die("Unsupported message version for ReceiptHandle" . $message -> ReceiptHandle());
 		}
