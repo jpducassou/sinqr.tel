@@ -12,7 +12,7 @@ use Data::Dumper;
 
 # ============================================================================
 use Amazon::SimpleDB::Client;
-use JSON::XS;
+use JSON;
 use Amazon::S3;
 
 # ============================================================================
@@ -131,7 +131,8 @@ sub main {
 			# Update S3
 			my $utf8_encoded_json_text = encode_json($item_hash);
 
-			my $uri = $score_online_base_uri . $item_name . '.json';
+			#no .json esxtension
+			my $uri = $score_online_base_uri . $item_name;
 
 			# full path would be $config -> {'score_online_bucket'} . '.' . $s3 -> host . '/' .	$uri
 			$logger -> info("Uploading '$uri'");
