@@ -17,8 +17,8 @@ use Amazon::SimpleDB::Client;
 
 # ============================================================================
 use Sinqrtel::SDB;
-use LWP::Simple::WithCache;
 use JSON;
+use LWP::Simple::WithCache;
 
 # ============================================================================
 # Smooth termination
@@ -83,14 +83,15 @@ sub _delete_message {
 sub _get_wp_score {
 	my ( $waypoint_uri ) = @_;
 	my $score;
-	
+
 	#get waypoint data from S3
-	my $waypoint_json = LWP::Simple::WithCache->get( $waypoint_uri );
+	my $waypoint_json = LWP::Simple::WithCache::get( $waypoint_uri );
 	#fail gracefully
 	if ( defined $waypoint_json ) {
 		my $waypoint = JSON->new->utf8->decode( $waypoint_json );
 		$score = $waypoint -> {score};
 	} else {
+		warn "Could not get score from $waypoint_uri";
 		$score = 0;
 	}
 	
@@ -225,7 +226,6 @@ sub main {
 				if ( $tag -> {timestamp} >= $last_interaction -> {timestamp} + $config -> {interactions_cool_down} ) {
 					do {
 						my $score = get_attributes( $sdb, $score_domain_name, $item_name );
-						# keep old time stamp for conditional put (could be undef and must be checked)
 
 						$logger -> debug(Dumper( $score ));
 
