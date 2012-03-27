@@ -12,11 +12,12 @@ use Archive::Zip qw( :ERROR_CODES :CONSTANTS );
 use XML::Simple;
 
 # Amazon S3 related
-use JSON::XS;
+use JSON;
 use Amazon::S3;
 
 # Waypoint related
 use WWW::Google::URLShortener;
+use Digest::SHA;
 
 my $config = {};
 my $config_file = $0; $config_file =~ s/\.([^\.]+)$/\.cfg/;
@@ -32,13 +33,15 @@ check_options ( $config );
 
 print "Checking for waypoints to upload...\n";
 
-find( \&waypoint_file, $config->{kmz_path} );
+#go into each kmz
+find( \&process_waypoint_file, $config->{kmz_path} );
 
 print "Done uploading waypoints\n";
 
 1;
 
-sub waypoint_file {
+#implementation
+sub process_waypoint_file {
   my $filename = $_;
   my $file_fullpath = $File::Find::name;
   my $dir = $File::Find::dir;
@@ -51,7 +54,7 @@ sub waypoint_file {
       #this file needs updating online
       my $waypoints = kmz_to_json( $file_fullpath );
       
-      if ( upload( $waypoints ) ) {
+      if ( upload_waypoints( $waypoints ) ) {
         my $upload_file = IO::File->new( $file_fullpath . $config->{upload_postfix} , q{>});
         if ( -f $file_fullpath . $config->{upload_postfix} ) {
           $upload_file->close;
@@ -66,7 +69,7 @@ sub waypoint_file {
   }
 }
 
-sub upload {
+sub upload_waypoints {
   my ( $waypoints ) = @_;
   
   #set up Amazon
@@ -132,6 +135,7 @@ sub kmz_to_json {
   
   #prepare to shorten some uris
   my $googl  = WWW::Google::URLShortener->new( $config->{google_api_key} );
+  my $digest = Digest::SHA->new( $config->{waypoint_digest} );
   #go into placemarks
   foreach my $waypoint ( @{$kml->{Document}->{Folder}->{Placemark}} ) {
     #skip waypoints that do not have a checkmark on Google Earth or end with a $
@@ -146,22 +150,27 @@ sub kmz_to_json {
       next unless $line =~ /^\s*(\S*?)\s*:\s*(\S*)\s*$/;
       $description->{$1} = $2 if ( defined $2 );
     }
-    
-    use Digest::SHA;
-    my $digest = Digest::SHA->new('sha1');
+
     #sha1_hex( 'Client|Product|Campaign.kmz|Waypoint 1' )
-    my $unique_identifier = $config->{waypoint_prefix} . $digest->sha1_hex( $rel_identifier . $config->{rel_identifier_separator} . $waypoint->{name});
+    $digest->reset();
+    $digest->add( $rel_identifier . $config->{rel_identifier_separator} . $waypoint->{name} );
+    my $unique_identifier = $config->{waypoint_prefix} . $digest->hexdigest();
     
     #shorten something like http://www.sinqrtel.com/#wpca4545f334234d465e
     my $waypoint_uri = $googl->shorten_url( $config->{waypoint_landing_path} . $unique_identifier );
     
     #split coordinates
     my ($waypoint_lon, $waypoint_lat, $waypoint_alt) = split(/,/, $waypoint->{Point}->{coordinates});
+    #relocate score
+    my ($waypoint_score) = $description->{score};
+    delete $description->{score};
     
+    #consolidated waypoint payload
     my $waypoint_data = {
       id=>$unique_identifier,
       name=>$waypoint->{name},
       uri=>$waypoint_uri,
+      score=>$waypoint_score,
       coordinates=>{
         lon=>$waypoint_lon,
         lat=>$waypoint_lat,
@@ -176,21 +185,21 @@ sub kmz_to_json {
     warn "Waypoint coordinates->lon misformed" unless $waypoint_data->{coordinates}->{lon} =~ /^[+-]?\d+\.?\d*$/;
     warn "Waypoint coordinates->lat misformed" unless $waypoint_data->{coordinates}->{lat} =~ /^[+-]?\d+\.?\d*$/;
     warn "Waypoint coordinates->alt misformed" unless $waypoint_data->{coordinates}->{alt} =~ /^[+-]?\d+\.?\d*$/;
-    warn "Waypoint properties->score misformed" unless $waypoint_data->{properties}->{score} =~ /^[+-]?\d+$/;
+    warn "Waypoint score misformed" unless $waypoint_data->{score} =~ /^[+-]?\d+$/;
     
     #more complex checks...
     warn "Waypoint coordinates->lon not from Uruguay..." unless $waypoint_data->{coordinates}->{lon} > $config->{waypoint_max_lon} || $waypoint_data->{coordinates}->{lon} < $config->{waypoint_min_lon};
     warn "Waypoint coordinates->lat not from Uruguay..." unless $waypoint_data->{coordinates}->{lat} > $config->{waypoint_max_lat} || $waypoint_data->{coordinates}->{lat} < $config->{waypoint_min_lat};
-    warn "Waypoint coordinates->alt below sea level..." unless $waypoint_data->{coordinates}->{alt} < 0;
-    warn "Waypoint coordinates->alt too high..." unless $waypoint_data->{coordinates}->{alt} > $config->{coordinates_max_alt};
-    warn "Waypoint properties->score misformed" unless $waypoint_data->{properties}->{score} =~ /^\d+$/;
+    warn "Waypoint coordinates->alt below sea level..." unless $waypoint_data->{coordinates}->{alt} <= 0;
+    warn "Waypoint coordinates->alt too high..." unless $waypoint_data->{coordinates}->{alt} >= $config->{coordinates_max_alt};
     
-    $waypoints-> { $unique_identifier } = JSON::XS->new->utf8->encode( $waypoint_data );
+    $waypoints-> { $unique_identifier } = JSON->new->utf8->encode( $waypoint_data );
   }
   
   return $waypoints;
 }
 
+#get kml from kmz->doc.kml file
 sub get_kml {
   my ( $file_fullpath ) = shift;
   my $error = 0;
@@ -204,9 +213,7 @@ sub get_kml {
                       NormaliseSpace => 1,
                       KeyAttr => {
                                   'Placemark'=>undef
-                                  
-                                  }, #disable folding on Plaecmark->name!
-                      #ValueAttr => {'polygon'=>'coordinates'},
+                                  }, #disable folding on Placemark->name!
                       ForceArray => ['Placemark'],
                       );
   return $kml;
