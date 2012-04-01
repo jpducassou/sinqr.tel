@@ -42,7 +42,7 @@ use base qw (Amazon::SimpleDB::Model);
         $self->{_fields} = {
             
             DomainName => { FieldValue => undef, FieldType => "string"},
-            Item => {FieldValue => [], FieldType => ["Amazon::SimpleDB::Model::ReplaceableItem"]},
+            Item => {FieldValue => [], FieldType => ["Amazon::SimpleDB::Model::Item"]},
         };
 
         bless ($self, $class);

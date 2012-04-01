@@ -785,23 +785,20 @@ my $SERVICE_VERSION = "2009-04-15";
         if ($request->isSetDomainName()) {
             $parameters->{"DomainName"} =  $request->getDomainName();
         }
-        my $itembatchPutAttributesRequestList = $request->getItem();
-        for my $itembatchPutAttributesRequestIndex (0 .. @$itembatchPutAttributesRequestList) {
-            my $itembatchPutAttributesRequest = $itembatchPutAttributesRequestList->[$itembatchPutAttributesRequestIndex];
-            if ($itembatchPutAttributesRequest->isSetItemName()) {
-                $parameters->{"Item" . "."  . ($itembatchPutAttributesRequestIndex + 1) . "." . "ItemName"} =  $itembatchPutAttributesRequest->getItemName();
+        my $itembatchDeleteAttributesRequestList = $request->getItem();
+        for my $itembatchDeleteAttributesRequestIndex (0 .. @$itembatchDeleteAttributesRequestList - 1) {
+            my $itembatchDeleteAttributesRequest = $itembatchDeleteAttributesRequestList->[$itembatchDeleteAttributesRequestIndex];
+            if ($itembatchDeleteAttributesRequest->isSetName()) {
+                $parameters->{"Item" . "."  . ($itembatchDeleteAttributesRequestIndex + 1) . "." . "ItemName"} =  $itembatchDeleteAttributesRequest->getName();
             }
-            my $attributeitemList = $itembatchPutAttributesRequest->getAttribute();
-            for my $attributeitemIndex (0 .. $#{$attributeitemList}) {
+            my $attributeitemList = $itembatchDeleteAttributesRequest->getAttribute();
+            for my $attributeitemIndex (0 .. @$attributeitemList - 1) {
                 my $attributeitem = $attributeitemList->[$attributeitemIndex];
                 if ($attributeitem->isSetName()) {
-                    $parameters->{"Item" . "."  . ($itembatchPutAttributesRequestIndex + 1) . "." . "Attribute" . "."  . ($attributeitemIndex + 1) . "." . "Name"} =  $attributeitem->getName();
+                    $parameters->{"Item" . "."  . ($itembatchDeleteAttributesRequestIndex + 1) . "." . "Attribute" . "."  . ($attributeitemIndex + 1) . "." . "Name"} =  $attributeitem->getName();
                 }
                 if ($attributeitem->isSetValue()) {
-                    $parameters->{"Item" . "."  . ($itembatchPutAttributesRequestIndex + 1) . "." . "Attribute" . "."  . ($attributeitemIndex + 1) . "." . "Value"} =  $attributeitem->getValue();
-                }
-                if ($attributeitem->isSetReplace()) {
-                    $parameters->{"Item" . "."  . ($itembatchPutAttributesRequestIndex + 1) . "." . "Attribute" . "."  . ($attributeitemIndex + 1) . "." . "Replace"} =  $attributeitem->getReplace() ? "true" : "false";
+                    $parameters->{"Item" . "."  . ($itembatchDeleteAttributesRequestIndex + 1) . "." . "Attribute" . "."  . ($attributeitemIndex + 1) . "." . "Value"} =  $attributeitem->getValue();
                 }
 
             }
