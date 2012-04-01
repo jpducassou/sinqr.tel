@@ -128,26 +128,61 @@ sub select_attributes {
 }
 
 sub batch_delete_attributes {
-	my ( $sdb, $domain_name, $delete_items ) = @_;
-	#$delete_items = {
-	#	"item_name" => {attribute_name=>'attribute_value'}, #delete by condition
-	#	"item_name" => undef, #delete by item_name
-	#}
+	my ( $sdb, $domain_name, $delete_request ) = @_;
+	
 	my $logger = Log::Log4perl -> get_logger();
 	
-	convert $delete_items to testbatchdelete format
+	#my $delete_items = {
+	#	fb0000=>[
+	#					{_dirty=>'1'},
+	#					{_dirty=>'0'},
+	#	], #delete only said attributes
+	#	fb0000a=>undef,
+	#};
 	
+	#	convert $delete_items to BatchDeleteRequest format
+	#$delete_request = {
+	#			DomainName=>'score',
+	#			Item=> [
+	#							{ Name=>'fb0000a' },
+	#							{ Name=>'fb00000323000',
+	#							  Attribute=>[
+	#														{
+	#														Name=>'_dirty',
+	#														Value=>0,
+	#														}
+	#								]
+	#							}
+	#			],
+	#		};
+	my $delete_request = {
+		DomainName=>$domain_name,
+	};
+
+	while ( my ($item_name, $attributes) = each %$delete_items ) {
+		my $item = { Name => $item_name };
+		push @{$delete_request->{Item}},$item;
+		
+		next unless ref $attributes eq 'ARRAY';
+		
+		foreach my $attribute_pair ( @$attributes ) {
+			my @params = %$attribute_pair;
+			my $attribute = { Name => $params[0], Value => $params[1] };
+			#attach some attributes to our item
+			push @{$item->{Attribute}}, $attribute;
+		}
+	}
+
 	eval {
-		$sdb->batchDeleteAttributes( $delete_items );
+		$sdb->batchDeleteAttributes( $delete_request );
 	};
 	# Get the exceptions
 	my $ex = $@;
 	if ($ex) {
 		require Amazon::SimpleDB::Exception;
 		if (ref $ex eq 'Amazon::SimpleDB::Exception') {
-				# Unknown exception type, this is shamefull...
-				$logger -> logcarp($@);
-			}
+			# Unknown exception type, this is shamefull...
+			$logger -> logcarp($@);
 		} else {
 			#unknown error, we are unworthy of this cpu time
 			$logger -> logcarp($@);
