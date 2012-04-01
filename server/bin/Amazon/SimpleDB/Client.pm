@@ -263,6 +263,16 @@ my $SERVICE_VERSION = "2009-04-15";
         require Amazon::SimpleDB::Model::BatchPutAttributesResponse;
         return Amazon::SimpleDB::Model::BatchPutAttributesResponse->fromXML($self->_invoke($self->_convertBatchPutAttributes($request)));
     }
+		
+		sub batchDeleteAttributes {
+        my ($self, $request) = @_;
+        if (not ref $request eq "Amazon::SimpleDB::Model::BatchDeleteAttributesRequest") {
+            require Amazon::SimpleDB::Model::BatchDeleteAttributesRequest;
+            $request = Amazon::SimpleDB::Model::BatchDeleteAttributesRequest->new($request);
+        }
+        require Amazon::SimpleDB::Model::BatchDeleteAttributesResponse;
+        return Amazon::SimpleDB::Model::BatchDeleteAttributesResponse->fromXML($self->_invoke($self->_convertBatchDeleteAttributes($request)));
+    }
 
 
             
@@ -740,6 +750,43 @@ my $SERVICE_VERSION = "2009-04-15";
         }
         my $itembatchPutAttributesRequestList = $request->getItem();
         for my $itembatchPutAttributesRequestIndex (0 .. $#{$itembatchPutAttributesRequestList}) {
+            my $itembatchPutAttributesRequest = $itembatchPutAttributesRequestList->[$itembatchPutAttributesRequestIndex];
+            if ($itembatchPutAttributesRequest->isSetItemName()) {
+                $parameters->{"Item" . "."  . ($itembatchPutAttributesRequestIndex + 1) . "." . "ItemName"} =  $itembatchPutAttributesRequest->getItemName();
+            }
+            my $attributeitemList = $itembatchPutAttributesRequest->getAttribute();
+            for my $attributeitemIndex (0 .. $#{$attributeitemList}) {
+                my $attributeitem = $attributeitemList->[$attributeitemIndex];
+                if ($attributeitem->isSetName()) {
+                    $parameters->{"Item" . "."  . ($itembatchPutAttributesRequestIndex + 1) . "." . "Attribute" . "."  . ($attributeitemIndex + 1) . "." . "Name"} =  $attributeitem->getName();
+                }
+                if ($attributeitem->isSetValue()) {
+                    $parameters->{"Item" . "."  . ($itembatchPutAttributesRequestIndex + 1) . "." . "Attribute" . "."  . ($attributeitemIndex + 1) . "." . "Value"} =  $attributeitem->getValue();
+                }
+                if ($attributeitem->isSetReplace()) {
+                    $parameters->{"Item" . "."  . ($itembatchPutAttributesRequestIndex + 1) . "." . "Attribute" . "."  . ($attributeitemIndex + 1) . "." . "Replace"} =  $attributeitem->getReplace() ? "true" : "false";
+                }
+
+            }
+
+        }
+
+        return $parameters;
+    }
+		
+		#
+    # Convert BatchDeleteAttributesRequest to name value pairs
+    #
+    sub _convertBatchDeleteAttributes() {
+        my ($self, $request) = @_;
+        
+        my $parameters = {};
+        $parameters->{"Action"} = "BatchDeleteAttributes";
+        if ($request->isSetDomainName()) {
+            $parameters->{"DomainName"} =  $request->getDomainName();
+        }
+        my $itembatchPutAttributesRequestList = $request->getItem();
+        for my $itembatchPutAttributesRequestIndex (0 .. @$itembatchPutAttributesRequestList) {
             my $itembatchPutAttributesRequest = $itembatchPutAttributesRequestList->[$itembatchPutAttributesRequestIndex];
             if ($itembatchPutAttributesRequest->isSetItemName()) {
                 $parameters->{"Item" . "."  . ($itembatchPutAttributesRequestIndex + 1) . "." . "ItemName"} =  $itembatchPutAttributesRequest->getItemName();
