@@ -707,7 +707,7 @@ my $SERVICE_VERSION = "2009-04-15";
             $parameters->{"ItemName"} =  $request->getItemName();
         }
         my $attributeputAttributesRequestList = $request->getAttribute();
-        for my $attributeputAttributesRequestIndex (0 .. $#{$attributeputAttributesRequestList}) {
+        for my $attributeputAttributesRequestIndex (0 .. @$attributeputAttributesRequestList - 1) {
             my $attributeputAttributesRequest = $attributeputAttributesRequestList->[$attributeputAttributesRequestIndex];
             if ($attributeputAttributesRequest->isSetName()) {
                 $parameters->{"Attribute" . "."  . ($attributeputAttributesRequestIndex + 1) . "." . "Name"} =  $attributeputAttributesRequest->getName();
@@ -749,13 +749,13 @@ my $SERVICE_VERSION = "2009-04-15";
             $parameters->{"DomainName"} =  $request->getDomainName();
         }
         my $itembatchPutAttributesRequestList = $request->getItem();
-        for my $itembatchPutAttributesRequestIndex (0 .. $#{$itembatchPutAttributesRequestList}) {
+        for my $itembatchPutAttributesRequestIndex (0 .. @$itembatchPutAttributesRequestList - 1) {
             my $itembatchPutAttributesRequest = $itembatchPutAttributesRequestList->[$itembatchPutAttributesRequestIndex];
             if ($itembatchPutAttributesRequest->isSetItemName()) {
                 $parameters->{"Item" . "."  . ($itembatchPutAttributesRequestIndex + 1) . "." . "ItemName"} =  $itembatchPutAttributesRequest->getItemName();
             }
             my $attributeitemList = $itembatchPutAttributesRequest->getAttribute();
-            for my $attributeitemIndex (0 .. $#{$attributeitemList}) {
+            for my $attributeitemIndex (0 .. @$attributeitemList - 1) {
                 my $attributeitem = $attributeitemList->[$attributeitemIndex];
                 if ($attributeitem->isSetName()) {
                     $parameters->{"Item" . "."  . ($itembatchPutAttributesRequestIndex + 1) . "." . "Attribute" . "."  . ($attributeitemIndex + 1) . "." . "Name"} =  $attributeitem->getName();
@@ -824,7 +824,7 @@ my $SERVICE_VERSION = "2009-04-15";
             $parameters->{"ItemName"} =  $request->getItemName();
         }
         my $attributeNamegetAttributesRequestList = $request->getAttributeName();
-        for my $attributeNamegetAttributesRequestIndex (0 .. $#{$attributeNamegetAttributesRequestList}) {
+        for my $attributeNamegetAttributesRequestIndex (0 .. @$attributeNamegetAttributesRequestList - 1) {
             my $attributeNamegetAttributesRequest = $attributeNamegetAttributesRequestList->[$attributeNamegetAttributesRequestIndex];
             $parameters->{"AttributeName" . "."  . ($attributeNamegetAttributesRequestIndex + 1)} =  $attributeNamegetAttributesRequest;
         }
@@ -851,7 +851,7 @@ my $SERVICE_VERSION = "2009-04-15";
             $parameters->{"ItemName"} =  $request->getItemName();
         }
         my $attributedeleteAttributesRequestList = $request->getAttribute();
-        for my $attributedeleteAttributesRequestIndex (0 .. $#{$attributedeleteAttributesRequestList}) {
+        for my $attributedeleteAttributesRequestIndex (0 .. @$attributedeleteAttributesRequestList - 1) {
             my $attributedeleteAttributesRequest = $attributedeleteAttributesRequestList->[$attributedeleteAttributesRequestIndex];
             if ($attributedeleteAttributesRequest->isSetName()) {
                 $parameters->{"Attribute" . "."  . ($attributedeleteAttributesRequestIndex + 1) . "." . "Name"} =  $attributedeleteAttributesRequest->getName();
