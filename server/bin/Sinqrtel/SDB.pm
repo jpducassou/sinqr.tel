@@ -134,11 +134,11 @@ sub batch_delete_attributes {
 	#	"item_name" => undef, #delete by item_name
 	#}
 	my $logger = Log::Log4perl -> get_logger();
-	
+
 	my $max_delete_items = 25; #documented at http://docs.amazonwebservices.com/AmazonSimpleDB/latest/DeveloperGuide/SDB_API_BatchDeleteAttributes.html
 	my $max_delete_attributes = 256; #documented at http://docs.amazonwebservices.com/AmazonSimpleDB/latest/DeveloperGuide/SDB_API_BatchDeleteAttributes.html
 	my @delete_items;
-	
+
 	my @request_parameters;
 	#do for all $delete_items
 	while ( keys %$delete_items > 0 ) {
@@ -170,9 +170,9 @@ sub _hash_pop {
 	#documented http://www.perlmonks.org/?node_id=779281
 	scalar keys %$hash; #reset each in scalar context, very fast!
 	my ( $key, $value ) = each( %$hash ); #get one key and value from hash
-	
+
 	delete $hash->{ $key };
-	
+
 	return ( $key, $value );
 }
 
