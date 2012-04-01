@@ -128,39 +128,65 @@ sub select_attributes {
 }
 
 sub batch_delete_attributes {
-	my ( $sdb, $domain_name, $delete_items ) = @_;
-	#$delete_items = {
-	#	"item_name" => {attribute_name=>'attribute_value'}, #delete by condition
-	#	"item_name" => undef, #delete by item_name
-	#}
+	my ( $sdb, $domain_name, $delete_request ) = @_;
+	
 	my $logger = Log::Log4perl -> get_logger();
+	
+	#my $delete_items = {
+	#	fb0000=>[
+	#					{_dirty=>'1'},
+	#					{_dirty=>'0'},
+	#	], #delete only said attributes
+	#	fb0000a=>undef,
+	#};
+	
+	#	convert $delete_items to BatchDeleteRequest format
+	#$delete_request = {
+	#			DomainName=>'score',
+	#			Item=> [
+	#							{ Name=>'fb0000a' },
+	#							{ Name=>'fb00000323000',
+	#							  Attribute=>[
+	#														{
+	#														Name=>'_dirty',
+	#														Value=>0,
+	#														}
+	#								]
+	#							}
+	#			],
+	#		};
+	my $delete_request = {
+		DomainName=>$domain_name,
+	};
 
-	my $max_delete_items = 25; #documented at http://docs.amazonwebservices.com/AmazonSimpleDB/latest/DeveloperGuide/SDB_API_BatchDeleteAttributes.html
-	my $max_delete_attributes = 256; #documented at http://docs.amazonwebservices.com/AmazonSimpleDB/latest/DeveloperGuide/SDB_API_BatchDeleteAttributes.html
-	my @delete_items;
-
-	my @request_parameters;
-	#do for all $delete_items
-	while ( keys %$delete_items > 0 ) {
-		#split in buckets of max allowed deletes or left keys
-		my $item_count = 1;
-		while ( $item_count <= $max_delete_items && keys %$delete_items > 0 ) {
-			my ( $item_name, $attributes ) = _hash_pop( $delete_items );
-			#documented docs.amazonwebservices.com/AmazonSimpleDB/latest/DeveloperGuide/SDB_API_DeleteAttributes.html#SDB_API_BatchPutAttributes_RequestParameters
-			push @request_parameters, 'Item.' . $item_count . 'ItemName=' . $item_name;
-			if ( defined $attributes ) {
-				$logger -> logdie("Too many parameters to an item_name on call to BatchDeleteAttributes for $item_name") if ( scalar keys %$attributes > $max_delete_attributes );
-				my $attribute_count = 1;
-				while ( keys %$attributes > 0 ) {
-					my ( $attribute_name, $attribute_value ) = _hash_pop( $attributes );
-					push @request_parameters, 'Item.' . $item_count . 'Attribute.' . $attribute_count . 'Name=' . $attribute_name;
-					push @request_parameters, 'Item.' . $item_count . 'Attribute.' . $attribute_count . 'Value=' . $attribute_value;
-					$attribute_count++;
-				}
-			}
-			$item_count++;
+	while ( my ($item_name, $attributes) = each %$delete_items ) {
+		my $item = { Name => $item_name };
+		push @{$delete_request->{Item}},$item;
+		
+		next unless ref $attributes eq 'ARRAY';
+		
+		foreach my $attribute_pair ( @$attributes ) {
+			my @params = %$attribute_pair;
+			my $attribute = { Name => $params[0], Value => $params[1] };
+			#attach some attributes to our item
+			push @{$item->{Attribute}}, $attribute;
 		}
-		#make call!
+	}
+
+	eval {
+		$sdb->batchDeleteAttributes( $delete_request );
+	};
+	# Get the exceptions
+	my $ex = $@;
+	if ($ex) {
+		require Amazon::SimpleDB::Exception;
+		if (ref $ex eq 'Amazon::SimpleDB::Exception') {
+			# Unknown exception type, this is shamefull...
+			$logger -> logcarp($@);
+		} else {
+			#unknown error, we are unworthy of this cpu time
+			$logger -> logcarp($@);
+		}
 	}
 }
 
