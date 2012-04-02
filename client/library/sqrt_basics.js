@@ -25,7 +25,7 @@ function sqrt_getSiteObjectInfoPath() {
     return "/objectinfo/";
 }
 
-function sqrt_sortTimeStamps(a,b) {return parseInt(a[0]) - parseInt(b[0]);}
+//function sqrt_sortTimeStamps(a,b) {return parseInt(a[0]) - parseInt(b[0]);}
 function sqrt_getTimeStamp() { return Math.round((new Date()).getTime() / 1000 ); };
 function sqrt_sumAndUpdateScoresToTimeStamp( scoreArray, timeStamp ) {
   var sum = 0;
@@ -42,8 +42,8 @@ function sqrt_sumAndUpdateScoresToTimeStamp( scoreArray, timeStamp ) {
   return sum;
 }
 
-function sqrt_getObjectInfo( hash ) {
-  $.getJSON( sqrt_getSiteRoot() + sqrt_getSiteObjectInfoPath() + hash );
+function sqrt_getObjectInfo( objectName, success ) {
+  $.getJSON( sqrt_getSiteRoot() + sqrt_getSiteObjectInfoPath() + objectName, success );
 }
 
 function sqrt_addLocalScore( scoreArray, score, timeStamp ) {
