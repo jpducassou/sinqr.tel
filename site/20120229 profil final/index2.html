@@ -5,54 +5,25 @@
 <link href='http://fonts.googleapis.com/css?family=Nova+Round' rel='stylesheet' type='text/css'>
 <title>SinQRtel.com</title>
 <script type="text/javascript" src="https://www.google.com/jsapi?key=ABQIAAAAGbCP7xAnDeaBWr-NDrNqXBQmMOc3nLjHthTa4EGe0lmmw0PRdxREC4FbLwhuQ0MKiSEZhZaqWLSXNA"></script>
-<script type="text/javascript">
-var _gaq = _gaq || [];
-_gaq.push(['_setAccount', 'UA-24758076-1']);
-_gaq.push(['_trackPageview']);
-
-(function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-})();
-</script>
-<script>
+<script type="text/javascript" src="js/sqrt_basics.js"></script>
 <script language="javascript" type="text/javascript">
-var request = false;
-try {
-  request = new XMLHttpRequest();
-} catch (failed) {
-  request = false;
-}
-
-request.open( "GET", "redir.json", true );
-request.setRequestHeader("User-Agent", navigator.userAgent);
-request.send(null)
-request.onreadystatechange = function() {
-	if (request.readyState==4 && request.status==200) {
-		redirs = JSON.parse(json);
-	}
-}
-</script>
-<script>
-	google.load("jquery", "1.7.0");
-
-function tryReady () {
-	if (typeof jQuery !== 'undefined') {
-		window.clearInterval( jquery_load_interval );
-		var redirs = {};
-		$.getJSON('redir.json', function(data) {
-			$.each(data, function(key, val) {
-				redirs[key] = val;
-			});
-			//console.log( redirs[window.location.hash] );
-			if ( redirs[window.location.hash] !== undefined ) {
-				window.location = redirs[window.location.hash];
+if ( window.location.hash.length > 0 ) {
+	try {
+		request = new XMLHttpRequest();
+		request.open( "GET", "redir.json", true );
+		request.setRequestHeader( "User-Agent", "SQRT Redir" );
+		request.send(null);
+		request.onreadystatechange = function() {
+			if ( request.readyState == 4 && request.status == 200 ) {
+				redirs = JSON.parse(request.responseText);
+				if ( redirs[window.location.hash] !== undefined ) {
+					window.location = redirs[window.location.hash];
+				}
 			}
-		});
-	}
-}
-var jquery_load_interval = window.setInterval( tryReady, 25 );
+		}
+	} catch (e) {};
+} 
+google.load("jquery", "1.7.0");
 </script>
 <style type="text/css">
 .counter {
