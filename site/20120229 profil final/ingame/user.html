@@ -1,33 +1,81 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml"><head>
-<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
-<link href='http://fonts.googleapis.com/css?family=Nova+Round' rel='stylesheet' type='text/css'>
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+    <link href='http://fonts.googleapis.com/css?family=Nova+Round' rel='stylesheet' type='text/css'>
+    
+    <title>Sinqrtel.com</title>
+    <script type="text/javascript" src="https://www.google.com/jsapi?key=ABQIAAAAGbCP7xAnDeaBWr-NDrNqXBQmMOc3nLjHthTa4EGe0lmmw0PRdxREC4FbLwhuQ0MKiSEZhZaqWLSXNA"></script>
+    <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-24758076-1']);
+    _gaq.push(['_trackPageview']);
+    
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+    google.load("jquery", "1.7.0");
+    </script>
+  </head>
+  <body>
+    <div id="fb-root"></div>
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({appId:'207120562693777',status:true,cookie:true,xfbml:true,oauth:true});
 
-<title>Sinqrtel.com</title>
-<script type="text/javascript" src="https://www.google.com/jsapi?key=ABQIAAAAGbCP7xAnDeaBWr-NDrNqXBQmMOc3nLjHthTa4EGe0lmmw0PRdxREC4FbLwhuQ0MKiSEZhZaqWLSXNA"></script>
-<script type="text/javascript">
-var _gaq = _gaq || [];
-_gaq.push(['_setAccount', 'UA-24758076-1']);
-_gaq.push(['_trackPageview']);
+        // update on login, logout, and once on page load
+        FB.Event.subscribe('auth.login', localInit);
+        FB.Event.subscribe('auth.logout', localInit);
+        FB.getLoginStatus(localInit);
 
-(function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-})();
-</script>
-</head>
-<body>
-<div id="fb-root"></div>
-<!--facebook-->
-<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
-  if (d.getElementById(id)) {return;}
-  js = d.createElement(s); js.id = id;
-  js.src = "http://connect.facebook.net/es_LA/all.js#xfbml=1&appId=207120562693777";
-  fjs.parentNode.insertBefore(js, fjs);
-}(document, 'script', 'facebook-jssdk'));
-</script>
-<div class="fb-login-button" data-show-faces="false" data-width="200" data-max-rows="1"></div>
-</body>
-</html>
+      };
+  
+      (function(d){
+         var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
+         js = d.createElement('script'); js.id = id; js.async = true;
+         js.src = "//connect.facebook.net/es_LA/all.js";
+         d.getElementsByTagName('head')[0].appendChild(js);
+       }(document));
+    </script>
+    
+    <div class="fb-login-button">Login with Facebook</div>
+  
+    <div align="center">
+      <img id="image"/>
+      <div id="name"></div>
+      <input type="button" id="refresh">
+    </div>
+    <script>
+    function localInit() {
+      console.log("localinit!");
+      FB.api('/me', function(user) {
+        if (user) {
+          //if user is know hide login buttons
+          $("fb-login-button").hide();
+          console.log("localinit!" + user.id);
+          var image = document.getElementById('image');
+          image.src = 'https://graph.facebook.com/' + user.id + '/picture';
+          var name = document.getElementById('name');
+          name.innerHTML = user.name;
+        }
+      });
+      $("#refresh").click( function() {
+        FB.api('/me/friends', function(friends) {
+          if (friends) {
+            //select one random friend
+            
+            var user = friends.data[Math.round(Math.random() * friends.data.length)];
+            
+            var image = document.getElementById('image');
+            image.src = 'https://graph.facebook.com/' + user.id + '/picture';
+            var name = document.getElementById('name');
+            name.innerHTML = user.name;
+          }
+        });
+      });
+    }
+    </script>      
+  </body>
+ </html>
