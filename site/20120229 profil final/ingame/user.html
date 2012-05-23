@@ -3,43 +3,59 @@
   <head>
     <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
     <link href='http://fonts.googleapis.com/css?family=Nova+Round' rel='stylesheet' type='text/css'>
-    
+    <script src="https://www.google.com/jsapi?key=ABQIAAAAGbCP7xAnDeaBWr-NDrNqXBQmMOc3nLjHthTa4EGe0lmmw0PRdxREC4FbLwhuQ0MKiSEZhZaqWLSXNA" type="text/javascript"></script>
+
     <title>Sinqrtel.com</title>
-    <script type="text/javascript" src="https://www.google.com/jsapi?key=ABQIAAAAGbCP7xAnDeaBWr-NDrNqXBQmMOc3nLjHthTa4EGe0lmmw0PRdxREC4FbLwhuQ0MKiSEZhZaqWLSXNA"></script>
     <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-24758076-1']);
-    _gaq.push(['_trackPageview']);
+    function localInit() {
+      console.log("localinit!");
+      FB.api('/me', function(user) {
+        if (user) {
+          //if user is known hide login buttons
+          //document.getElementById("fb-login-button").parentNode.removeChild("fb-login-button");
+          console.log("localinit!" + user.id);
+          var image = document.getElementById('image');
+          image.src = 'https://graph.facebook.com/' + user.id + '/picture';
+          var name = document.getElementById('name');
+          name.innerHTML = user.name;
+        }
+      });
+    };
+      
+    window.fbAsyncInit = function() {
+      FB.init({appId:'207120562693777',status:true,cookie:true,xfbml:true,oauth:true});
+  
+      // update on login, logout, and once on page load
+      FB.Event.subscribe('auth.login', localInit);
+      FB.Event.subscribe('auth.logout', localInit);
+      FB.getLoginStatus(localInit);
+    };
     
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-    google.load("jquery", "1.7.0");
+    (function(d) {
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-24758076-1']);
+      _gaq.push(['_trackPageview']);
+      
+      var ga = d.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == d.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = d.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      
+      var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
+      js = d.createElement('script'); js.id = id; js.async = true;
+      js.src = ('https:' == d.location.protocol ? 'https://' : 'http://') + 'connect.facebook.net/es_LA/all.js';
+      d.getElementsByTagName('head')[0].appendChild(js);
+      
+      var sqrtjs = d.createElement('script'); sqrtjs.type = 'text/javascript'; sqrtjs.async = true;
+      sqrtjs.src = ('https:' == d.location.protocol ? 'https://' : 'http://') + 'www.sinqrtel.com/ingame/sqrt_basics.js';
+      d.getElementsByTagName('head')[0].appendChild(sqrtjs);
+      
+      google.load("jquery", "1.7.0");
+    })(document);
     </script>
   </head>
   <body>
     <div id="fb-root"></div>
-    <script>
-      window.fbAsyncInit = function() {
-        FB.init({appId:'207120562693777',status:true,cookie:true,xfbml:true,oauth:true});
-
-        // update on login, logout, and once on page load
-        FB.Event.subscribe('auth.login', localInit);
-        FB.Event.subscribe('auth.logout', localInit);
-        FB.getLoginStatus(localInit);
-
-      };
-  
-      (function(d){
-         var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
-         js = d.createElement('script'); js.id = id; js.async = true;
-         js.src = "//connect.facebook.net/es_LA/all.js";
-         d.getElementsByTagName('head')[0].appendChild(js);
-       }(document));
-    </script>
-    
+   
     <div class="fb-login-button">Login with Facebook</div>
   
     <div align="center">
@@ -48,34 +64,17 @@
       <input type="button" id="refresh">
     </div>
     <script>
-    function localInit() {
-      console.log("localinit!");
-      FB.api('/me', function(user) {
-        if (user) {
-          //if user is know hide login buttons
-          $("fb-login-button").hide();
-          console.log("localinit!" + user.id);
-          var image = document.getElementById('image');
-          image.src = 'https://graph.facebook.com/' + user.id + '/picture';
-          var name = document.getElementById('name');
-          name.innerHTML = user.name;
+    $("#refresh").click( function() {
+      FB.api('/me/friends', function(friends) {
+        if (friends) {
+          //select one random friend
+          var user = friends.data[Math.round(Math.random() * friends.data.length)];
+          
+          document.getElementById("image").src = "https://graph.facebook.com/" + user.id + "/picture";
+          document.getElementById('name').innerHTML = user.name;
         }
       });
-      $("#refresh").click( function() {
-        FB.api('/me/friends', function(friends) {
-          if (friends) {
-            //select one random friend
-            
-            var user = friends.data[Math.round(Math.random() * friends.data.length)];
-            
-            var image = document.getElementById('image');
-            image.src = 'https://graph.facebook.com/' + user.id + '/picture';
-            var name = document.getElementById('name');
-            name.innerHTML = user.name;
-          }
-        });
-      });
-    }
+    });
     </script>      
   </body>
  </html>
