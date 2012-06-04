@@ -4,10 +4,10 @@
     <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
     <link href='http://fonts.googleapis.com/css?family=Nova+Round' rel='stylesheet' type='text/css'>
     <script src="https://www.google.com/jsapi?key=ABQIAAAAGbCP7xAnDeaBWr-NDrNqXBQmMOc3nLjHthTa4EGe0lmmw0PRdxREC4FbLwhuQ0MKiSEZhZaqWLSXNA" type="text/javascript"></script>
-
+		
     <title>Sinqrtel.com</title>
     <script type="text/javascript">
-    function localInit() {
+		window.sqrtAsyncInit = function () {
       console.log("localinit!");
       FB.api('/me', function(user) {
         if (user) {
@@ -21,10 +21,10 @@
         }
       });
     };
-      
+    
     window.fbAsyncInit = function() {
       FB.init({appId:'207120562693777',status:true,cookie:true,xfbml:true,oauth:true});
-  
+			
       // update on login, logout, and once on page load
       FB.Event.subscribe('auth.login', localInit);
       FB.Event.subscribe('auth.logout', localInit);
@@ -55,9 +55,9 @@
   </head>
   <body>
     <div id="fb-root"></div>
-   
+		
     <div class="fb-login-button">Login with Facebook</div>
-  
+		
     <div align="center">
       <img id="image"/>
       <div id="name"></div>
