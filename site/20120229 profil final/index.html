@@ -33,26 +33,7 @@ request.onreadystatechange = function() {
 		redirs = JSON.parse(json);
 	}
 }
-</script>
-<script>
-	google.load("jquery", "1.7.0");
-
-function tryReady () {
-	if (typeof jQuery !== 'undefined') {
-		window.clearInterval( jquery_load_interval );
-		var redirs = {};
-		$.getJSON('redir.json', function(data) {
-			$.each(data, function(key, val) {
-				redirs[key] = val;
-			});
-			//console.log( redirs[window.location.hash] );
-			if ( redirs[window.location.hash] !== undefined ) {
-				window.location = redirs[window.location.hash];
-			}
-		});
-	}
-}
-var jquery_load_interval = window.setInterval( tryReady, 25 );
+google.load("jquery", "1.7.0");
 </script>
 <style type="text/css">
 .counter {
