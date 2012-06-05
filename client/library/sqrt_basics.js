@@ -52,8 +52,8 @@ var sqrt = {
 	}
 };
 
-if (typeof window.sqrtAsyncCallback == 'function') {
-	window.sqrtAsyncCallback(this);
+if (typeof window.sqrtAsyncInit == 'function') {
+	window.sqrtAsyncInit(this);
 } else {
   console.log('Loaded syncroneusly?!?');
 }
