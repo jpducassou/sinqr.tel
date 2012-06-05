@@ -39,5 +39,11 @@ var sqrt = {
   },
   loadScore:function() {
     return JSON.parse(this.getItem('score'));
-  },
+  }
+}
+
+if (typeof window.sqrtAsyncInit == 'function') {
+  window.sqrtAsyncInit(this);
+} else {
+  console.log('Loaded syncroneusly?!?');
 }
