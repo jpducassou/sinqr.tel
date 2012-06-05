@@ -7,13 +7,15 @@
 		
     <title>Sinqrtel.com</title>
     <script type="text/javascript">
-		window.sqrtAsyncInit = function () {
-      console.log("localinit!");
+    window.sqrtAsyncLoad = function () {
+      console.log("sqrtAsyncLoad!");
+    }
+    function localInit() {
+      console.log("localinit started!");
       FB.api('/me', function(user) {
         if (user) {
-          //if user is known hide login buttons
-          //document.getElementById("fb-login-button").parentNode.removeChild("fb-login-button");
-          console.log("localinit!" + user.id);
+          document.getElementById("facebook-button").parentNode.removeChild("facebook-button");
+          console.log("localinit with logged in user: " + user.id);
           var image = document.getElementById('image');
           image.src = 'https://graph.facebook.com/' + user.id + '/picture';
           var name = document.getElementById('name');
@@ -56,7 +58,9 @@
   <body>
     <div id="fb-root"></div>
 		
+    <div id="facebook-button">
     <div class="fb-login-button">Login with Facebook</div>
+    </div>
 		
     <div align="center">
       <img id="image"/>

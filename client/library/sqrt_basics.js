@@ -54,4 +54,6 @@ var sqrt = {
 
 if (typeof window.sqrtAsyncCallback == 'function') {
 	window.sqrtAsyncCallback(this);
+} else {
+  console.log('Loaded syncroneusly?!?');
 }
