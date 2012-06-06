@@ -3,27 +3,18 @@
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf8">
 		<!--Local CSS-->
-    <link href='http://fonts.googleapis.com/css?family=Nova+Round' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Syncopate:400,700' rel='stylesheet' type='text/css'>
     <script src="https://www.google.com/jsapi?key=ABQIAAAAGbCP7xAnDeaBWr-NDrNqXBQmMOc3nLjHthTa4EGe0lmmw0PRdxREC4FbLwhuQ0MKiSEZhZaqWLSXNA" type="text/javascript"></script>
     <title>Sinqrtel.com</title>
 		<script>
-		function afterFBInit() {
-      console.log("deferredInit!");
-			
-			localFBAuthChange();
-    };
-
-    window.fbAsyncInit = function() {
+		window.fbAsyncInit = function() {
 			console.log("fbAsyncInit!");
       FB.init({appId:'207120562693777',status:true,cookie:true,xfbml:true,oauth:true});
 			
       // update on login, logout, and once on page load
-      FB.Event.subscribe('auth.login', afterFBInit);
-      FB.Event.subscribe('auth.logout', afterFBInit);
-			
-			auth.authResponseChange
-			
-      FB.getLoginStatus(afterFBInit);
+      FB.Event.subscribe('auth.login', afterFBInit() );
+      FB.Event.subscribe('auth.logout', afterFBInit() );
+      FB.getLoginStatus( afterFBInit() );
     };
 		
 		window.sqrtAsyncInit = function () {
@@ -69,8 +60,9 @@
 		
     <script type="text/javascript">
 		function localFBAuthChange() {
-			console.log("localFBAuthChange: " + response.status);
+			console.log("localFBAuthChange!");
 			FB.getLoginStatus(function(response) {
+				console.log("localFBAuthChange: " + response.status);
 				if (response.status === 'connected') {
 					FB.api('/me', function(user) {
 						if (user) {
