@@ -11,10 +11,11 @@
 			console.log("fbAsyncInit!");
       FB.init({appId:'207120562693777',status:true,cookie:true,xfbml:true,oauth:true});
 			
-      // update on login, logout, and once on page load
-      FB.Event.subscribe('auth.login', afterFBInit() );
-      FB.Event.subscribe('auth.logout', afterFBInit() );
-      FB.getLoginStatus( afterFBInit() );
+			// update on login, logout, and once on page load
+      //FB.Event.subscribe('auth.login', localFBAuthChange() );
+      //FB.Event.subscribe('auth.logout', localFBAuthChange() );
+			FB.Event.subscribe('auth.statusChange', function(response) { localFBAuthChange(response) } );
+      FB.getLoginStatus( function(response) { localFBAuthChange(response) } );
     };
 		
 		window.sqrtAsyncInit = function () {
@@ -24,11 +25,9 @@
   </head>
   <body>
     <div id="fb-root"></div>
-		
-		<div id="facebook-button">
-    <div class="fb-login-button">Login with Facebook</div>
-    </div>
-		
+		<div id="facebook-beforelogin">
+		<div class="fb-login-button"></div>
+		</div>
 		<script>
     (function(d) {
 			var _gaq = _gaq || [];
@@ -59,42 +58,48 @@
     </div>
 		
     <script type="text/javascript">
-		function localFBAuthChange() {
+		function localFBAuthChange(response) {
 			console.log("localFBAuthChange!");
-			FB.getLoginStatus(function(response) {
+			if (response.authResponse && response.status === 'connected') {
 				console.log("localFBAuthChange: " + response.status);
-				if (response.status === 'connected') {
-					FB.api('/me', function(user) {
-						if (user) {
-							document.getElementById("facebook-button").style.display='none';
-							console.log("localinit with logged in user: " + user.id);
-							var image = document.getElementById('image');
-							image.src = 'https://graph.facebook.com/' + user.id + '/picture';
-							var name = document.getElementById('name');
-							name.innerHTML = user.name;
-						}
-					});
-					// the user is logged in and has authenticated your
-					// app, and response.authResponse supplies
-					// the user's ID, a valid access token, a signed
-					// request, and the time the access token 
-					// and signed request each expire
-					// var uid = response.authResponse.userID;
-					// var accessToken = response.authResponse.accessToken;
-				}
-			});
+				document.getElementById('facebook-beforelogin').style.display='none';
+				FB.api('/me', function(user) {
+					if (user) {
+						console.log("localinit with logged in user: " + user.id);
+						var image = document.getElementById('image');
+						image.src = 'https://graph.facebook.com/' + user.id + '/picture';
+						var name = document.getElementById('name');
+						name.innerHTML = user.name;
+					}
+				});
+				// the user is logged in and has authenticated your
+				// app, and response.authResponse supplies
+				// the user's ID, a valid access token, a signed
+				// request, and the time the access token 
+				// and signed request each expire
+				// var uid = response.authResponse.userID;
+				// var accessToken = response.authResponse.accessToken;
+			}
 		}
 		
 		function afterLoad() {
-			console.log("Event Init!");
+			console.log("afterLoad()!");
+			
 			$("#refresh").click( function() {
-				FB.api('/me/friends', function(friends) {
-					if (friends) {
-						//select one random friend
-						var user = friends.data[Math.round(Math.random() * friends.data.length)];
-						
-						document.getElementById("image").src = "https://graph.facebook.com/" + user.id + "/picture";
-						document.getElementById('name').innerHTML = user.name;
+				FB.getLoginStatus(function(response) {
+					if (response.status === 'connected') {
+						FB.api('/me/friends', function(friends) {
+							if (friends) {
+								//select one random friend
+								var user = friends.data[Math.round(Math.random() * friends.data.length)];
+							
+								document.getElementById("image").src = "https://graph.facebook.com/" + user.id + "/picture";
+								document.getElementById('name').innerHTML = user.name;
+							}
+						});
+					} else {
+						document.getElementById('facebook-beforelogin').style.display='block';
+						console.log("Not logged in!");
 					}
 				});
 			});

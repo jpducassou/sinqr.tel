@@ -1,159 +1,162 @@
-<!doctype html>
-<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
-<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
-<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
-<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
-<!-- Consider adding an manifest.appcache: h5bp.com/d/Offline -->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<html xml:lang="es" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>Perfil</title>
-  <meta name="viewport" content="width=1000">
-  <link rel="stylesheet" href="css/style.css">
-  <link href='http://fonts.googleapis.com/css?family=Syncopate:400,700' rel='stylesheet' type='text/css'><!-- fuente de google, -->
-        <link rel="stylesheet" type="text/css" href="css/style_common.css" />
-        <link href='http://fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css' />
-        <script type="text/javascript" language="javascript" src="js/ratingsys.js"></script>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+	<title>Perfil</title>
+	<meta name="viewport" content="width=1000" />
+	<link rel="stylesheet" href="css/style.css" type="text/css" />
+	<link href='http://fonts.googleapis.com/css?family=Syncopate:400,700' rel='stylesheet' type='text/css' /><!-- fuente de google, -->
+	<link rel="stylesheet" type="text/css" href="css/style_common.css" />
+	<link href='http://fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css' />
+	<script type="text/javascript" language="javascript" src="js/ratingsys.js">
+</script>
 </head>
+
 <body>
-<header>
-	<div id="header_container">
-		<div class="text_floater"><h1>Vivi la experiencia</h1></div><div class="logo_floater"><img src="img/logo_1.png" width="200" height="51" style="float:left; max-width:100%;"></div>
-  </div>
-</header>
+	<header>
+		<div id="header_container">
+			<div class="text_floater">
+				<h1>Vivi la experiencia</h1>
+			</div>
 
-<div id="body_1">
-  <div id="container">
-      <div id="main" role="main">
-    	<div class="main_perfil">
-        	<div class="header">
-           	  <div class="header_left">
-               	<div class="view view-ninth" style="height:180px; width:180px;">
-   	      				<img src="img/perfil.jpg" width="180" height="180">
-                         <div class="mask mask-1" style="width: 117px;"></div>
-                    <div class="mask mask-2" style="width: 155px; height: 260px;"></div>
-                    <div class="content" style="top:65px;">
-                        <h2>Richard Dean Anderson</h2>
-                       <a href="#" class="info">Stats</a>
-                    </div>
-                   </div>
-                   	<span id="rateStatus">Puntuar usuario!</span>
-					<span id="ratingSaved">Puntaje guardado!</span> 
-                    <div id="rateMe" title="Puntuar...">
-   				 <a onclick="rateIt(this)" id="_1" title="Malo" onmouseover="rating(this)" onmouseout="off(this)"></a>
-    			<a onclick="rateIt(this)" id="_2" title="Aceptable" onmouseover="rating(this)" onmouseout="off(this)"></a>
-    			<a onclick="rateIt(this)" id="_3" title="Bueno" onmouseover="rating(this)" onmouseout="off(this)"></a>
-                <a onclick="rateIt(this)" id="_4" title="Muy bueno" onmouseover="rating(this)" onmouseout="off(this)"></a>
-                <a onclick="rateIt(this)" id="_5" title="Excelente!" onmouseover="rating(this)" onmouseout="off(this)"></a>
+			<div class="logo_floater"><img src="img/logo_1.png" width="200" height="51" /></div>
+		</div>
+	</header>
+
+	<div id="container">
+		<div id="container_top">
+			<div id="container_left_spacer"></div>
+
+			<div id="container_left">
+				<div class="view view-ninth" style="height:180px; width:180px;">
+					<img src="http://graph.facebook.com/gonzalo.barco/picture?type=large" width="200" />
+
+					<div class="mask mask-1" style="width: 117px;"></div>
+
+					<div class="mask mask-2" style="width: 155px; height: 260px;"></div>
+
+					<div class="content" style="top:65px;">
+						<h2>Richard Dean Anderson</h2><!--<a href="#" class="info">Stats</a>-->
+					</div>
 				</div>
-               		</div>	
-                	<div class="header_right">
-                      	<div class="qr_cont">
-                   	    	<img src="img/qr.jpg" width="135" height="135">
-                        </div>
-                    	<h1>richard dean anderson</h1>
-                      <div class="follow_player">
-                       	<h2>SEGUIR JUGADOR</h2>
-                        	<a href="#"><img src="img/fb.png" width="42" height="42"></a>
-                      		<a href="#"><img src="img/twt.png" width="40" height="40"></a>
-                      </div>
-                   </div>
-                   </div>
-             	<div class="main_perfil_bottom">
-                	<div class="main_perfil_bottom_left">
-                    	<div class="bonus_space">
-                        	<div class="bonus_space_win">
-                       	    	 <img src="img/badget_15.png" width="85" height="81">
-                            </div>
-                        	<h1>PREMIO BONIFICACION POR ALCANZAR 15000 PUNTOS QR</h1>
-                        </div>
-                        <div class="bonus_space">
-                        	<div class="bonus_space_win">
-                       	    	 <img src="img/badget_15.png" width="85" height="81">
-                            </div>
-                        	<h1>PREMIO BONIFICACION POR ALCANZAR 15000 PUNTOS QR</h1>
-                        </div>
-                        <div class="bonus_space">
-                        	<div class="bonus_space_win">
-                       	    	 <img src="img/badget_15.png" width="85" height="81">
-                            </div>
-                        	<h1>PREMIO BONIFICACION POR ALCANZAR 15000 PUNTOS QR</h1>
-                        </div>
-                        <div class="bonus_space">
-                        	<div class="bonus_space_win">
-                       	    	 <img src="img/badget_15.png" width="85" height="81">
-                            </div>
-                        	<h1>PREMIO BONIFICACION POR ALCANZAR 15000 PUNTOS QR</h1>
-                        </div>
-                        
-                    </div>
-                    	<div class="main_perfil_bottom_right">
-                        <div class="actualiza">
-                        	<h1>DESAFIO</h1><p class="actualiza_title">WC Donalds</p><h1>&nbsp;54%</h1>
-                            <div class="redes">
-                            	<a href="#"><img src="img/fb.png" width="40" height="40"></a>
-                      			<a href="#"><img src="img/twt.png" width="40" height="40"></a>
-														</div>
-                    </div>
-                          <div class="actualiza">
-                        	<h1>DESAFIO</h1><p class="actualiza_title">WC Donalds</p><h1>&nbsp;54%</h1>
-                            <div class="redes">
-                            	<a href="#"><img src="img/fb.png" width="40" height="40"></a>
-                      			<a href="#"><img src="img/twt.png" width="40" height="40"></a>
-                            </div>
-                    </div>
-                          <div class="actualiza">
-													<h1>DESAFIO</h1><p class="actualiza_title">WC Donalds</p><h1>&nbsp;54%</h1>
-                            <div class="redes">
-                            	<a href="#"><img src="img/fb.png" width="40" height="40"></a>
-                      			<a href="#"><img src="img/twt.png" width="40" height="40"></a>
-														</div>
-                    </div>
-                          <div class="actualiza">
-                        	<h1>DESAFIO</h1><p class="actualiza_title">WC Donalds</p><h1>&nbsp;54%</h1>
-                            <div class="redes">
-                            	<a href="#"><img src="img/fb.png" width="40" height="40"></a>
-                      			<a href="#"><img src="img/twt.png" width="40" height="40"></a>
-														</div>
-                    </div>
-                        </div>
-                </div>
-        </div>
+			</div><!--container_left-->
 
-        
-        
-    </div><!--FIN_main-->
-   
-  </div> <!--! end of #container -->
- </div><!--FIN container-->
- </div>
-    <footer>
-    
-    	<div class="footer_container">
-              <div id="Footer_nav">
-                 <nav >
-                        <ul>
-                            <li><a href="#">Quienes somos</a></li>
-                            <li><a href="#">Ayuda</a></li>
-                            <li><a href="#">Contacto</a></li>
-                        </ul>
-                </nav>
-             </div><!--Footer_nav-->
-             <div id="Footer_derechos">Todos los derechos reservados <img src="img/fotter.png" >
-             </div>
-        </div>
-    </footer>
-  <!-- JavaScript at the bottom for fast page loading -->
+			<div id="container_middle">
+				<h1>richard dean anderson</h1>
 
-  <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
-  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+				<div class="follow_player">
+					<h2>SEGUIR JUGADOR</h2><a href="#"><img src="img/fb.png" width="42" height="42" /></a> <a href="#"><img src="img/twt.png" width="40" height="40" /></a>
+				</div>
+			</div><!--container_middle-->
 
-  <!-- Prompt IE 6 users to install Chrome Frame. Remove this if you want to support IE 6.
-       chromium.org/developers/how-tos/chrome-frame-getting-started -->
-  <!--[if lt IE 7 ]>
-    <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
-    <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
-  <![endif]-->d
+			<div id="container_right">
+				<div class="qr_cont"><img src="img/qr.jpg" width="135" height="135" /></div>
+			</div><!--container_right-->
+
+			<div id="container_right_spacer"></div>
+		</div><!--container_top-->
+		<div id="container_bottom">
+		</div>
+
+		<div class="main_perfil">
+			<div class="main_perfil_bottom">
+				<div class="main_perfil_bottom_left">
+					<div class="bonus_space">
+						<div class="bonus_space_win"><img src="img/badget_15.png" width="85" height="81" /></div>
+
+						<h1>PREMIO BONIFICACION POR ALCANZAR 15000 PUNTOS QR</h1>
+					</div>
+
+					<div class="bonus_space">
+						<div class="bonus_space_win"><img src="img/badget_15.png" width="85" height="81" /></div>
+
+						<h1>PREMIO BONIFICACION POR ALCANZAR 15000 PUNTOS QR</h1>
+					</div>
+
+					<div class="bonus_space">
+						<div class="bonus_space_win"><img src="img/badget_15.png" width="85" height="81" /></div>
+
+						<h1>PREMIO BONIFICACION POR ALCANZAR 15000 PUNTOS QR</h1>
+					</div>
+
+					<div class="bonus_space">
+						<div class="bonus_space_win"><img src="img/badget_15.png" width="85" height="81" /></div>
+
+						<h1>PREMIO BONIFICACION POR ALCANZAR 15000 PUNTOS QR</h1>
+					</div>
+				</div>
+
+				<div class="main_perfil_bottom_right">
+					<div class="actualiza">
+						<h1>DESAFIO</h1>
+
+						<p class="actualiza_title">WC Donalds</p>
+
+						<h1>&nbsp;54%</h1>
+
+						<div class="redes">
+							<a href="#"><img src="img/fb.png" width="40" height="40" /></a> <a href="#"><img src="img/twt.png" width="40" height="40" /></a>
+						</div>
+					</div>
+
+					<div class="actualiza">
+						<h1>DESAFIO</h1>
+
+						<p class="actualiza_title">WC Donalds</p>
+
+						<h1>&nbsp;54%</h1>
+
+						<div class="redes">
+							<a href="#"><img src="img/fb.png" width="40" height="40" /></a> <a href="#"><img src="img/twt.png" width="40" height="40" /></a>
+						</div>
+					</div>
+
+					<div class="actualiza">
+						<h1>DESAFIO</h1>
+
+						<p class="actualiza_title">WC Donalds</p>
+
+						<h1>&nbsp;54%</h1>
+
+						<div class="redes">
+							<a href="#"><img src="img/fb.png" width="40" height="40" /></a> <a href="#"><img src="img/twt.png" width="40" height="40" /></a>
+						</div>
+					</div>
+
+					<div class="actualiza">
+						<h1>DESAFIO</h1>
+
+						<p class="actualiza_title">WC Donalds</p>
+
+						<h1>&nbsp;54%</h1>
+
+						<div class="redes">
+							<a href="#"><img src="img/fb.png" width="40" height="40" /></a> <a href="#"><img src="img/twt.png" width="40" height="40" /></a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div><!--! end of #container -->
+
+	<footer>
+		<div class="footer_container">
+			<div id="Footer_nav">
+				<nav>
+					<ul>
+						<li><a href="#">Quienes somos</a></li>
+
+						<li><a href="#">Ayuda</a></li>
+
+						<li><a href="#">Contacto</a></li>
+					</ul>
+				</nav>
+			</div><!--Footer_nav-->
+
+			<div id="Footer_derechos">Todos los derechos reservados <img src="img/fotter.png" /></div>
+		</div>
+	</footer><script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js">
+</script>
 </body>
 </html>

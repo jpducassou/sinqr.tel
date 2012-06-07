@@ -32,7 +32,7 @@ audio:not([controls]) { display: none; }
 
 html { font-size: 100%; overflow-y: scroll; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
 
-body {background-color:#000; margin: 0; font-size: 13px; line-height: 1.231; }
+body {background-color:#fff; margin: 0; font-size: 13px; line-height: 1.231; }
 
 body, button, input, select, textarea { font-family: sans-serif; color: #222; }
 
@@ -307,9 +307,7 @@ td { vertical-align: top; }
 
 
 header{
-background-color:#000;
-min-height:100px;
-
+	background-color:#000;
 }
 
 #header_container{
@@ -317,65 +315,78 @@ min-height:100px;
     max-width: 960px;
     overflow: hidden;
     width: 100%;
-	padding:20px;
-    
+	padding:5px;
 }
 
 .logo_floater {
-	float: left;
+	float:left;
+	max-width:100%;
 }
 
 #header_container h1{
 	font-weight:200;
 	color:#F60;
 	float:left;
-	
 }	
-
-
-
-
-
 
 #container{
 	margin: 0 auto;
-    max-width: 960px;
-    overflow: hidden;
-    width: 100%;
+  overflow: hidden;
+  width: 100%;
 	padding:20px;
+	background-color: #fff;
+	max-width: 960;
 }
 
-#body_1{
-	
-	background:#f7f7f7 url(../images/pattern.png) repeat top left;
-	width:100%;
-	height:auto;
-
+#container_top {
+	width:auto;
+	max-height: 300px;
+	min-height: 250px;
+	margin:0 auto;
 }
-#profile_images{max-width:234px;
+
+#container_bottom {
+	width:auto;
+	min-height: 300px;
+	margin:0 auto;
+}
+
+#container_left_spacer {
+	min-width: 10px;
+}
+
+#container_left {
+	min-width: 250px;
+	float: left;
+}
+
+#container_middle {
+	min-width: 440px;
+	float: left;
+}
+
+#container_right {
+	min-width: 250px;
+	float: right;
+}
+
+#container_right_spacer {
+	min-width: 10px;
+}
+
+#profile_images{
+	max-width:234px;
 	height:auto;
-	margin:5px;}
+	margin:5px;
+}
 
 footer{
 	min-height:75px;
 	height:100%;
 	width: 100%;  
-    bottom: 0px; 
-    left:0px; 
-	 
-background-image: linear-gradient(bottom, rgb(48,47,48) 91%, rgb(0,0,0) 47%);
-background-image: -o-linear-gradient(bottom, rgb(48,47,48) 91%, rgb(0,0,0) 47%);
-background-image: -moz-linear-gradient(bottom, rgb(48,47,48) 100%, rgb(0,0,0) 50%);
-background-image: -webkit-linear-gradient(bottom, rgb(48,47,48) 91%, rgb(0,0,0) 47%);
-background-image: -ms-linear-gradient(bottom, rgb(48,47,48) 91%, rgb(0,0,0) 47%);
-
-background-image: -webkit-gradient(
-	linear,
-	left bottom,
-	left top,
-	color-stop(0.91, rgb(48,47,48)),
-	color-stop(0.47, rgb(0,0,0))
-);
+  bottom: 0px; 
+  left:0px; 
+	background-color: #000;
 }
 .footer_container{
 	margin: 0 auto;
@@ -397,37 +408,6 @@ background-image: -webkit-gradient(
 	max-width:50%;
 	}
 
-
-/**links aleatorios del sitio**/
-
-.links_aleatorios{ color:#333;
-	text-decoration:none;
-    transition-property: background-color, color;
-    transition-duration: 1s;
-    transition-timing-function: ease-out;
-    -webkit-transition-property: background-color, color;
-    -webkit-transition-duration: 1s;
-    -o-transition-property: background-color, color;
-    -o-transition-duration: 1s;
-    -moz-transition-property: background-color, color;
-    -moz-transition-duration: 1s; }
-
-
-.links_aleatorios:hover{
-	
-	 transition-property: background-color,  color;
-  	 transition-duration: 1s;
-  	 transition-timing-function: ease-out;
- 	 -webkit-transition-property: background-color,, color;
- 	 -webkit-transition-duration: 1s;
- 	 -o-transition-property: background-color, color;
-	 -o-transition-duration: 1s;
-	 color:#f08527;
-	 font-weight:700; 
-   
-}
-
-
 /***navegación_footer*/
 nav{
 	position:relative;	
@@ -439,11 +419,9 @@ nav li{
 	display:inline;
 	padding:5px 5px 5px 5px;
 	font-family:Verdana, Geneva, sans-serif;
-	
 }
 
 nav a{
-
 	text-decoration:none;
 	color:#FFF;
 	
@@ -506,29 +484,13 @@ h3{
 	width:983px;
 	margin:0 auto;
 }
-.header{
-	width:938px;
-	height:300px;
-	margin:0 auto;
-}
+
 .header_left{
 	width:311px;
 	height:300px;
 	float:left;
 }
-.header_right h1{
-	font-family:Arial, Helvetica, sans-serif;
-	font-size:36px;
-	color:#e88728;
-	text-transform:capitalize;
-	font-weight:lighter;
-	
-}
-.header_right h2{
-	font-family:Arial, Helvetica, sans-serif;
-	font-size:18px;
-	color:#000;
-}
+
 .follow_player{
 	width:205px;
 	height:95px;
@@ -749,11 +711,6 @@ h3{
 }
 /***********************************************************************************/
 	
-.header_right{
-	width:627px;
-	height:300px;
-	float:right;
-}
 .main_perfil_bottom{
 	width:938px;
 }
