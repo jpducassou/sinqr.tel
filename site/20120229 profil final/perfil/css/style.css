@@ -351,26 +351,31 @@ header{
 	margin:0 auto;
 }
 
-#container_left_spacer {
+.container_left_spacer {
 	min-width: 10px;
 }
 
-#container_left {
+.container_left {
 	min-width: 250px;
 	float: left;
 }
 
-#container_middle {
+.container_middle {
 	min-width: 440px;
 	float: left;
 }
 
-#container_right {
+.container_right {
 	min-width: 250px;
 	float: right;
 }
 
-#container_right_spacer {
+.container_middle_right {
+	min-width: 690px;
+	float: left;
+}
+
+.container_right_spacer {
 	min-width: 10px;
 }
 
