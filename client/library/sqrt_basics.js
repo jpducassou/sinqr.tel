@@ -21,22 +21,24 @@ var sqrt = {
 	getGoogleApiKey:function() {
 		return 'AIzaSyAYDaIJG7v7j5mKy6cAjhzRI4LVa7yu6io';
 	},
-	getSqrtuserUrl:function() {
-		return 'http://www.sinqrtel.com/ingame/#fb1424880618';
-	}
+	getSqrtUserUrl:function(sqrt_user_id) {
+		return 'http://www.sinqrtel.com/ingame/#fb' + sqrt_user_id;
+	},
 	getGooglQRUrl:function(sqrt_user_id) {
-		var urlEscaped = escape(url).replace(/\+/g,"%2B");
+		var shorturl = null;
 		
-		xmlhttp.open("POST", "http://goo.gl/api/url?user=gonzalo@computadorasyservice.com&url=" + urlEscaped + "&key=" + this.getGoogleApiKey, false);
-		xmlhttp.send(null);
-			
-		var googl;
-			
 		try {
-			googl = JSON.parse(xmlhttp.responseText)
+			var urlEscaped = escape(url).replace(/\+/g,"%2B");
+			
+			xmlhttp.open("POST", "http://goo.gl/api/url?user=gonzalo@computadorasyservice.com&url=" + getSqrtUserUrl(sqrt_user_id) + "&key=" + this.getGoogleApiKey, false);
+			xmlhttp.send(null);
+			
+			var googl = JSON.parse(xmlhttp.responseText);
+			shorturl = googl.id;
 		} catch(e) {
-			googl = null
-		}		
+			shorturl = null
+		}
+		return shorturl;
 	},
 	getSiteRoot:function() {
     return "http://www.sinqrtel.com";
