@@ -16,22 +16,24 @@ _gaq.push(['_trackPageview']);
   var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
 })();
 </script>
-<script>
 <script language="javascript" type="text/javascript">
 var request = false;
 try {
-  request = new XMLHttpRequest();
-} catch (failed) {
-  request = false;
-}
-
-request.open( "GET", "redir.json", true );
-request.setRequestHeader("User-Agent", navigator.userAgent);
-request.send(null)
-request.onreadystatechange = function() {
-	if (request.readyState==4 && request.status==200) {
-		redirs = JSON.parse(json);
+	request=new XMLHttpRequest();
+	request.open( "GET", "redir.json", true );
+	request.setRequestHeader("User-Agent", navigator.userAgent);
+	request.send(null)
+	request.onreadystatechange = function() {
+		if (request.readyState==4 && request.status==200) {
+			redirs = JSON.parse(request.responseText);
+			console.log( redirs[window.location.hash] );
+ 			if ( redirs[window.location.hash] !== undefined ) {
+ 				window.location = redirs[window.location.hash];
+ 			}
+		}
 	}
+} catch (failed) {
+	console.log("Redir not found");
 }
 google.load("jquery", "1.7.0");
 </script>
