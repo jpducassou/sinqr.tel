@@ -3,3 +3,4 @@
 #qrbici	http://www.sinqrtel.com/perfil/perfil_usu.html
 #cn4mvd	http://www.sinqrtel.com/cn4mvd/index.html
 #gonzo	http://www.sinqrtel.com/users/gonzo.html
+#amaretto	http://www.sinqrtel.com/ted/amarettobakerycafe.html
