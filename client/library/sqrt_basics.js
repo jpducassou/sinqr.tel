@@ -18,6 +18,26 @@ Storage.prototype.getObject = function(key) {
 };
 
 var sqrt = {
+	getGoogleApiKey:function() {
+		return 'AIzaSyAYDaIJG7v7j5mKy6cAjhzRI4LVa7yu6io';
+	},
+	getSqrtuserUrl:function() {
+		return 'http://www.sinqrtel.com/ingame/#fb1424880618';
+	}
+	getGooglQRUrl:function(sqrt_user_id) {
+		var urlEscaped = escape(url).replace(/\+/g,"%2B");
+		
+		xmlhttp.open("POST", "http://goo.gl/api/url?user=gonzalo@computadorasyservice.com&url=" + urlEscaped + "&key=" + this.getGoogleApiKey, false);
+		xmlhttp.send(null);
+			
+		var googl;
+			
+		try {
+			googl = JSON.parse(xmlhttp.responseText)
+		} catch(e) {
+			googl = null
+		}		
+	},
 	getSiteRoot:function() {
     return "http://www.sinqrtel.com";
 	},
