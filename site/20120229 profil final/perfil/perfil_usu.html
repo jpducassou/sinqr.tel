@@ -6,20 +6,65 @@
 	<title>Perfil</title>
 	<meta name="viewport" content="width=1000" />
 	<link rel="stylesheet" href="css/style.css" type="text/css" />
-	<link href='http://fonts.googleapis.com/css?family=Syncopate:400,700' rel='stylesheet' type='text/css' /><!-- fuente de google, -->
-	<link rel="stylesheet" type="text/css" href="css/style_common.css" />
-	<link href='http://fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css' />
-	<script type="text/javascript" language="javascript" src="js/ratingsys.js">
+	<link href='http://fonts.googleapis.com/css?family=Syncopate:400,700' rel='stylesheet' type='text/css' />
+	<script src="https://www.google.com/jsapi?key=ABQIAAAAGbCP7xAnDeaBWr-NDrNqXBQmMOc3nLjHthTa4EGe0lmmw0PRdxREC4FbLwhuQ0MKiSEZhZaqWLSXNA" type="text/javascript"></script>
 </script>
 </head>
 
 <body>
+	<!--script loading begin-->
+	<div id="fb-root"></div>
+	<script>
+	window.fbAsyncInit = function() {
+		console.log("fbAsyncInit!");
+		FB.init({appId:'207120562693777',status:true,cookie:true,xfbml:true,oauth:true});
+		//FB.Event.subscribe('auth.login', localFBAuthChange() );
+		//FB.Event.subscribe('auth.logout', localFBAuthChange() );
+		//update on statusChange and once on page load
+		FB.Event.subscribe('auth.statusChange', function(response) { localFBAuthChange(response) } );
+		FB.getLoginStatus( function(response) { localFBAuthChange(response) } );
+	};
+	
+	window.sqrtAsyncInit = function (Sinqrtel) {
+		window.Sinqrtel = Sinqrtel;
+		console.log("sqrtAsyncLoad!");
+	};
+	
+	(function(d) {
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-24758076-1']);
+		_gaq.push(['_trackPageview']);
+		
+		var ga = d.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == d.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = d.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})(document);
+		
+	(function(d) {
+		var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
+		js = d.createElement('script'); js.id = id; js.async = true;
+		js.src = ('https:' == d.location.protocol ? 'https://' : 'http://') + 'connect.facebook.net/es_LA/all.js';
+		d.getElementsByTagName('head')[0].appendChild(js);
+	})(document);
+	
+	(function(d) {
+		var sqrtjs = d.createElement('script'); sqrtjs.type = 'text/javascript'; sqrtjs.async = true;
+		sqrtjs.src = ('https:' == d.location.protocol ? 'https://' : 'http://') + 'www.sinqrtel.com/perfil/js/sqrt_basics.js';
+		d.getElementsByTagName('head')[0].appendChild(sqrtjs);
+	})(document);
+	
+	google.load("jquery", "1.7.0");
+	</script>
+	<!--script loading end-->
+	
+	<!--document begin-->
+	<div id="facebook-beforelogin">
+		<div class="fb-login-button"></div>
+	</div>
+	<div class="header">
 	<div id="header_container">
-		<div class="text_floater">
-			<h1>Vivi la experiencia</h1>
-		</div>
-
-		<div class="logo_floater"><img src="img/logo_1.png" width="200" height="51" /></div>
+		<div class="text_floater"><h1>Vivi la experiencia</h1></div><div class="logo_floater"><img src="../img/logo_black.png" width="200" height="51" /></div>
+	</div>
 	</div>
 
 	<div id="container">
@@ -27,21 +72,21 @@
 			<div class="container_left_spacer"></div>
 
 			<div class="container_left">
-				<div class="view view-ninth" style="height:180px; width:180px;">
-					<img src="http://graph.facebook.com/gonzalo.barco/picture?type=large" width="200" />
+				<div class="view view-ninth">
+					<img id="sqrt_user_picture_large" src="http://graph.facebook.com/gonzalo.barco/picture?type=large" width="200" />
 
 					<div class="mask mask-1" style="width: 117px;"></div>
 
 					<div class="mask mask-2" style="width: 155px; height: 260px;"></div>
 
 					<div class="content" style="top:65px;">
-						<h2>Richard Dean Anderson</h2><!--<a href="#" class="info">Stats</a>-->
+						<h2 id="sqrt_user_name_small"></h2>
 					</div>
 				</div>
 			</div><!--container_left-->
 
 			<div class="container_middle">
-				<h1>richard dean anderson</h1>
+				<h1 id="sqrt_user_name_large"></h1>
 
 				<div class="follow_player">
 					<h2>SEGUIR JUGADOR</h2><a href="#"><img src="img/fb.png" width="42" height="42" /></a> <a href="#"><img src="img/twt.png" width="40" height="40" /></a>
@@ -49,7 +94,9 @@
 			</div><!--container_middle-->
 
 			<div class="container_right">
-				<div class="qr_cont"><img src="img/qr.jpg" width="135" height="135" /></div>
+				<div class="qr_cont">
+					<img id="sqrt_qr" src="img/preload.gif" width="64" height="64" />
+				</div>
 			</div><!--container_right-->
 
 			<div class="container_right_spacer"></div>
@@ -140,22 +187,89 @@
 		</div>
 	</div><!--! end of #container -->
 
-	<div class="footer_container">
-		<div id="Footer_nav">
-			<nav>
-				<ul>
-					<li><a href="#">Quienes somos</a></li>
-
-					<li><a href="#">Ayuda</a></li>
-
-					<li><a href="#">Contacto</a></li>
-				</ul>
-			</nav>
-		</div><!--Footer_nav-->
-
-		<div id="Footer_derechos">Todos los derechos reservados <img src="img/fotter.png" /></div>
+	<div class="footer">
+		<div class="footer_container">
+			<div id="Footer_nav">
+				<nav>
+					<ul>
+						<li><a href="#">Quienes somos</a></li>
+	
+						<li><a href="#">Ayuda</a></li>
+	
+						<li><a href="#">Contacto</a></li>
+					</ul>
+				</nav>
+			</div><!--Footer_nav-->
+					<div id="Footer_derechos">Todos los derechos reservados <img src="img/footer.png" /></div>
+		</div>
 	</div>
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js">
-</script>
+	<!--document end-->
+	<script type="text/javascript">
+		function localFBAuthChange(response) {
+			console.log("localFBAuthChange!");
+			
+			if (response.authResponse && response.status === 'connected') {
+				console.log("localFBAuthChange: " + response.status);
+				document.getElementById('facebook-beforelogin').style.display='none';
+				FB.api('/me', function(user) {
+					if (user) {
+						console.log("localinit with logged in user: " + user.id);
+						var image = document.getElementById('image');
+						image.src = 'https://graph.facebook.com/' + user.id + '/picture';
+						var name = document.getElementById('name');
+						name.innerHTML = user.name;
+					}
+				});
+				// the user is logged in and has authenticated your
+				// app, and response.authResponse supplies
+				// the user's ID, a valid access token, a signed
+				// request, and the time the access token 
+				// and signed request each expire
+				// var uid = response.authResponse.userID;
+				// var accessToken = response.authResponse.accessToken;
+			}
+		}
+		
+		function afterLoad() {
+			console.log("afterLoad()!");
+						
+			function checkCuorum() {
+				if ( FB && Sinqrtel ) {
+					console.log("checkCuorum ok!");
+					Sinqrtel.sqrt_init(FB);
+				
+					//customize
+					Sinqrtel.profileCustomize(document);
+				} else {
+					setTimeout(checkCuorum,50);
+					console.log("checkCuorum failed!");
+				}
+			}
+			
+			checkCuorum();
+			
+			//
+			//$("#refresh").click( function() {
+			//	FB.getLoginStatus(function(response) {
+			//		if (response.status === 'connected') {
+			//			FB.api('/me/friends', function(friends) {
+			//				if (friends) {
+			//					//select one random friend
+			//					var user = friends.data[Math.round(Math.random() * friends.data.length)];
+			//				
+			//					document.getElementById("image").src = "https://graph.facebook.com/" + user.id + "/picture";
+			//					document.getElementById('name').innerHTML = user.name;
+			//				}
+			//			});
+			//		} else {
+			//			document.getElementById('facebook-beforelogin').style.display='block';
+			//			console.log("Not logged in!");
+			//		}
+			//	});
+			//});
+		}
+		
+		window.onload = afterLoad();	
+	</script>
 </body>
 </html>
