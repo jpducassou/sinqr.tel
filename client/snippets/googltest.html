@@ -1,0 +1,28 @@
+<html>
+<body>
+	<h1>Test!</h1>
+	<img id="sqrtqr">
+<script type="text/javascript">
+	sqrt_user_id="1424880618";
+	var shorturl = null;
+	
+	try {
+		var url = 'http://www.sinqrtel.com/ingame/#fb' + sqrt_user_id;
+		url.replace(/\+/g,"%2B");
+		
+		xmlhttp=new XMLHttpRequest;
+		xmlhttp.open("POST", 'https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyAYDaIJG7v7j5mKy6cAjhzRI4LVa7yu6io',false);
+		xmlhttp.setRequestHeader('Content-Type','application/json');
+		xmlhttp.send('{"longUrl":"' + url + '"}' );
+		
+		var googl = JSON.parse(xmlhttp.responseText);
+		shorturl = googl.id + ".qr";
+	} catch(e) {
+		console.log(e);
+		shorturl = null
+	}
+	
+	document.getElementById("sqrtqr").setAttribute("src",shorturl);
+</script>
+</body>
+</html>
