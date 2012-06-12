@@ -15,7 +15,9 @@
 	<!--script loading begin-->
 	<div id="fb-root"></div>
 	<script>
+	var fbInitialized;
 	window.fbAsyncInit = function() {
+		fbInitialized=true;	
 		console.log("fbAsyncInit!");
 		FB.init({appId:'207120562693777',status:true,cookie:true,xfbml:true,oauth:true});
 		//FB.Event.subscribe('auth.login', localFBAuthChange() );
@@ -26,7 +28,7 @@
 	};
 	
 	window.sqrtAsyncInit = function (Sinqrtel) {
-		//window.Sinqrtel = Sinqrtel;
+		window.Sinqrtel = Sinqrtel;
 		console.log("sqrtAsyncLoad!");
 	};
 	
@@ -53,10 +55,7 @@
 	</script>
 	<!--script loading end-->
 	
-	<!--document begin-->
-	<div id="facebook-beforelogin">
-		<div class="fb-login-button"></div>
-	</div>
+	<!--document begin-->	
 	<div class="header">
 	<div id="header_container">
 		<div class="text_floater"><h1>Vivi la experiencia</h1></div><div class="logo_floater"><img src="../img/logo_black.png" width="200" height="51" /></div>
@@ -64,6 +63,9 @@
 	</div>
 
 	<div id="container">
+		<div id="facebook-beforelogin">
+			<div class="fb-login-button"></div>
+		</div>
 		<div id="container_top">
 			<div class="container_left_spacer"></div>
 
@@ -210,10 +212,10 @@
 				FB.api('/me', function(user) {
 					if (user) {
 						console.log("localinit with logged in user: " + user.id);
-						var image = document.getElementById('image');
-						image.src = 'https://graph.facebook.com/' + user.id + '/picture';
-						var name = document.getElementById('name');
-						name.innerHTML = user.name;
+						//var image = document.getElementById('image');
+						//image.src = 'https://graph.facebook.com/' + user.id + '/picture';
+						//var name = document.getElementById('name');
+						//name.innerHTML = user.name;
 					}
 				});
 				// the user is logged in and has authenticated your
@@ -230,10 +232,13 @@
 			console.log("afterLoad()!");
 						
 			function checkCuorum() {
-				if ( typeof FB != 'undefined' && typeof Sinqrtel != 'undefined' ) {
+				if ( typeof fbInitialized == 'boolean' && fbInitialized && typeof Sinqrtel != 'undefined' ) {
 					console.log("checkCuorum ok!");
 					Sinqrtel.sqrt_init(FB);
-				
+					
+					//wait...
+					while (!Sinqrtel.getSqrtIsConnected);
+			
 					//customize
 					Sinqrtel.profileCustomize(document);
 				} else {

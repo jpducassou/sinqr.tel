@@ -19,7 +19,8 @@ Storage.prototype.getObject = function(key) {
 
 var Sinqrtel = {
 	//configuration
-	sqrt_google_api_key:'AIzaSyAYDaIJG7v7j5mKy6cAjhzRI4LVa7yu6io',sqrt_social_prefixes:{'facebook':'fb','twitter':'tw'},
+	sqrt_google_api_key:'AIzaSyAYDaIJG7v7j5mKy6cAjhzRI4LVa7yu6io',
+	//sqrt_social_prefixes:{'facebook':'fb','twitter':'tw'},
 	//logic
 	sqrt_user_id:null,
 	sqrt_fb_status:null,
@@ -32,9 +33,6 @@ var Sinqrtel = {
 		this.sqrt_user_id = p_sqrt_user_id;
 	},
 	getSqrtUserId:function() {
-		if (this.sqrt_user_id == null) {
-			throw new Error('user_id not set');
-		}
 		return this.sqrt_user_id;
 	},
 	getFacebookStatus:function() {
@@ -46,7 +44,7 @@ var Sinqrtel = {
 	sqrt_update_fb_status:function (response) {
 		if (response != null && response.authResponse && response.status === 'connected') {
 			this.sqrt_fb_status = true;
-			this.setSqrtUserId(this.sqrt_social_prefixes.facebook + response.authResponse.userID );
+			this.setSqrtUserId( 'fb' + response.authResponse.userID );
 		} else {
 			this.sqrt_fb_status = false;
 			this.setSqrtUserId(null);
@@ -63,7 +61,7 @@ var Sinqrtel = {
 		}
 	},
 	getUserAuthIsFacebook:function() {
-		return (this.getSqrtUserId.indexOf(this.sqrt_social_prefixes.facebook) == 0);
+		return (this.getSqrtUserId.indexOf( 'fb' ) == 0);
 	},
 	getFacebookCachedResponse:function() {
 		return this.sqrt_fb_last_response;
@@ -72,18 +70,18 @@ var Sinqrtel = {
 		this.sqrt_fb_last_response = fb_last_response;
 	},
 	getUserAuthIsTwitter:function () {
-		return (this.getSqrtUserId.indexOf(sqrt_social_prefixes.twitter) == 0);
+		return (this.getSqrtUserId.indexOf( 'tw' ) == 0);
 	},
 	getSqrtIsConnected:function() {
-		var connected = (this.getSqrtUserId != null) && (
-			( this.getUserAuthIsFacebook && this.getFacebookStatus) ||
-			( this.getUserAuthIsTwitter && this.getTwitterStatus)
+		var connected = (this.getSqrtUserId() != null) && (
+			( this.getUserAuthIsFacebook() && this.getFacebookStatus() ) ||
+			( this.getUserAuthIsTwitter() && this.getTwitterStatus() )
 		);
 				
 		return connected;
 	},
 	getFacebookUserId:function() {
-		return this.getSqrtUserId().substring( this.sqrt_social_prefixes.facebook.length );
+		return this.getSqrtUserId().substring( 'fb'.length );
 	},
 	getSqrtUserUrl:function() {
 		return 'http://www.sinqrtel.com/ingame/#' + this.getSqrtUserId();
@@ -189,7 +187,7 @@ window.Sinqrtel = Sinqrtel;
 
 if (typeof window.sqrtAsyncInit == 'function') {
 	window.sqrtAsyncInit(Sinqrtel);
-	window.sqrtAsynInit = null;
+	window.sqrtAsyncInit = null;
 } else {
   console.log('Loaded syncroneusly?!?');
 }
