@@ -22,64 +22,74 @@ var Sinqrtel = {
 	sqrt_google_api_key:'AIzaSyAYDaIJG7v7j5mKy6cAjhzRI4LVa7yu6io',sqrt_social_prefixes:{'facebook':'fb','twitter':'tw'},
 	//logic
 	sqrt_user_id:null,
-	sqrt_fb_object:null,
+	sqrt_fb_status:null,
+	sqrt_tw_status:null,
 	sqrt_fb_last_response:null,
 	getGoogleApiKey:function() {
 		return sqrt_google_api_key;
 	},
 	setSqrtUserId:function(p_sqrt_user_id) {
-		sqrt_user_id = p_sqrt_user_id;
+		this.sqrt_user_id = p_sqrt_user_id;
 	},
 	getSqrtUserId:function() {
-		if (sqrt_user_id == null) {
+		if (this.sqrt_user_id == null) {
 			throw new Error('user_id not set');
 		}
-		return sqrt_user_id;
+		return this.sqrt_user_id;
 	},
-	setFacebookObject:function(p_sqrt_fb_object) {
-		sqrt_fb_object = p_sqrt_fb_object;
+	getFacebookStatus:function() {
+		return this.sqrt_fb_status;
 	},
-	sqrt_init:function(p_sqrt_fb_object) {
-		if ( p_sqrt_fb_object != null ) {
-			this.setFacebookObject(p_sqrt_fb_object);
-			this.setSqrtUserId(p_sqrt_user_id);
+	getTwitterStatus:function() {
+		return this.sqrt_tw_status;
+	},
+	sqrt_update_fb_status:function (response) {
+		if (response != null && response.authResponse && response.status === 'connected') {
+			this.sqrt_fb_status = true;
+			this.setSqrtUserId(this.sqrt_social_prefixes.facebook + response.authResponse.userID );
 		} else {
-			p_sqrt_fb_object = null;
-			p_sqrt_user_id = null;
+			this.sqrt_fb_status = false;
+			this.setSqrtUserId(null);
+		}
+		this.setFacebookCachedResponse(response);
+	},
+	sqrt_init:function() {
+		if ( typeof FB != "undefined" ) {
+			FB.Event.subscribe('auth.statusChange', this.sqrt_update_fb_status );
+			FB.getLoginStatus( this.sqrt_update_fb_status );
+		} else {
+			this.sqrt_fb_connected = false;
+			this.setSqrtUserId(null);
 		}
 	},
 	getUserAuthIsFacebook:function() {
-		return (sqrt_user_id.indexOf(sqrt_social_prefixes.facebook) == 0);
+		return (this.getSqrtUserId.indexOf(this.sqrt_social_prefixes.facebook) == 0);
 	},
 	getFacebookCachedResponse:function() {
-		return sqrt_fb_last_response;
+		return this.sqrt_fb_last_response;
+	},
+	setFacebookCachedResponse:function(fb_last_response) {
+		this.sqrt_fb_last_response = fb_last_response;
 	},
 	getUserAuthIsTwitter:function () {
-		return (sqrt_user_id.indexOf(sqrt_social_prefixes.twitter) == 0);
+		return (this.getSqrtUserId.indexOf(sqrt_social_prefixes.twitter) == 0);
 	},
 	getSqrtIsConnected:function() {
-		var connected = false;
-		
-		if ( this.getUserAuthIsFacebook && sqrt_fb_object != null ) {
-			sqrt_fb_object.getLoginStatus(function(response) {
-				connected = (response.authResponse && response.status === 'connected');
-				sqrt_fb_last_response = response;
-			});
-		} else if (this.getUserAuthIsTwitter && sqrt_tw_object != null ) {
-			connected = false;
-		}
-		
+		var connected = (this.getSqrtUserId != null) && (
+			( this.getUserAuthIsFacebook && this.getFacebookStatus) ||
+			( this.getUserAuthIsTwitter && this.getTwitterStatus)
+		);
+				
 		return connected;
 	},
 	getFacebookUserId:function() {
-		
-		return sqrt_user_id.substring( fb_pre.length ); //return id after fb
+		return this.getSqrtUserId().substring( this.sqrt_social_prefixes.facebook.length );
 	},
-	getSqrtUserUrl:function(sqrt_user_id) {
-		return 'http://www.sinqrtel.com/ingame/#' + sqrt_user_id;
+	getSqrtUserUrl:function() {
+		return 'http://www.sinqrtel.com/ingame/#' + this.getSqrtUserId();
 	},
-	getFacebookPublicData:function(sqrt_user_id) {
-		var facebook_user_id = this.getFacebookUserId(sqrt_user_id);
+	getFacebookPublicData:function() {
+		var facebook_user_id = this.getFacebookUserId();
 		var facebook_public_data;
 		try {
 			xmlhttp = new XMLHttpRequest;
@@ -95,11 +105,11 @@ var Sinqrtel = {
 		
 		return facebook_public_data;
 	},
-	getGooglQRUrl:function(sqrt_user_id,callback) {
+	getGooglQRUrl:function(callback) {
 		var short_url = null;
 		
 		try {
-			var url = this.getSqrtUserUrl(sqrt_user_id).replace(/\+/g,"%2B");
+			var url = this.getSqrtUserUrl().replace(/\+/g,"%2B");
 			
 			xmlhttp = new XMLHttpRequest;
 			xmlhttp.open("POST", "http://goo.gl/api/url?key=" + this.getGoogleApiKey, false);
@@ -140,10 +150,14 @@ var Sinqrtel = {
 		return sum;
 	},
 	getObjectInfo:function( objectName, success ) {
-		xmlhttp = new XMLHttpRequest;
-		xmlhttp.open("GET", this.getSiteRoot() + this.getSiteObjectInfoPath() + objectName);
-		xmlhttp.onreadystatechange = success;
-		xmlhttp.send(null);
+		try {
+			xmlhttp = new XMLHttpRequest;
+			xmlhttp.open("GET", this.getSiteRoot() + this.getSiteObjectInfoPath() + objectName);
+			xmlhttp.onreadystatechange = success;
+			xmlhttp.send(null);
+		} catch (e) {
+			success(null,0);
+		}
 	},
 	addLocalScore:function( scoreArray, score, timeStamp ) {
 		scoreArray.push( [timeStamp, score] );
@@ -156,15 +170,15 @@ var Sinqrtel = {
 	//sqrt_user_name_small (textNode)
 	//sqrt_user_name_large (textNode)
 	profileCustomize:function(d) {
-		if ( getSqrtIsConnected() ) {
-			if ( getUserAuthIsFacebook ) {
-				var facebook_public_data  = getFacebookPublicData();
+		if ( this.getSqrtIsConnected() ) {
+			if ( this.getUserAuthIsFacebook ) {
+				var facebook_public_data  = this.getFacebookPublicData();
 				try {
 					d.getElementById('sqrt_user_picture_large').src = facebook_public_data.picture_large;
 					d.getElementById('sqrt_user_name_small').innerHtml = facebook_public_data.name;
 					d.getElementById('sqrt_user_name_large').innerHtml = facebook_public_data.name;
 				} catch (e) {};
-			} else if ( getAuthIsTwitter ) {
+			} else if ( this.getAuthIsTwitter ) {
 				
 			}
 		}
