@@ -1,0 +1,111 @@
+<!DOCTYPE HTML>
+<html xml:lang="es" xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf8">
+		<!--Local CSS-->
+    <link href='http://fonts.googleapis.com/css?family=Syncopate:400,700' rel='stylesheet' type='text/css'>
+    <script src="https://www.google.com/jsapi?key=ABQIAAAAGbCP7xAnDeaBWr-NDrNqXBQmMOc3nLjHthTa4EGe0lmmw0PRdxREC4FbLwhuQ0MKiSEZhZaqWLSXNA" type="text/javascript"></script>
+    <title>Sinqrtel.com</title>
+		<script>
+		window.fbAsyncInit = function() {
+			console.log("fbAsyncInit!");
+      FB.init({appId:'207120562693777',status:true,cookie:true,xfbml:true,oauth:true});
+			
+			// update on login, logout, and once on page load
+      //FB.Event.subscribe('auth.login', localFBAuthChange() );
+      //FB.Event.subscribe('auth.logout', localFBAuthChange() );
+			FB.Event.subscribe('auth.statusChange', function(response) { localFBAuthChange(response) } );
+      FB.getLoginStatus( function(response) { localFBAuthChange(response) } );
+    };
+		
+		window.sqrtAsyncInit = function () {
+      console.log("sqrtAsyncLoad!");
+    }
+		</script>
+  </head>
+  <body>
+    <div id="fb-root"></div>
+		<div id="facebook-beforelogin">
+		<div class="fb-login-button"></div>
+		</div>
+		<script>
+    (function(d) {
+			var _gaq = _gaq || [];
+			_gaq.push(['_setAccount', 'UA-24758076-1']);
+			_gaq.push(['_trackPageview']);
+			
+			var ga = d.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == d.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = d.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+			
+			var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
+      js = d.createElement('script'); js.id = id; js.async = true;
+      js.src = ('https:' == d.location.protocol ? 'https://' : 'http://') + 'connect.facebook.net/es_LA/all.js';
+      d.getElementsByTagName('head')[0].appendChild(js);
+			
+			var sqrtjs = d.createElement('script'); sqrtjs.type = 'text/javascript'; sqrtjs.async = true;
+			sqrtjs.src = ('https:' == d.location.protocol ? 'https://' : 'http://') + 'www.sinqrtel.com/ingame/sqrt_basics.js';
+			d.getElementsByTagName('head')[0].appendChild(sqrtjs);
+    })(document);
+		
+		google.load("jquery", "1.7.0");
+    </script>
+		
+    <div align="center">
+      <img id="image"/>
+      <div id="name"></div>
+      <input type="button" id="refresh">
+    </div>
+		
+    <script type="text/javascript">
+		function localFBAuthChange(response) {
+			console.log("localFBAuthChange!");
+			if (response.authResponse && response.status === 'connected') {
+				console.log("localFBAuthChange: " + response.status);
+				document.getElementById('facebook-beforelogin').style.display='none';
+				FB.api('/me', function(user) {
+					if (user) {
+						console.log("localinit with logged in user: " + user.id);
+						var image = document.getElementById('image');
+						image.src = 'https://graph.facebook.com/' + user.id + '/picture';
+						var name = document.getElementById('name');
+						name.innerHTML = user.name;
+					}
+				});
+				// the user is logged in and has authenticated your
+				// app, and response.authResponse supplies
+				// the user's ID, a valid access token, a signed
+				// request, and the time the access token 
+				// and signed request each expire
+				// var uid = response.authResponse.userID;
+				// var accessToken = response.authResponse.accessToken;
+			}
+		}
+		
+		function afterLoad() {
+			console.log("afterLoad()!");
+			
+			$("#refresh").click( function() {
+				FB.getLoginStatus(function(response) {
+					if (response.status === 'connected') {
+						FB.api('/me/friends', function(friends) {
+							if (friends) {
+								//select one random friend
+								var user = friends.data[Math.round(Math.random() * friends.data.length)];
+							
+								document.getElementById("image").src = "https://graph.facebook.com/" + user.id + "/picture";
+								document.getElementById('name').innerHTML = user.name;
+							}
+						});
+					} else {
+						document.getElementById('facebook-beforelogin').style.display='block';
+						console.log("Not logged in!");
+					}
+				});
+			});
+		}
+		
+		window.onload = afterLoad();
+    </script>      
+  </body>
+ </html>

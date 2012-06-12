@@ -32,7 +32,7 @@ audio:not([controls]) { display: none; }
 
 html { font-size: 100%; overflow-y: scroll; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
 
-body {background-color:#fff; margin: 0; font-size: 13px; line-height: 1.231; }
+body {background-color:#000; margin: 0; font-size: 13px; line-height: 1.231; }
 
 body, button, input, select, textarea { font-family: sans-serif; color: #222; }
 
@@ -45,7 +45,7 @@ body, button, input, select, textarea { font-family: sans-serif; color: #222; }
 ::-moz-selection { 
 	background: #F60; 
 	color: #000;
-    text-shadow: none; }
+  text-shadow: none; }
 
 ::selection {
 	background: #F60; 
@@ -309,9 +309,9 @@ td { vertical-align: top; }
 
 #header_container{
 	margin: 0 auto;
-    max-width: 960px;
-    overflow: hidden;
-    width: 100%;
+  max-width: 960px;
+  overflow: hidden;
+  width: 100%;
 	padding:5px;
 }
 
@@ -320,19 +320,23 @@ td { vertical-align: top; }
 	max-width:100%;
 }
 
+#facebook-beforelogin {
+	max-width: 960px;
+	margin: 20px auto;
+}
+
 #header_container h1{
 	font-weight:200;
 	color:#F60;
 	float:left;
 }	
 
-#container{
+#container {
 	margin: 0 auto;
   overflow: hidden;
   width: 100%;
-	padding:20px;
 	background-color: #fff;
-	max-width: 960;
+	max-width: 960px;
 }
 
 #container_top {
@@ -340,12 +344,14 @@ td { vertical-align: top; }
 	max-height: 300px;
 	min-height: 250px;
 	margin:0 auto;
+	max-width:960px;
 }
 
 #container_bottom {
 	width:auto;
 	min-height: 300px;
 	margin:0 auto;
+	max-width:960px;
 }
 
 .container_left_spacer {
@@ -501,21 +507,15 @@ h3{
 	position:relative;
 }
 .follow_player a:hover{
-	    -moz-opacity: 0.5;
-   		 -webkit-opacity: 0.5;
-    	-khtml-opacity: 0.5;
-	/* para IE*/
-		filter:alpha(opacity=50);  
- 		-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+	opacity: 0.5;
+	filter:alpha(opacity=50);  
 }
+
 .qr_cont{
-	width: 133px;
-	height: 133px;
+	width: 200px;
+	height: 200px;
 	position:relative;
 	float:right;
-	top: 31px;
-    right: 20px;
-	 
 }
 
 /******perdil main/////////////*************/
@@ -525,7 +525,7 @@ h3{
 	padding-left:15px;
 	padding-top:15px;
 	margin-top:15px;
-	background:url(../images/white_texture.jpg) repeat;
+	background-color: #fff;
 	border-bottom: 1px dotted #F63;
 	border-top: solid 1px #F60;
 }
@@ -556,12 +556,8 @@ h3{
 	padding-left:15px;
 }
 .redes a:hover{
-	   -moz-opacity: 0.5;
-   		 -webkit-opacity: 0.5;
-    	-khtml-opacity: 0.5;
-	/* para IE*/
-		filter:alpha(opacity=50);  
- 		-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+	opacity: 0.5;
+	filter:alpha(opacity=50);
 }
 
 
@@ -584,38 +580,19 @@ h3{
 	padding-top: 16px;
 	padding-left:5px;
 }
-.stars_clasification{
-	margin-top: 10px; 
-	margin-left: 34px;
-}
-
-
-/***********************************STASRR***********************/
- #rateStatus{float:left; clear:both; width:100%; height:20px; font-size:10px;}
-    #rateMe{float:left; clear:both; width:100%; height:auto; padding:0px; margin:0px;}
-    #rateMe li{float:left;list-style:none;}
-    #rateMe li a:hover,
-    #rateMe .on{background:url(../img/star_on.png) no-repeat;}
-    #rateMe a{float:left;background:url(../img/star_off.png) no-repeat;width:26px; height:26px;}
-    #ratingSaved{display:none;}
-    .saved{color:red; }
-	/****************************************/
 
 /***********************efecto_imagen********************/
 .view {
    width: 180px;
    height: 180px;
-   margin: 10px;
    float: left;
    border: 5px solid #e88728;
    overflow: hidden;
    position: relative;
    text-align: center;
-   -webkit-box-shadow: 1px 1px 2px #e6e6e6;
-   -moz-box-shadow: 1px 1px 2px #e6e6e6;
    box-shadow: 1px 1px 2px #e6e6e6;
    cursor: default;
-   background: #fff url(../images/bgimg.jpg) no-repeat center center;
+   background-color: #fff;
 }
 .view .mask,.view .content {
    width: 180px;
@@ -659,21 +636,16 @@ h3{
    background: #000;
    color: #fff;
    text-transform: uppercase;
-   -webkit-box-shadow: 0 0 1px #000;
-   -moz-box-shadow: 0 0 1px #000;
    box-shadow: 0 0 1px #000;
 }
 
 .view a.info: hover {
-   -webkit-box-shadow: 0 0 5px #000;
-   -moz-box-shadow: 0 0 5px #000;
    box-shadow: 0 0 5px #000;
 }
 .view-ninth .mask-1, .view-ninth .mask-2 {
     background-color:#e88728;
  	width: 155px; height: 260px;
     background: rgba(232, 135, 40, .5);
-    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
     filter: alpha(opacity=100);
     opacity: 1;
     -webkit-transition: all 0.3s ease-in-out 0.6s;
