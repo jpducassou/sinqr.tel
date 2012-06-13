@@ -4,13 +4,39 @@
   <title></title>
   <meta name="description" content="">
   <meta name="author" content="">
-
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-
-  <!-- Place favicon.ico and apple-touch-icon.png in the root directory: mathiasbynens.be/notes/touch-icons -->
   <link rel="stylesheet" href="css/common.css">
   <link href='http://fonts.googleapis.com/css?family=Syncopate:400,700' rel='stylesheet' type='text/css'>
-  <!-- More ideas for your <head> here: h5bp.com/d/head-Tips -->
+  <script type="text/javascript" src="https://www.google.com/jsapi?key=ABQIAAAAGbCP7xAnDeaBWr-NDrNqXBQmMOc3nLjHthTa4EGe0lmmw0PRdxREC4FbLwhuQ0MKiSEZhZaqWLSXNA"></script>
+<script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-24758076-1']);
+_gaq.push(['_trackPageview']);
+
+(function() {
+  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+})();
+
+var request = false;
+try {
+	request=new XMLHttpRequest();
+	request.open( "GET", "redir.json", true );
+	request.setRequestHeader("User-Agent", navigator.userAgent);
+	request.send(null)
+	request.onreadystatechange = function() {
+		if (request.readyState==4 && request.status==200) {
+			redirs = JSON.parse(request.responseText);
+			console.log( redirs[window.location.hash] );
+ 			if ( redirs[window.location.hash] !== undefined ) {
+ 				window.location = redirs[window.location.hash];
+ 			}
+		}
+	}
+} catch (failed) {
+	console.log("Redir not found");
+}
+</script>
 </head>
 
 <body>
@@ -26,12 +52,15 @@
     <div>
     </div>
     <div style="float:right; max-width: 480; padding: 10px">
-  <iframe width="600" height="450" src="http://www.youtube.com/embed/OcayWJjFHGU?&autoplay=1&rel=0&fs=0&theme=light&loop=1&disablekb=1&controls=0&autohide=1&playlist=OcayWJjFHGU" frameborder="0" allowfullscreen></iframe>
+    <iframe width="600" height="450" src="http://www.youtube.com/embed/sOiKAO7SVhQ?autoplay=1&rel=0&fs=0&theme=light&loop=1&disablekb=1&controls=0&autohide=1" frameborder="0" allowfullscreen></iframe>
     </div>
 		<!--<h1>Que es SinQRtel?</h1>-->
     <div style="padding: 10px">
-    <h2>Jug&aacute; con tu cuenta de Facebook, desde tu celular o PC, gan&aacute; puntos y cambialos por premios, sorteos, descuentos, regalos, cr&eacute;dito en compras y efectivo.</h2>
-		<!--<h2><a class="links_aleatorios" href="/como_se_juga.html">C&oacute;mo se juga?</a></h2>-->
+    <h2>SinQRtel es el juego urbano y virtual que te permitirá acceder a promociones, descuentos y acumular puntos para canjear por premios, mientras jugas en forma gratuita.</h2>
+    <h2><strong>Jug&aacute; con tu cuenta de Facebook, desde tu celular o PC.</strong></h2>
+    <h2>&nbsp;</h2>
+    <h2><a class="links_aleatorios" href="/como_se_juega.html">C&oacute;mo se juega?</a></h2>
+    <h2><a class="links_aleatorios" href="http://get.beetagg.com/">Descargar lector de códigos QR</a></h2>
     <!--<h2><a class="links_aleatorios" href="/beneficios.html">Beneficios activos</a></h2>-->
     </div>
     </div><!--FIN_main-->
@@ -52,20 +81,5 @@
 		</div>
 	</div>
  </div>
-<script>
-	(function(d) {
-		var _gaq = _gaq || [];
-		_gaq.push(['_setAccount', 'UA-24758076-1']);
-		_gaq.push(['_trackPageview']);
-		
-		var ga = d.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == d.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = d.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-
-	/*	var sqrtjs = d.createElement('script'); sqrtjs.type = 'text/javascript'; sqrtjs.async = true;
-		sqrtjs.src = ('https:' == d.location.protocol ? 'https://' : 'http://') + 'www.sinqrtel.com/js/sqrt_basics.js';
-		d.getElementsByTagName('head')[0].appendChild(sqrtjs);*/
-	})(document);
- </script>
  </body>
 </html>

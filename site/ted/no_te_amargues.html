@@ -1,45 +1,163 @@
 <!DOCTYPE html>
 <head>
   <meta charset="utf-8">
-  <title></title>
+  <title>No te amargues....</title>
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="viewport" content="width=640,initial-scale=0.5">
 
   <!-- Place favicon.ico and apple-touch-icon.png in the root directory: mathiasbynens.be/notes/touch-icons -->
   <link rel="stylesheet" href="../css/common.css">
   <link href='http://fonts.googleapis.com/css?family=Syncopate:400,700' rel='stylesheet' type='text/css'>
-  <!-- More ideas for your <head> here: h5bp.com/d/head-Tips -->
+  <script type="text/javascript" src="https://www.google.com/jsapi?key=ABQIAAAAGbCP7xAnDeaBWr-NDrNqXBQmMOc3nLjHthTa4EGe0lmmw0PRdxREC4FbLwhuQ0MKiSEZhZaqWLSXNA"></script>
+<script type="text/javascript" src="http://crypto-js.googlecode.com/files/2.4.0-crypto-sha1-hmac-pbkdf2-blockmodes-aes.js"></script>  
+  <script type="text/javascript" src="/js/sendmessage.js"></script>
+  <script>	google.load("jquery", "1.7.0");
+	google.load("jqueryui", "1.8.16");
+</script>
+<style type="text/css">
+input {
+    outline: none;
+    transition: all 0.25s ease-in-out;
+    -webkit-transition: all 0.25s ease-in-out;
+    -moz-transition: all 0.25s ease-in-out;
+    border-radius:3px;
+    -webkit-border-radius:3px;
+    -moz-border-radius:3px;
+    border: 1px solid rgba(0, 0, 0, 1);
+		z-index: 1;
+}
+input:focus {
+    box-shadow: 0 0 13px rgba(255, 106, 0, 1);
+    -webkit-box-shadow: 0 0 13px rgba(255, 106, 0, 1);
+    -moz-box-shadow: 0 0 13px rgba(255, 106, 0, 1);
+    border:1px solid rgba(0, 0, 0, 1);
+}
+input.invalid {
+	color: #ff0000;
+	background-color: #000;
+}
+input.valid {
+	color: #4d4948;
+	background-color: #FFF;
+}
+#already_signed {
+  border: 1px solid rgb(255,255,255);
+  display: none;
+  text-align: center;
+  vertical-align: middle;
+  width: 255px;
+	color: #ffffff;
+	padding: 5px;
+  background-color: #000;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+#signin_button {
+  display: none;
+  border: 1px solid rgb(0, 0, 0);
+  background-color: #fff;
+	color: #000;
+  text-align: center;
+  vertical-align: middle;
+  width: 265px;
+	cursor: pointer;
+}
+</style>
 </head>
 
 <body>
+<div id="fb-root"></div>
+	<script>
+	function getFBName(response) {
+		FB.getLoginStatus(function(response) {
+			  if (response.status == "connected") {
+					FB.api('/me', function(response) {
+						if ( response && response.id) {
+							document.getElementById("name").value=response.name;
+							document.getElementById("fbid").value=response.id;
+						}
+					});
+				}
+			});
+	}
+	var fbInitialized;
+	window.fbAsyncInit = function() {
+		fbInitialized=true;	
+		console.log("fbAsyncInit!");
+		FB.init({appId:'207120562693777',status:true,cookie:true,xfbml:true,oauth:true});
+		FB.Event.subscribe('auth.login', getFBName );
+		//FB.Event.subscribe('auth.logout', localFBAuthChange() );
+		//update on statusChange and once on page load
+		FB.Event.subscribe('auth.statusChange', getFBName);
+		FB.getLoginStatus( getFBName );
+	};
+	
+	window.sqrtAsyncInit = function (Sinqrtel) {
+		window.Sinqrtel = Sinqrtel;
+		console.log("sqrtAsyncLoad!");
+	};
+	
+	(function(d) {
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', 'UA-24758076-1']);
+		_gaq.push(['_trackPageview']);
+		
+		var ga = d.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == d.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = d.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		
+		var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
+		js = d.createElement('script'); js.id = id; js.async = true;
+		js.src = ('https:' == d.location.protocol ? 'https://' : 'http://') + 'connect.facebook.net/es_LA/all.js';
+		d.getElementsByTagName('head')[0].appendChild(js);
 
-<div class="header">
-	_
-	<div id="header_container">
+		var sqrtjs = d.createElement('script'); sqrtjs.type = 'text/javascript'; sqrtjs.async = true;
+		sqrtjs.src = ('https:' == d.location.protocol ? 'https://' : 'http://') + 'www.sinqrtel.com/js/sqrt_basics.js';
+		d.getElementsByTagName('head')[0].appendChild(sqrtjs);
+	})(document);
+	</script>
+
+<div class="header" style="max-width:480">
+	<div id="header_container" style="max-width:480">
 		<div class="text_floater"><h1>Vivi la experiencia</h1></div><div class="logo_floater"><img src="../img/logo_header.png" width="200" height="51" /></div>
 	</div>
 </div>
-<div id="main">
-  <div id="container">
+<div id="main" style="max-width:480">
+  <div id="container" style="max-width:480">
     <div>
 		<!--<h1>Que es SinQRtel?</h1>-->
-    <div style="float:left; padding: 10px; max-width: 600px;">
-    <img src="img/contra_izq.jpg" width="480" height="580"></div>
-    <div style="float: left; padding: 30px 0px 0px 10px;">
+    
+    <div style="clear: both; padding: 30px 0px 0px 10px;">
     <img src="img/participa.png" width="300" height="129"><br>
-    <div style="float:left; width:100px; font-size:18px">
-              <label for="name">Nombre</label><br>
-                        <label for="name">Celular</label>
+    <div>
+    <div style="float:left">
+    Completá tus datos o accedé con tu cuenta de Facebook&nbsp; </div><div style="float:"><div class="fb-login-button"></div></div>
+    </div>
+    <div style="clear:both"></div><br>
+<div style="float:left; width:100px; font-size:18px">
+<div style="padding:1px">
+              <label for="name">Nombre</label></div>
+<div style="padding:1px">              
+              <label for="name">Mail</label></div>
     </div>
 		<div style="float:left">
-      <input type="text" name="name" id="name"><br>
-      <input type="text" name="celular" id="celular">
+    <div style="padding:2px">
+      <input type="text" name="name" id="name"></div>
+<div style="padding:2px">
+      <input type="text" name="mail" id="mail">
+      </div>
+      <input type="hidden" name="fbid" id="fbid">
      </div>
+     <div style="clear:both; font-size:18px" id="signin_button">Enviar datos!</div>
+     <div id="already_signed" style="clear:both; padding: 5px; display:none;">Ya est&aacute;s participando del sorteo.<br>
+      Suerte!!!</div>
 
      </div>
-    
+     <div style="clear:both; padding: 10px; max-width: 480px;">
+    <img src="img/contra_izq.jpg" width="480" height="580"></div>
 </div>
   </div><!--FIN_main-->
   </div> <!--! end of #container -->
@@ -49,30 +167,43 @@
 				<nav>
 					<ul>
 						<li><a href="/como_se_juega.html">C&oacute;mo se juega?</a></li>
-						<li><a href="/beneficios.html">Beneficios activos</a></li>
+<!--						<li><a href="/beneficios.html">Beneficios activos</a></li>-->
 <!--						<li><a href="/ingame/#myself">Ver tu perfil</a></li>-->
 <!--						<li><a href="/ranking.html">Ver ranking</a></li>-->
 					</ul>
 				</nav>
 			</div><!--Footer_nav-->
-			<div id="Footer_derechos">Todos los derechos reservados <img src="../img/logo_footer.png" /></div>
+			<div id="Footer_derechos" style="float:none">Todos los derechos reservados <img src="../img/logo_footer.png" /></div>
 		</div>
 	</div>
  </div>
 <script>
-	(function(d) {
-		var _gaq = _gaq || [];
-		_gaq.push(['_setAccount', 'UA-24758076-1']);
-		_gaq.push(['_trackPageview']);
+$(document).ready(function() {
+	$("#signin_button").click( function () {
+	  $("#signin_button").hide();
+	  $("#already_signed").show();
+	  if ( localStorage["contra"] == null ) {
+		localStorage["contra"] = $("#email").val();
+	  } else {
+		localStorage["contra"] = localStorage["contra"].concat( "|" + $("#name").val() );
+	  }
 		
-		var ga = d.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == d.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = d.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-
-	/*	var sqrtjs = d.createElement('script'); sqrtjs.type = 'text/javascript'; sqrtjs.async = true;
-		sqrtjs.src = ('https:' == d.location.protocol ? 'https://' : 'http://') + 'www.sinqrtel.com/js/sqrt_basics.js';
-		d.getElementsByTagName('head')[0].appendChild(sqrtjs);*/
-	})(document);
+	  invokeRequest( "Contraaccion|" + $("#name").val() + "|" + $("#mail").val() +  "|" + $("#fbid").val());
+		
+	});
+  $("#mail").keyup( function() {
+		if ( this.value.length > 6 ) {
+			if ( /\b[a-z0-9._%-]+@[a-z0-9.-]+\.[a-z]{2,4}\b/i.test( this.value ) ) {
+			$("#mail").removeClass("invalid").addClass("valid");
+			$("#signin_button").show('slow');
+			} else {
+			$("#mail").removeClass("valid").addClass("invalid");
+			$("#signin_button").hide('slow');
+			}
+		}
+  });
+  $("#mail").keyup();
+});
  </script>
  </body>
 </html>
