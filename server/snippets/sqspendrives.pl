@@ -18,16 +18,23 @@ my $sqs = new Amazon::SQS::Simple( $access_key, $secret_key );
 # Get Existing queue by endpoint
 my $q = $sqs->GetQueue( $queue_uri );
 
+open( SIGNUPS, '>>signups_tedx.txt' );
+
 # Retrieve a message
 while ( my @msg = $q->ReceiveMessage( 'AttributeName.1' => 'All' , MaxNumberOfMessages=>10, VisibilityTimeout=>60 ) ) {
   foreach my $msg ( @msg ) {
     print $msg->MessageBody() . "\n";
+    print SIGNUPS $msg->MessageBody() . "\n";
     #if ( defined $msg->{Attribute} ) {
-    #  print "\t" . join("|", map {$_->{Name} . '=' . $_->{Value}} @{$msg->{Attribute}} );
+    #  my $attributes = join("|", map {$_->{Name} . '=' . $_->{Value}} @{$msg->{Attribute}} );
+    #  print "|" . $attributes . "\n";
+    #  print SIGNUPS "|" . $attributes . "\n";
     #}
     #  Delete the message
-    unless ( $q->DeleteMessage($msg->ReceiptHandle()) ) {
-      print "Delete failed\n";
-    }
+    #unless ( $q->DeleteMessage($msg->ReceiptHandle()) ) {
+    #  print "Delete failed\n";
+    #}
   }
 }
+
+close ( SIGNUPS );
