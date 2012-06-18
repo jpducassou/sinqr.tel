@@ -1,72 +1,74 @@
-Contraaccion|German |Ggorosito@pronto.com.uy|
-Accion|Analia pouy|Anipomu@hotmail.com|
-Accion|Itay|Itaybrenner@hotmail.com|
-Accion|German Gorosito |Gertxu@gmail.com|
-Accion|Jorge mastropietro|Jorgejuan.mastropietro@gmail.com|
-Accion|Rossina Rombys|rossina.rombys@gmail.com|
-Contraaccion|Valentina A. Lopez Eguren|vam_le@hotmail.com|1185730946
-Accion|Rosina|Roxies@gmail.com|
-Accion|Iair|Iaiowol@hotmail.com|
-Accion|Diego|Diegobg11@gmail.com|
-Contraaccion|Ariel Acosta|acostabarreto@gmail.com|
-Accion|sebastian|sebastianflaquer@hotmail.com|
-Accion|maria eugenia|marudura@hotmail.com|
-Accion|Verorey@gmail.com|VEroreyd@gmail.com|
-Contraaccion|Dan|sujin@dkanime.com|
-Contraaccion|maximiliano|maxifigue@gmail.com|
-Accion|Stefania|Stefi_119@hotmail.com|
-Accion|Carolina|Carito-gandolfo@hotmail.com|
-Accion|marcelo dominguez|dmarce60@gmail.com|
-Accion|Mauricio Abelar|mauricio.abelar@gmail.com|
-Accion|EmAnuEl|emanuel.galletto@gmail.com|
-Accion|Fabricio Patron|Fabriciopatron@me.com |
-Accion|Jaime|Jaimeamigos@gmail.com|
-Accion|MArco Rocha|Marcorochauru@gmail.com|
-Contraaccion|Pablo Silva|pdegiuda@gmail.com|
-Accion|Nicolas Quagliata|Nicoquagliata@gmail.com|1142946207
-Accion|Ari Rostkier|roska87@gmail.com|
-Accion|Andres Butteri|andres.butteri@gmail.com|
-Accion|Silvana Pereira|Silvaper@netgate.com.uy|
-Accion|Rodrigo Cardozo|rodrigoc85@gmail.com|
-Accion|Luis videgain|Lvidegain@hotmail.com|
-Accion|Bruno Pannunzio|brunoo.182@hotmail.com|
-Accion|Agustin Poznanski|agustinp20@hotmail.com|
-Contraaccion|Virginia|virginia88@gmail.com|
-Accion|matias|colotuzzo@gmail.com|
-Accion|Valeria ozer ami|Valeo_7_7@hotmail.com|
-Contraaccion|Federico de los Santos|fededelossantos@gmail.com|
-Contraaccion|silvia|silviadiazf@gmail.com|
-Accion|Florencia|Florenciasanjulian@gmail.com|
-Accion|Sodia|Sofitagm@hotmail.com|
-Accion|Javier|Jvenossa@gmail.com|
-Accion|Patricia|Perezpatricia@gmail.com|
-Accion|Lucia tirelli|Luliih2009@hotmail.com|
-Accion|Sofia|Sofi@gmail.com|
-Accion|Sofia|Sofi.menoni@gmail.com|
-Contraaccion|Federico Sardi|federicosardi@montevideo.com.uy|1311190497
-Accion|fabricio|faiops@gmail.com|
-Accion|Matias Hernandez|mhernand@gmail.com|
-Contraaccion|Gaston Marrero|gaston.marrero@cartapad.com|
-Contraaccion|Ana Torres|anamontevideo@email.com|
-Contraaccion|Gaboto|gabriel.rshaw@gmail.com|
-Contraaccion|isabella|isaantonaccio@gmail.com|
-Accion|Diego Renau |Koobcamuru@gmail.com|
-Accion|Cristian|crisnun80@gmail.com|
-Accion|Christofer|Brudz@adinet.com.uy|
-Accion|Mercedes|Molivera@teatrosolis.org.uy|
-Accion|Joaquin|Juaking66@hotmail.com|
-Accion|Marcelo Manukian|Marcelo2002@gmail.com|
-Contraaccion|pablo|pbalseiro@marketing.com.uy|
-Accion|J. Pablo Zebraitis|zebraitis@gmail.com|
-Accion|MArtin pravia|Martinpravia@hotmail.com|
-Accion|Gonzalo Tasende|gonzalo.tasende@gmail.com|
-Accion|Joanna Blankleder|Enjowit@gmail.com|
-Accion|Federico Traiman |ftraiman3@hotmail.com|
-Accion|eyal brenner|eyalbrennerwer@hotmail.com|
-Accion|Jen Cesarkas|Jencesarkas@hotmail.com|
-Accion|Venezia visca|veneziavz@me.com|
-Accion|Diego Renau |Koobcamuru@gmail.com|
-Accion|Pablo|Pgarciabagani@hotmail.com|
-Accion|Enrique|Tatodemello10@gmail.com|
-Accion|Nicolas Baptista|nbaptista@geocom.com.uy|
-Accion|Stephanie|Catatonias@gmail.com|
+Acción	Nombre	Mail	FBID
+Contraacción	Pablo	pbalseiro@marketing.com.uy	
+Acción	J. Pablo Zebraitis	zebraitis@gmail.com	
+Acción	MArtin pravia	Martinpravia@hotmail.com	
+Acción	Gonzalo Tasende	gonzalo.tasende@gmail.com	
+Acción	Joanna Blankleder	Enjowit@gmail.com	
+Acción	Federico Traiman 	ftraiman3@hotmail.com	
+Acción	eyal brenner	eyalbrennerwer@hotmail.com	
+Acción	Jen Cesarkas	Jencesarkas@hotmail.com	
+Acción	Venezia visca	veneziavz@me.com	
+Acción	Diego Renau 	Koobcamuru@gmail.com	
+Contraacción	German 	Ggorosito@pronto.com.uy	
+Acción	Analia pouy	Anipomu@hotmail.com	
+Acción	Itay	Itaybrenner@hotmail.com	
+Acción	German Gorosito 	Gertxu@gmail.com	
+Acción	Jorge mastropietro	Jorgejuan.mastropietro@gmail.com	
+Acción	Rossina Rombys	rossina.rombys@gmail.com	
+Contraacción	Valentina A. Lopez Eguren	vam_le@hotmail.com	1185730946
+Acción	Rosina	Roxies@gmail.com	
+Acción	Iair	Iaiowol@hotmail.com	
+Acción	Diego	Diegobg11@gmail.com	
+Acción	fabricio	faiops@gmail.com	
+Acción	Matias Hernandez	mhernand@gmail.com	
+Contraacción	Gaston Marrero	gaston.marrero@cartapad.com	
+Contraacción	Ana Torres	anamontevideo@email.com	
+Contraacción	Gaboto	gabriel.rshaw@gmail.com	
+Contraacción	Isabella	isaantonaccio@gmail.com	
+Acción	Diego Renau 	Koobcamuru@gmail.com	
+Acción	Cristian	crisnun80@gmail.com	
+Acción	Christofer	Brudz@adinet.com.uy	
+Acción	Mercedes	Molivera@teatrosolis.org.uy	
+Contraacción	Federico de los santos	fededelossantos@gmail.com	
+Contraacción	Silvia	silviadiazf@gmail.com	
+Acción	Florencia	Florenciasanjulian@gmail.com	
+Acción	Sodia	Sofitagm@hotmail.com	
+Acción	Javier	Jvenossa@gmail.com	
+Acción	Patricia	Perezpatricia@gmail.com	
+Acción	Joaquin	Juaking66@hotmail.com	
+Acción	Marcelo Manukian	Marcelo2002@gmail.com	
+Acción	Gonzalo Barco	Gbarcouy@gmail.com	
+Acción	Rodrigo Cardozo	rodrigoc85@gmail.com	
+Acción	Luis videgain	Lvidegain@hotmail.com	
+Acción	Bruno Pannunzio	brunoo.182@hotmail.com	
+Acción	Agustin Poznanski	agustinp20@hotmail.com	
+Contraacción	Virginia	virginia88@gmail.com	
+Acción	matias	colotuzzo@gmail.com	
+Acción	Valeria ozer ami	Valeo_7_7@hotmail.com	
+Acción	Lucia tirelli	Luliih2009@hotmail.com	
+Acción	Sofia	Sofi@gmail.com	
+Acción	Sofia	Sofi.menoni@gmail.com	
+Contraacción	Federico Sardi	federicosardi@montevideo.com.uy	1311190497
+Acción	Andres Butteri	andres.butteri@gmail.com	
+Acción	Ari Rostkier	roska87@gmail.com	
+Acción	Silvana Pereira	Silvaper@netgate.com.uy	
+Acción	Nicolas Quagliata	Nicoquagliata@gmail.com	1142946207
+Acción	marcelo dominguez	dmarce60@gmail.com	
+Acción	Mauricio Abelar	mauricio.abelar@gmail.com	
+Acción	EmAnuEl	emanuel.galletto@gmail.com	
+Acción	Jaime	Jaimeamigos@gmail.com	
+Acción	Fabricio Patron	Fabriciopatron@me.com 	
+Contraacción	Ariel Acosta	acostabarreto@gmail.com	
+Acción	sebastian	sebastianflaquer@hotmail.com	
+Acción	maria eugenia	marudura@hotmail.com	
+Acción	Verorey@gmail.com	VEroreyd@gmail.com	
+Contraacción	Dan	sujin@dkanime.com	
+Contraacción	Maximiliano	maxifigue@gmail.com	
+Acción	Stefania	Stefi_119@hotmail.com	
+Acción	Carolina	Carito-gandolfo@hotmail.com	
+Contraacción	Pablo Silva	pdegiuda@gmail.com	
+Acción	MArco Rocha	Marcorochauru@gmail.com	
+Acción	Pablo	Pgarciabagani@hotmail.com	
+Acción	Enrique	Tatodemello10@gmail.com	
+Acción	Nicolas Baptista	nbaptista@geocom.com.uy	
+Acción	Stephanie	Catatonias@gmail.com	

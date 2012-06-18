@@ -31,9 +31,9 @@ while ( my @msg = $q->ReceiveMessage( 'AttributeName.1' => 'All' , MaxNumberOfMe
     #  print SIGNUPS "|" . $attributes . "\n";
     #}
     #  Delete the message
-    #unless ( $q->DeleteMessage($msg->ReceiptHandle()) ) {
-    #  print "Delete failed\n";
-    #}
+    unless ( $q->DeleteMessage($msg->ReceiptHandle()) ) {
+      print "Delete failed\n";
+    }
   }
 }
 
