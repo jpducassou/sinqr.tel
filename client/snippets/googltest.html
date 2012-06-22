@@ -13,16 +13,28 @@
 		xmlhttp=new XMLHttpRequest;
 		xmlhttp.open("POST", 'https://www.googleapis.com/urlshortener/v1/url?key=AIzaSyAYDaIJG7v7j5mKy6cAjhzRI4LVa7yu6io',false);
 		xmlhttp.setRequestHeader('Content-Type','application/json');
-		xmlhttp.send('{"longUrl":"' + url + '"}' );
+		//xmlhttp.send('{"longUrl":"' + url + '"}' );
 		
-		var googl = JSON.parse(xmlhttp.responseText);
-		shorturl = googl.id + ".qr";
+		//var googl = JSON.parse(xmlhttp.responseText);
+		//shorturl = googl.id + ".qr";
 	} catch(e) {
 		console.log(e);
-		shorturl = null
+		shorturl = null;
 	}
 	
 	document.getElementById("sqrtqr").setAttribute("src",shorturl);
+	
+	Number.prototype.dd = function () {
+		with (this) return ( valueOf() < 0 || valueOf() > 9 ? "" : "0" ) + valueOf();
+	}
+	
+	var a = (function(d) {
+		with (d)
+		return 	[ getUTCFullYear().dd()	,(getUTCMonth()+1).dd()	,getUTCDate().dd()		].join('-') + 'T' +
+						[ getUTCHours().dd()		, getUTCMinutes().dd()	,getUTCSeconds().dd()	].join(':') + '.000Z';
+	})( new Date());
+	
+	document.write( a.valueOf() );
 </script>
 </body>
 </html>
