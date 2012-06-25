@@ -17,22 +17,36 @@ Storage.prototype.getObject = function(key) {
 	}
 };
 
+window.onbeforeunload = function () {
+	console.log = window.location.hash;
+}
+
 var Sinqrtel = {
 	//configuration
 	sqrt_google_api_key:'AIzaSyAYDaIJG7v7j5mKy6cAjhzRI4LVa7yu6io',
-	sqrt_amazon_queue_uri:'https://queue.amazonaws.com/041722291456/sinqrtel_public',
+	sqrt_amazon_queue_uri:'https://queue.amazonaws.com/041722291456/sinqrtel_public_tag',
 	sqrt_amazon_id:'AKIAIC2DBRTIUKHMGASQ',
 	sqrt_amazon_access_key:'2Ofh3ICjeKpxeWBV2KGmKJ4co4WoeGtpumiiGEPX',
 	sqrt_amazon_endpoint:'https://queue.amazonaws.com',
 	sqrt_amazon_version:'2009-02-01',
 	//sqrt_social_prefixes:{'facebook':'fb','twitter':'tw'},
 	//logic
+	sqrt_view_myself:null,
 	sqrt_user_id:null,
 	sqrt_fb_status:null,
+	sqrt_waiting_login:true,
+	sqrt_view_user_id:null,
 	sqrt_tw_status:null,
 	sqrt_fb_last_response:null,
+	sqrt_score_array:new Array(),
 	getGoogleApiKey:function() {
 		return this.sqrt_google_api_key;
+	},
+	setViewUserId:function(view_user_id) {
+		this.sqrt_view_user_id = view_user_id;
+	},
+	getViewUserId:function() {
+		return this.sqrt_view_user_id;
 	},
 	setSqrtUserId:function(p_sqrt_user_id) {
 		this.sqrt_user_id = p_sqrt_user_id;
@@ -51,25 +65,38 @@ var Sinqrtel = {
 		if (response != null && response.authResponse && response.status === 'connected') {
 			Sinqrtel.sqrt_fb_status = true;
 			Sinqrtel.setSqrtUserId( 'fb' + response.authResponse.userID );
-			Sinqrtel.sqrt_profile_customize(window.document);
+			//set view myself if I am myself
+			Sinqrtel.setViewMyself( window.location.hash == Sinqrtel.getSqrtUserId );
+			Sinqrtel.ProfileCustomize(window.document);
 		} else {
 			Sinqrtel.sqrt_fb_status = false;
 			Sinqrtel.setSqrtUserId(null);
 		}
+		Sinqrtel.sqrt_waiting_login = false;
 		Sinqrtel.setFacebookCachedResponse(response);
 	},
-	sqrt_init:function() {
+	getViewMySelf:function() {
+		return ( this.sqrt_view_user_id == this.sqrt_user_id );
+	},
+	init:function() {
+		this.sqrt_waiting_login = true;
 		console.log("sqrt_init");
-		if ( typeof FB != "undefined" ) {
-			FB.Event.subscribe('auth.statusChange', this.sqrt_update_fb_status );
-			//FB.getLoginStatus( this.sqrt_update_fb_status );
+		
+		if ( window.location.hash == "" || window.location.hash =="#myself" ) {
+			if ( typeof FB != "undefined" ) {
+				FB.Event.subscribe('auth.statusChange', this.sqrt_update_fb_status );
+				//FB.getLoginStatus( this.sqrt_update_fb_status );
+			} else {
+				this.sqrt_fb_connected = false;
+			}	
 		} else {
-			this.sqrt_fb_connected = false;
-			this.setSqrtUserId(null);
+			//kill #
+			this.setViewUserId(window.location.hash.substring(1));
+			this.ProfileCustomize(window.document);
 		}
 	},
-	getUserAuthIsFacebook:function() {
-		return (this.getSqrtUserId().indexOf( 'fb' ) == 0);
+	getUserAuthIsFacebook:function(sqrt_user_id) {
+		return (sqrt_user_id.indexOf( 'fb' ) == 0);
 	},
 	getFacebookCachedResponse:function() {
 		return this.sqrt_fb_last_response;
@@ -77,25 +104,27 @@ var Sinqrtel = {
 	setFacebookCachedResponse:function(fb_last_response) {
 		this.sqrt_fb_last_response = fb_last_response;
 	},
-	getUserAuthIsTwitter:function () {
-		return (this.getSqrtUserId().indexOf( 'tw' ) == 0);
+	getUserAuthIsTwitter:function (sqrt_user_id) {
+		return (sqrt_user_id.indexOf( 'tw' ) == 0);
 	},
 	getSqrtIsConnected:function() {
 		var connected = (this.getSqrtUserId() != null) && (
-			( this.getUserAuthIsFacebook() && this.getFacebookStatus() ) ||
-			( this.getUserAuthIsTwitter() && this.getTwitterStatus() )
+			( this.getUserAuthIsFacebook(sqrt_user_id) && this.getFacebookStatus() ) ||
+			( this.getUserAuthIsTwitter(sqrt_user_id) && this.getTwitterStatus() )
 		);
 				
 		return connected;
 	},
-	getFacebookUserId:function() {
-		return this.getSqrtUserId().substring( 'fb'.length );
+	getProviderUserId:function(sqrt_user_id) {
+		//kill prefix
+		return sqrt_user_id.substring( 'xx'.length );
 	},
-	getSqrtUserUrl:function() {
-		return 'http://www.sinqrtel.com/ingame/#' + this.getSqrtUserId();
+	getSqrtUserUrl:function(sqrt_user_id) {
+		return 'http://www.sinqrtel.com/ingame/#' + sqrt_user_id;
 	},
-	getFacebookPublicData:function() {
-		var facebook_user_id = this.getFacebookUserId();
+	getFacebookPublicData:function(sqrt_user_id) {
+		//other user or logged in user
+		var facebook_user_id = this.getProviderUserId(sqrt_user_id);
 		var facebook_public_data;
 		try {
 			xmlhttp = new XMLHttpRequest;
@@ -111,11 +140,11 @@ var Sinqrtel = {
 		
 		return facebook_public_data;
 	},
-	getGooglQRUrl:function(callback) {
+	getGooglQRUrl:function(sqrt_user_id, callback) {
 		var short_url = null;
 		
 		try {
-			var url = this.getSqrtUserUrl().replace(/\+/g,"%2B");
+			var url = this.getSqrtUserUrl(sqrt_user_id).replace(/\+/g,"%2B");
 			
 			xmlhttp = new XMLHttpRequest;
 			xmlhttp.open("POST", "https://www.googleapis.com/urlshortener/v1/url?key=" + this.getGoogleApiKey(), false);
@@ -141,81 +170,100 @@ var Sinqrtel = {
 	getTimeStamp:function() {
 		return Math.round((new Date()).getTime() / 1000 );
 	},
-	sumAndUpdateScoresToTimeStamp:function( scoreArray, timeStamp ) {
+	sumAndUpdateScoresToTimeStamp:function( timeStamp ) {
+		//gets score and delete seen server scores to timeStamp
 		var sum = 0;
 		var scoreIterator = 0;
-		while( scoreIterator < scoreArray.length ) {
-			if ( scoreArray[scoreIterator][0] > timeStamp ) {
-				sum+=scoreArray[scoreIterator][1];
+		while( scoreIterator < this.sqrt_score_array.length ) {
+			if ( this.sqrt_score_array[scoreIterator][0] > timeStamp ) {
+				sum+=this.sqrt_score_array[scoreIterator][1];
 				scoreIterator++;
 			} else {
 				//delete one, iterator should not be incremented
-				scoreArray.splice(scoreIterator,1);
+				this.sqrt_score_array.splice(scoreIterator,1);
 			}
 		}
 		return sum;
 	},
-	getObjectInfo:function( objectName, success ) {
+	getObjectInfo:function( objectName, callback ) {
+		var object_info = null;
+		
 		try {
 			xmlhttp = new XMLHttpRequest;
-			xmlhttp.open("GET", this.getSiteRoot() + this.getSiteObjectInfoPath() + objectName);
-			xmlhttp.onreadystatechange = success;
+			xmlhttp.open("GET", this.getSiteRoot() + this.getSiteObjectInfoPath() + objectName, false);
+			xmlhttp.onreadystatechange = callback;
 			xmlhttp.send(null);
-		} catch (e) {
-			success(null,0);
+			
+			if ( xmlhttp.status == 200 ) {
+				var object_info = JSON.parse(xmlhttp.responseText);
+			}
+		} catch(e) {}
+		
+		//error data
+		if ( object_info == null ) {
+			object_info.score = "?";
 		}
+
+		return object_info;
 	},
-	addLocalScore:function( scoreArray, score, timeStamp ) {
-		scoreArray.push( [timeStamp, score] );
+	addLocalScore:function( score, timeStamp ) {
+		this.sqrt_score_array.push( [timeStamp, score] );
 	},
-	storeScore:function( scoreArray ) {
-		localStorage.setObject( 'score', scoreArray );
+	storeScore:function( ) {
+		localStorage.setObject( 'score', this.sqrt_score_array );
 	},
 	//gets document and changes fixed elements
 	//sqrt_user_picture_large (img)
 	//sqrt_user_name_small (textNode)
 	//sqrt_user_name_large (textNode)
 	//sqrt_user_qr (img)
-	sqrt_profile_customize:function(d) {
+	ProfileCustomize:function(d) {
 		console.log("sqrt_profile_customize");
-		if ( this.getSqrtIsConnected() ) {
+		var sqrt_user_id = this.getViewMySelf()?this.getSqrtUserId():this.getViewUserId();
+		if ( sqrt_user_id != "" ) {
 			console.log("sqrt_profile_customize, connected");
 			//facebook login
-			if ( this.getUserAuthIsFacebook ) {
+			if ( this.getUserAuthIsFacebook(sqrt_user_id) ) {
 				console.log("sqrt_profile_customize, connected, auth facebook");
-				var facebook_public_data  = this.getFacebookPublicData();
+				var facebook_public_data  = this.getFacebookPublicData(sqrt_user_id);
 				try {
 					console.log("sqrt_profile_customize, connected, auth facebook, try main");
 					d.getElementById('sqrt_user_picture_large').src = facebook_public_data.picture_large;
 					d.getElementById('sqrt_user_name_small').textContent = facebook_public_data.name;
 					d.getElementById('sqrt_user_name_large').textContent = facebook_public_data.name;
 				} catch (e) {};
-			} else if ( this.getAuthIsTwitter ) {
+			} else if ( this.getAuthIsTwitter(sqrt_user_id) ) {
 				
 			}
 			//all login methods
 			try {
 				console.log("sqrt_profile_customize, try qr");
-				d.getElementById('sqrt_user_qr').src=this.getGooglQRUrl() + '.qr';
+				d.getElementById('sqrt_user_qr').src=this.getGooglQRUrl(sqrt_user_id) + '.qr';
+				var userInfo = this.getObjectInfo( sqrt_user_id );
+				try {
+					d.getElementById('sqrt_user_score_server').textContent = userInfo.score;
+					d.getElementById('sqrt_user_score_local').textContent = this.sumAndUpdateScoresToTimeStamp(userInfo.timestamp);
+				} catch (e) {
+					//try to update just local score...
+					d.getElementById('sqrt_user_score_local').textContent = this.sumAndUpdateScoresToTimeStamp(userInfo.timestamp);
+				}
 			} catch (e) {};
 		}
 	},
-	sqs_send:function(message, stateChange) {
+	TagSend:function(message, stateChange) {
 		function _addZero(n) {
 				return ( n < 0 || n > 9 ? "" : "0" ) + n;
 		}
 		function _getNowTimeStamp() {
-			var time = new Date();
-			var gmtTime = new Date(time.getTime() + (time.getTimezoneOffset() * 60000));
+			Number.prototype.dd = function () {
+				with (this) return ( valueOf() < 0 || valueOf() > 9 ? "" : "0" ) + valueOf();
+			}
 			
-			var d = [gmtTime.getFullYear(),gmtTime.getMonth()+1,gmtTime.getHours()];
-			var t = [gmtTime.getHours(), gmtTime.getMinutes(), gmtTime.getSeconds()];
-			
-			return d.join('-') + 'T' + t.join(':') + '.000Z';
-			
-			return (function(d){
-				return d.getFullYear()+'-'+_addZero()+'-'+_addZero(d.getDate())+'T'+_addZero(d.getHours())+':'+_addZero(d.getMinutes())+':'+_addZero(d.getSeconds())+ '.000Z';
-			})(gmtTime);
+			return (function(d) {
+				with (d)
+				return	[ getUTCFullYear().dd()	,(getUTCMonth()+1).dd()	,getUTCDate().dd()		].join('-') + 'T' +
+								[ getUTCHours().dd()		, getUTCMinutes().dd()	,getUTCSeconds().dd()	].join(':') + '.000Z';
+			})( new Date());
 		}
 		function _ignoreCaseSort(a, b) {
 			var ret = 0;
@@ -274,5 +322,5 @@ if (typeof window.sqrtAsyncInit == 'function') {
 	window.sqrtAsyncInit(Sinqrtel);
 	window.sqrtAsyncInit = null;
 } else {
-  console.log('Loaded syncroneusly?!?');
+  console.log('Loaded syncroneously?!?');
 }

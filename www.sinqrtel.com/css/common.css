@@ -214,26 +214,6 @@ input:invalid, textarea:invalid { background-color: #ff0000; color:#FFF }
 table { border-collapse: collapse; border-spacing: 0; }
 td { vertical-align: top; }
 
-
-/* ==|== primary styles =====================================================
-   Author: 
-   ========================================================================== */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* ==|== non-semantic helper classes ========================================
    Please define your styles before this section.
    ========================================================================== */
@@ -259,8 +239,6 @@ td { vertical-align: top; }
 .clearfix:after { clear: both; }
 .clearfix { zoom: 1; }
 
-
-
 /* ==|== media queries ======================================================
    PLACEHOLDER Media Queries for Responsive Design.
    These override the primary ('mobile first') styles
@@ -276,8 +254,6 @@ td { vertical-align: top; }
   /* Style adjustments for viewports 768px and over go here */
 
 }
-
-
 
 /* ==|== print styles =======================================================
    Print styles.
@@ -298,8 +274,6 @@ td { vertical-align: top; }
   p, h2, h3 { orphans: 3; widows: 3; }
   h2, h3 { page-break-after: avoid; }
 }
-
-
 
 /*estilo del sitio*/
 
@@ -463,28 +437,30 @@ nav a:hover{
 	float: left;
 }
 
-/*
-
-/*textos*/
-
 h1{
 	font-family: 'Syncopate', sans-serif;
 	font-weight:700;
 	font-size:24px;
 	
 }
-
 h2{
-	font-family:Tahoma, Geneva, sans-serif;
-	font-weight:normal;
-	font-size:16px;
-	color:#666;
-}
-h3{
 	font-family: 'Syncopate', sans-serif;
 	font-weight:400;
 	font-size:16px;
 	line-height:25px;
+}
+h3 {
+	font-family: 'Syncopate', sans-serif;
+	font-weight:400;
+	font-size:16px;
+	line-height:25px;
+	color:#666;
+}
+h4
+{
+	font-family:Tahoma, Geneva, sans-serif;
+	font-weight:normal;
+	font-size:16px;
 	color:#666;
 }
 
@@ -583,24 +559,24 @@ h3{
 
 /***********************efecto_imagen********************/
 .view {
-   width: 180px;
-   height: 180px;
-   float: left;
-   border: 5px solid #e88728;
-   overflow: hidden;
-   position: relative;
-   text-align: center;
-   box-shadow: 1px 1px 2px #e6e6e6;
-   cursor: default;
-   background-color: #fff;
+	max-width: 180px;
+	max-height: 200px;
+	float: left;
+	border: 5px solid #e88728;
+	overflow: hidden;
+	position: relative;
+	text-align: center;
+	box-shadow: 1px 1px 2px #e6e6e6;
+	cursor: default;
+	background-color: #fff;
 }
 .view .mask,.view .content {
-   width: 180px;
-   height: 180px;
-   position: absolute;
-   overflow: hidden;
-   top: 0;
-   left: 0;
+	max-width: 180px;
+	max-height: 200px;
+	position: absolute;
+	overflow: hidden;
+	top: 0;
+	left: 0;
 }
 
 .view img {
@@ -762,4 +738,18 @@ h3{
 #main {
 	background-color: #FFF;
 	width: 100%;
+}
+
+.clear {
+	clear:both;
+}
+
+#sqrt_user_score_server {
+	color: #000;
+	float: left;
+}
+
+#sqrt_user_score_local {
+	color: #ff0000;
+	float: left;
 }

@@ -16,7 +16,6 @@
 	<script>
 	var fbInitialized;
 	window.fbAsyncInit = function() {
-		fbInitialized=true;	
 		console.log("fbAsyncInit!");
 		FB.init({appId:'207120562693777',status:true,cookie:true,xfbml:true,oauth:true});
 		//FB.Event.subscribe('auth.login', localFBAuthChange() );
@@ -60,7 +59,7 @@
 		<div class="text_floater"><h1>Vivi la experiencia</h1></div><div class="logo_floater"><img src="../img/logo_header.png" width="200" height="51" /></div>
 	</div>
 	</div>
-
+<div id="main">
 	<div id="container">
 		<div id="facebook-beforelogin">
 			<div class="fb-login-button"></div>
@@ -77,9 +76,7 @@
 					<div class="mask mask-2" style="width: 155px; height: 260px;"></div>
 
 					<div class="content" style="top:65px;">
-						<h2>
-						<div id="sqrt_user_name_small"></div>
-						</h2>
+						<h4><div id="sqrt_user_name_small"></div></h4>
 					</div>
 				</div>
 			</div><!--container_left-->
@@ -88,10 +85,15 @@
 				<h1>
 				<div id="sqrt_user_name_large"></div>
 				</h1>
-
-				<div class="follow_player">
-					<h2>SEGUIR JUGADOR</h2><a href="#"><img src="img/fb.png" width="42" height="42" /></a> <a href="#"><img src="img/twt.png" width="40" height="40" /></a>
-				</div>
+				<h2>Puntos acumulados:</h2>
+				<h2>
+				<div id="sqrt_user_score_server"></div>
+				<div id="sqrt_user_score_local"></div>
+				</h2>
+				<div class="clear"></div>
+			<!--	<div class="clear follow_player">
+					<h4>SEGUIR JUGADOR</h4><a href="#"><img src="img/fb.png" width="42" height="42" /></a> <a href="#"><img src="img/twt.png" width="40" height="40" /></a>
+				</div>-->
 			</div><!--container_middle-->
 
 			<div class="container_right">
@@ -162,24 +164,8 @@
 	<!--document end-->
 	<script type="text/javascript">
 		function afterLoad() {
-			console.log("afterLoad()!");
-						
-			console.log("before checkCuorum!");
-						
-			function checkCuorum() {
-				if ( typeof fbInitialized == 'boolean' && fbInitialized && typeof Sinqrtel != 'undefined' ) {
-					console.log("checkCuorum ok!");
-					Sinqrtel.sqrt_init(FB);
-				} else {
-					setTimeout(checkCuorum,50);
-					console.log("checkCuorum failed!");
-				}
-			}
-			
-			console.log("before call checkCuorum!");
-			
-			checkCuorum();
-			
+			Sinqrtel.init();
+	
 			//
 			//$("#refresh").click( function() {
 			//	FB.getLoginStatus(function(response) {
@@ -203,5 +189,6 @@
 		
 		window.onload = afterLoad();	
 	</script>
+</div>
 </body>
 </html>
