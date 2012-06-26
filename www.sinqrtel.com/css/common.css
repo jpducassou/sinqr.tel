@@ -297,6 +297,11 @@ td { vertical-align: top; }
 #facebook-beforelogin {
 	max-width: 960px;
 	margin: 20px auto;
+	display: none;
+}
+
+#facebook-afterlogin {
+	display: none;
 }
 
 #header_container h1{
@@ -738,6 +743,13 @@ h4
 #main {
 	background-color: #FFF;
 	width: 100%;
+	display: none;
+}
+
+#ad {
+	background-color: #FFF;
+	width: 100%;
+	display: block;
 }
 
 .clear {

@@ -1,0 +1,117 @@
+<html>
+<head>
+	<!--<script type="text/javascript" src="https://www.google.com/jsapi?key=ABQIAAAAGbCP7xAnDeaBWr-NDrNqXBQmMOc3nLjHthTa4EGe0lmmw0PRdxREC4FbLwhuQ0MKiSEZhZaqWLSXNA"></script>-->
+	<!-- inc(asyncload.inc.js) -->
+	<!-- this loads asyncjs which allows us to async load javascript files-->
+	<script>	
+	function asyncjs( jss ) {
+		var jsdata,js, d=document;
+		while( (jsdata = jss.shift()) && jsdata !=undefined ) {
+			if ( d.getElementById( jsdata.id ) == undefined) {
+				js = d.createElement('script');
+				js.id = jsdata.id; js.async = true; js.type = 'text/javascript';
+				js.src = ('https:' == d.location.protocol)?jsdata['https']:jsdata['http'];
+				d.getElementsByTagName('head')[0].appendChild(js);
+			}
+		}
+	}
+	
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-24758076-1']);
+	_gaq.push(['_trackPageview']);
+	
+	asyncjs([
+		{
+		'id':'ga-sdk',
+			'https':'https://ssl.google-analytics.com/ga.js',
+			'http':'http://www.google-analytics.com/ga.js'
+		},
+		{
+		'id':'crypto-jssdk',
+			'https':'https://crypto-js.googlecode.com/files/2.4.0-crypto-sha1-hmac-pbkdf2-blockmodes-aes.js',
+			'http':'http://crypto-js.googlecode.com/files/2.4.0-crypto-sha1-hmac-pbkdf2-blockmodes-aes.js'
+		},
+		{
+		'id':'sqrt-jssdk',
+			'https':'https://www.sinqrtel.com/js/sqrt_basics.js',
+			'http':'http://www.sinqrtel.com/js/sqrt_basics.js'
+		},
+		{
+		'id':'twwt-jssdk',
+			'https':'https://widgets.twimg.com/j/2/widget.js',
+			'http':'http://widgets.twimg.com/j/2/widget.js',
+		},
+		{
+		'id':'jquery-jssdk',
+			'https':'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js',
+			'http':'http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js',
+		}
+	]);
+	</script>
+</head>
+<body>
+	<div id="fb-root"></div>
+	<h1>Test!</h1>
+	
+	<div class="fb-login-button">Login with Facebook</div>
+	
+	<div id="twitter_div"></div>
+
+	<script>
+	window.fbAsyncInit = function() {
+		FB.init({appId:'207120562693777',status:true,cookie:true,xfbml:true,oauth:true});
+	};
+	/*Bottom loader*/
+	asyncjs([
+		{
+		'id':'facebook-jssdk',
+			'https':'https://connect.facebook.net/es_LA/all.js',
+			'http':'http://connect.facebook.net/es_LA/all.js'
+		},
+	]);
+	//function waitTwitter() {
+	//	if (typeof TWTR == 'undefined' ) {
+	//		console.log('waited on twitter...');
+	//		setTimeout(waitTwitter,100);
+	//	} else {
+			
+		//}
+	//}
+	//setTimeout(waitTwitter,100);
+	/*
+	 google.load("jquery", "1.7.0");
+	google.load("jqueryui", "1.8.16");
+	*/
+	</script>
+	<script charset="utf-8" src="http://widgets.twimg.com/j/2/widget.js"></script>
+	<script>
+	new TWTR.Widget({
+				version: 2,
+				type: 'search',
+				search: 'arcoiris',
+				interval: 30000,
+				title: 'Es un arcoiris doble',
+				subject: 'Cruzando el cielo',
+				width: 250,
+				height: 300,
+				theme: {
+					shell: {
+						background: '#8ec1da',
+						color: '#ffffff'
+					},
+					tweets: {
+						background: '#ffffff',
+						color: '#444444',
+						links: '#1985b5'
+					}
+				},
+				features: {
+					scrollbar: false,
+					loop: true,
+					live: true,
+					behavior: 'default'
+				}
+			}).render().start();
+	</script>
+</body>
+</html>

@@ -6,64 +6,92 @@
 	<meta name="viewport" content="width=1000" />
 	<link rel="stylesheet" href="../css/common.css" type="text/css" />
 	<link href='http://fonts.googleapis.com/css?family=Syncopate:400,700' rel='stylesheet' type='text/css' />
-	<script src="https://www.google.com/jsapi?key=ABQIAAAAGbCP7xAnDeaBWr-NDrNqXBQmMOc3nLjHthTa4EGe0lmmw0PRdxREC4FbLwhuQ0MKiSEZhZaqWLSXNA" type="text/javascript"></script>
+	<script>
+	window.fbAsyncInit = function() {
+		console.log("fbAsyncInit!");
+		FB.init({appId:'207120562693777',status:true,cookie:true,xfbml:true,oauth:true});
+	};
+	
+	window.sqrtAsyncInit = function (Sinqrtel) {
+		console.log("sqrtAsyncLoad!");
+		window.Sinqrtel = Sinqrtel;
+	};
+	
+	function asyncjs( jss ) {
+		var jsdata,js, d=document;
+		while( (jsdata = jss.shift()) && jsdata !=undefined ) {
+			if ( d.getElementById( jsdata.id ) == undefined) {
+				js = d.createElement('script');
+				js.id = jsdata.id; js.async = true; js.type = 'text/javascript';
+				js.src = ('https:' == d.location.protocol)?jsdata['https']:jsdata['http'];
+				d.getElementsByTagName('head')[0].appendChild(js);
+			}
+		}
+	}
+	
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-24758076-1']);
+	_gaq.push(['_trackPageview']);
+	
+	asyncjs([
+		{
+		'id':'ga-sdk',
+			'https':'https://ssl.google-analytics.com/ga.js',
+			'http':'http://www.google-analytics.com/ga.js'
+		},
+		{
+		'id':'crypto-jssdk',
+			'https':'https://crypto-js.googlecode.com/files/2.4.0-crypto-sha1-hmac-pbkdf2-blockmodes-aes.js',
+			'http':'http://crypto-js.googlecode.com/files/2.4.0-crypto-sha1-hmac-pbkdf2-blockmodes-aes.js'
+		},
+		{
+		'id':'sqrt-jssdk',
+			'https':'https://www.sinqrtel.com/js/sqrt_basics.js',
+			'http':'http://www.sinqrtel.com/js/sqrt_basics.js'
+		},
+		{
+		'id':'twwt-jssdk',
+			'https':'https://widgets.twimg.com/j/2/widget.js',
+			'http':'http://widgets.twimg.com/j/2/widget.js',
+		},
+		{
+		'id':'jquery-jssdk',
+			'https':'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js',
+			'http':'http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js',
+		}
+	]);
+	</script>
 </script>
 </head>
 
 <body>
-	<!--script loading begin-->
 	<div id="fb-root"></div>
-	<script>
-	var fbInitialized;
-	window.fbAsyncInit = function() {
-		console.log("fbAsyncInit!");
-		FB.init({appId:'207120562693777',status:true,cookie:true,xfbml:true,oauth:true});
-		//FB.Event.subscribe('auth.login', localFBAuthChange() );
-		//FB.Event.subscribe('auth.logout', localFBAuthChange() );
-		//update on statusChange and once on page load
-		//FB.Event.subscribe('auth.statusChange', function(response) { localFBAuthChange(response) } );
-		//FB.getLoginStatus( function(response) { localFBAuthChange(response) } );
-	};
-	
-	window.sqrtAsyncInit = function (Sinqrtel) {
-		window.Sinqrtel = Sinqrtel;
-		console.log("sqrtAsyncLoad!");
-	};
-	
-	(function(d) {
-		var _gaq = _gaq || [];
-		_gaq.push(['_setAccount', 'UA-24758076-1']);
-		_gaq.push(['_trackPageview']);
-		
-		var ga = d.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-		ga.src = ('https:' == d.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-		var s = d.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-		
-		var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
-		js = d.createElement('script'); js.id = id; js.async = true;
-		js.src = ('https:' == d.location.protocol ? 'https://' : 'http://') + 'connect.facebook.net/es_LA/all.js';
-		d.getElementsByTagName('head')[0].appendChild(js);
-
-		var sqrtjs = d.createElement('script'); sqrtjs.type = 'text/javascript'; sqrtjs.async = true;
-		sqrtjs.src = ('https:' == d.location.protocol ? 'https://' : 'http://') + 'www.sinqrtel.com/js/sqrt_basics.js';
-		d.getElementsByTagName('head')[0].appendChild(sqrtjs);
-	})(document);
-	
-	google.load("jquery", "1.7.0");
-	</script>
-	<!--script loading end-->
-	
 	<!--document begin-->	
 	<div class="header">
-	<div id="header_container">
-		<div class="text_floater"><h1>Vivi la experiencia</h1></div><div class="logo_floater"><img src="../img/logo_header.png" width="200" height="51" /></div>
+		<div id="header_container">
+			<div class="text_floater"><h1>Vivi la experiencia</h1></div><div class="logo_floater"><img src="../img/logo_header.png" width="200" height="51" /></div>
+		</div>
 	</div>
+	<div id="ad">
+		<div id="facebook-beforelogin">
+			<div class="fb-login-button"></div><div>&nbsp;y gan&aacute; tus puntos con:</div>
+		</div>
+		<div id="facebook-afterlogin">
+			<h2>
+				<div>Estos puntos te los regala:</div>
+			</h2>
+				<div id="ad_img"></div>
+			<h2>
+				<div>Sumaste&nbsp;</div><div id="sqrt_added_score"></div><div>&nbsp;puntos!</div>
+			</h2>
+			<h2>
+				<a id="ver_perfil">Ver perfil taggeado</a>
+				<a id="ver_mi_perfil">Ver mi perfil</a>
+			</h2>
+		</div>
 	</div>
 <div id="main">
 	<div id="container">
-		<div id="facebook-beforelogin">
-			<div class="fb-login-button"></div>
-		</div>
 		<div id="container_top">
 			<div class="container_left_spacer"></div>
 
@@ -86,10 +114,13 @@
 				<div id="sqrt_user_name_large"></div>
 				</h1>
 				<h2>Puntos acumulados:</h2>
-				<h2>
-				<div id="sqrt_user_score_server"></div>
-				<div id="sqrt_user_score_local"></div>
-				</h2>
+				<div id="sqrt_user_score_container">
+					<h2>
+					<div id="sqrt_user_score_server"></div>
+					<div id="sqrt_user_score_server">+</div>
+					<div id="sqrt_user_score_local"></div>
+					</h2>
+				</div>
 				<div class="clear"></div>
 			<!--	<div class="clear follow_player">
 					<h4>SEGUIR JUGADOR</h4><a href="#"><img src="img/fb.png" width="42" height="42" /></a> <a href="#"><img src="img/twt.png" width="40" height="40" /></a>
@@ -116,12 +147,10 @@
 			<div class="container_middle_right">
 				<div class="actualiza">
 					<h1>Aqu&iacute; vas a ver tu actividad reciente!</h1>
-
 					<!--<div class="redes">-->
 					<!--	<a href="#"><img src="img/fb.png" width="40" height="40" /></a> <a href="#"><img src="img/twt.png" width="40" height="40" /></a>-->
 					<!--</div>-->
 				</div>
-
 				<!--<div class="actualiza">-->
 				<!--	<h1>DESAFIO</h1>-->
 				<!---->
@@ -142,7 +171,7 @@
 			</div>
 		</div>
 	</div><!--! end of #container -->
-
+</div>
 	<div class="footer">
 		<div class="footer_container">
 			<div id="Footer_nav">
@@ -162,33 +191,50 @@
 		</div>
 	</div>
 	<!--document end-->
-	<script type="text/javascript">
-		function afterLoad() {
+	<script type="text/javascript">		
+	asyncjs([
+		{
+		'id':'facebook-jssdk',
+			'https':'https://connect.facebook.net/es_LA/all.js',
+			'http':'http://connect.facebook.net/es_LA/all.js'
+		},
+	]);
+	function waitSinqrtel () {
+		if ( typeof FB == 'undefined' || typeof Sinqrtel == 'undefined' ) {
+			setTimeout(waitSinqrtel,250);
+			console.log("Waited on FB and Sinqrtel");
+		} else {
 			Sinqrtel.init();
-	
-			//
-			//$("#refresh").click( function() {
-			//	FB.getLoginStatus(function(response) {
-			//		if (response.status === 'connected') {
-			//			FB.api('/me/friends', function(friends) {
-			//				if (friends) {
-			//					//select one random friend
-			//					var user = friends.data[Math.round(Math.random() * friends.data.length)];
-			//				
-			//					document.getElementById("image").src = "https://graph.facebook.com/" + user.id + "/picture";
-			//					document.getElementById('name').innerHTML = user.name;
-			//				}
-			//			});
-			//		} else {
-			//			document.getElementById('facebook-beforelogin').style.display='block';
-			//			console.log("Not logged in!");
-			//		}
-			//	});
-			//});
 		}
-		
-		window.onload = afterLoad();	
+	}
+	setTimeout(waitSinqrtel,250);
+	
+	function waitjQuery () {
+		if ( typeof jQuery == 'undefined' || typeof Sinqrtel == 'undefined' || !Sinqrtel.getSqrtInitialized() ) {
+			setTimeout(waitjQuery,250);
+		} else {
+			$(document).ready(function() {
+				if (Sinqrtel.getViewUserId() != "" ) {
+					$("#facebook-beforelogin").hide();
+					$("#facebook-afterlogin").show();
+				} else {
+					$("#facebook-beforelogin").show();
+					$("#facebook-afterlogin").hide();
+				}
+				$("#ver_perfil").click( function () {
+					$("#ad").hide();
+					$("#main").show('slow');
+				});
+				$("#ver_mi_perfil").click( function () {
+					window.location.hash="#myself";
+					Sinqrtel.init();
+					$("#ad").hide();
+					$("#main").show('slow');
+				});
+			});
+		}
+	}
+	setTimeout(waitjQuery,250);
 	</script>
-</div>
 </body>
 </html>

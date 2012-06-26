@@ -1,0 +1,54 @@
+<html>
+<head>
+	<!-- inc(asyncload.inc.js) -->
+	<!-- this loads asyncjs which allows us to async load javascript files-->
+	<script>	
+	function asyncjs( jss ) {
+		var jsdata,js, d=document;
+		while( (jsdata = jss.shift()) && jsdata !=undefined ) {
+			if ( d.getElementById( jsdata.id ) == undefined) {
+				js = d.createElement('script');
+				js.id = jsdata.id; js.async = true; js.type = 'text/javascript';
+				js.src = ('https:' == d.location.protocol)?jsdata['https']:jsdata['http'];
+				d.getElementsByTagName('head')[0].appendChild(js);
+			}
+		}
+	}
+	
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-24758076-1']);
+	_gaq.push(['_trackPageview']);
+	
+	asyncjs([
+		{
+		'id':'ga-sdk',
+			'https':'https://ssl.google-analytics.com/ga.js',
+			'http':'http://www.google-analytics.com/ga.js'
+		},
+		{
+		'id':'crypto-jssdk',
+			'https':'https://crypto-js.googlecode.com/files/2.4.0-crypto-sha1-hmac-pbkdf2-blockmodes-aes.js',
+			'http':'http://crypto-js.googlecode.com/files/2.4.0-crypto-sha1-hmac-pbkdf2-blockmodes-aes.js'
+		},
+		{
+		'id':'sqrt-jssdk',
+			'https':'https://www.sinqrtel.com/js/sqrt_basics.js',
+			'http':'http://www.sinqrtel.com/js/sqrt_basics.js'
+		},
+	]);
+	</script>
+</head>
+<body>
+	<div id="fb-root"></div>
+	<script>
+	asyncjs([	
+		{
+		'id':'facebook-jssdk',
+			'https':'https://connect.facebook.net/es_LA/all.js',
+			'http':'http://connect.facebook.net/es_LA/all.js'
+		},
+	]);
+	</script>
+	<h1>Test!</h1>
+</body>
+</html>

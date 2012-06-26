@@ -9,12 +9,13 @@ Storage.prototype.setObject = function(key, value) {
 
 Storage.prototype.getObject = function(key) {
 	var value = this.getItem(key);
-	if (value==undefined) {
-		return value;
-	} else {
-		//ERROR on undefined: "return value && JSON.parse(value);"
-		return JSON.parse(value);
+	if ( value == undefined ) value = null;
+	try {
+		value = JSON.parse(value);
+	} catch (e) {
+		value = null;
 	}
+	return returnValue;
 };
 
 window.onbeforeunload = function () {
@@ -31,21 +32,20 @@ var Sinqrtel = {
 	sqrt_amazon_version:'2009-02-01',
 	//sqrt_social_prefixes:{'facebook':'fb','twitter':'tw'},
 	//logic
-	sqrt_view_myself:null,
-	sqrt_user_id:null,
-	sqrt_fb_status:null,
-	sqrt_waiting_login:true,
-	sqrt_view_user_id:null,
-	sqrt_tw_status:null,
+	sqrt_user_id:"",
+	sqrt_initialized:false,
+	sqrt_fb_status:false,
+	sqrt_view_user_id:"",
+	sqrt_tw_status:false,
 	sqrt_fb_last_response:null,
 	sqrt_score_array:new Array(),
 	getGoogleApiKey:function() {
 		return this.sqrt_google_api_key;
 	},
-	setViewUserId:function(view_user_id) {
+	setVisitingUserId:function(view_user_id) {
 		this.sqrt_view_user_id = view_user_id;
 	},
-	getViewUserId:function() {
+	getVisitUserId:function() {
 		return this.sqrt_view_user_id;
 	},
 	setSqrtUserId:function(p_sqrt_user_id) {
@@ -65,34 +65,42 @@ var Sinqrtel = {
 		if (response != null && response.authResponse && response.status === 'connected') {
 			Sinqrtel.sqrt_fb_status = true;
 			Sinqrtel.setSqrtUserId( 'fb' + response.authResponse.userID );
-			//set view myself if I am myself
-			Sinqrtel.setViewMyself( window.location.hash == Sinqrtel.getSqrtUserId );
-			Sinqrtel.ProfileCustomize(window.document);
+			Sinqrtel.setVisitingUserId( window.location.hash );
+			var user_id = Sinqrtel.getVisiting()?Sinqrtel.getVisitUserId():Sinqrtel.getSqrtUserId();
+			Sinqrtel.ProfileCustomize(window.document, user_id);
 		} else {
 			Sinqrtel.sqrt_fb_status = false;
 			Sinqrtel.setSqrtUserId(null);
 		}
-		Sinqrtel.sqrt_waiting_login = false;
 		Sinqrtel.setFacebookCachedResponse(response);
+		this.sqrt_initialized = true;
 	},
-	getViewMySelf:function() {
-		return ( this.sqrt_view_user_id == this.sqrt_user_id );
+	getVisiting:function() {
+		return ( this.sqrt_user_id == "" || this.sqrt_user_id == null );
+	},
+	getViewUserId:function() {
+		return this.getVisiting()?this.getVisitUserId():this.getSqrtUserId();
+	},
+	getSqrtInitialized:function() {
+		return this.sqrt_initialized;
 	},
 	init:function() {
-		this.sqrt_waiting_login = true;
 		console.log("sqrt_init");
+		this.sqrt_initialized = false;
 		
 		if ( window.location.hash == "" || window.location.hash =="#myself" ) {
 			if ( typeof FB != "undefined" ) {
 				FB.Event.subscribe('auth.statusChange', this.sqrt_update_fb_status );
-				//FB.getLoginStatus( this.sqrt_update_fb_status );
+				FB.getLoginStatus( this.sqrt_update_fb_status );
 			} else {
 				this.sqrt_fb_connected = false;
 			}	
 		} else {
-			//kill #
-			this.setViewUserId(window.location.hash.substring(1));
-			this.ProfileCustomize(window.document);
+			//kill # and save as user
+			this.setVisitingUserId(window.location.hash.substring(1));
+			var user_id = this.getViewUserId();
+			this.ProfileCustomize(window.document, user_id );
+			this.sqrt_initialized = true;
 		}
 	},
 	getUserAuthIsFacebook:function(sqrt_user_id) {
@@ -199,11 +207,6 @@ var Sinqrtel = {
 			}
 		} catch(e) {}
 		
-		//error data
-		if ( object_info == null ) {
-			object_info.score = "?";
-		}
-
 		return object_info;
 	},
 	addLocalScore:function( score, timeStamp ) {
@@ -217,9 +220,8 @@ var Sinqrtel = {
 	//sqrt_user_name_small (textNode)
 	//sqrt_user_name_large (textNode)
 	//sqrt_user_qr (img)
-	ProfileCustomize:function(d) {
+	ProfileCustomize:function(d, sqrt_user_id) {
 		console.log("sqrt_profile_customize");
-		var sqrt_user_id = this.getViewMySelf()?this.getSqrtUserId():this.getViewUserId();
 		if ( sqrt_user_id != "" ) {
 			console.log("sqrt_profile_customize, connected");
 			//facebook login
@@ -241,8 +243,13 @@ var Sinqrtel = {
 				d.getElementById('sqrt_user_qr').src=this.getGooglQRUrl(sqrt_user_id) + '.qr';
 				var userInfo = this.getObjectInfo( sqrt_user_id );
 				try {
-					d.getElementById('sqrt_user_score_server').textContent = userInfo.score;
-					d.getElementById('sqrt_user_score_local').textContent = this.sumAndUpdateScoresToTimeStamp(userInfo.timestamp);
+					if ( userInfo == null ) {
+						d.getElementById('sqrt_user_score_container').style.display = 'none';
+					} else {
+						d.getElementById('sqrt_user_score_container').style.display = 'block';
+						d.getElementById('sqrt_user_score_server').textContent = userInfo.score;
+						d.getElementById('sqrt_user_score_local').textContent = this.sumAndUpdateScoresToTimeStamp(userInfo.timestamp);
+					}
 				} catch (e) {
 					//try to update just local score...
 					d.getElementById('sqrt_user_score_local').textContent = this.sumAndUpdateScoresToTimeStamp(userInfo.timestamp);
