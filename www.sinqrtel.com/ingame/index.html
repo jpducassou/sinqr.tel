@@ -7,14 +7,17 @@
 	<link rel="stylesheet" href="../css/common.css" type="text/css" />
 	<link href='http://fonts.googleapis.com/css?family=Syncopate:400,700' rel='stylesheet' type='text/css' />
 	<script>
+	quorum = 0;
 	window.fbAsyncInit = function() {
 		console.log("fbAsyncInit!");
 		FB.init({appId:'207120562693777',status:true,cookie:true,xfbml:true,oauth:true});
+		quorum++;
 	};
 	
 	window.sqrtAsyncInit = function (Sinqrtel) {
 		console.log("sqrtAsyncLoad!");
 		window.Sinqrtel = Sinqrtel;
+		quorum++;
 	};
 	
 	function asyncjs( jss ) {
@@ -74,13 +77,15 @@
 	</div>
 	<div id="ad">
 		<div id="facebook-beforelogin">
+    <h2>
 			<div class="fb-login-button"></div><div>&nbsp;y gan&aacute; tus puntos con:</div>
+     </h2>
 		</div>
 		<div id="facebook-afterlogin">
 			<h2>
 				<div>Estos puntos te los regala:</div>
 			</h2>
-				<div id="ad_img"></div>
+
 			<h2>
 				<div>Sumaste&nbsp;</div><div id="sqrt_added_score"></div><div>&nbsp;puntos!</div>
 			</h2>
@@ -89,6 +94,7 @@
 				<a id="ver_mi_perfil">Ver mi perfil</a>
 			</h2>
 		</div>
+    <div id="ad_img"></div>
 	</div>
 <div id="main">
 	<div id="container">
@@ -200,18 +206,19 @@
 		},
 	]);
 	function waitSinqrtel () {
-		if ( typeof FB == 'undefined' || typeof Sinqrtel == 'undefined' ) {
-			setTimeout(waitSinqrtel,250);
+		if ( quorum < 2 ) {
+			setTimeout(waitSinqrtel,300);
 			console.log("Waited on FB and Sinqrtel");
 		} else {
 			Sinqrtel.init();
 		}
 	}
-	setTimeout(waitSinqrtel,250);
+	setTimeout(waitSinqrtel,300);
 	
 	function waitjQuery () {
-		if ( typeof jQuery == 'undefined' || typeof Sinqrtel == 'undefined' || !Sinqrtel.getSqrtInitialized() ) {
-			setTimeout(waitjQuery,250);
+		if ( typeof $ == 'undefined' || quorum < 2 ) {
+			setTimeout(waitjQuery,300);
+			console.log('waiting on jQuery');
 		} else {
 			$(document).ready(function() {
 				if (Sinqrtel.getViewUserId() != "" ) {
@@ -234,7 +241,8 @@
 			});
 		}
 	}
-	setTimeout(waitjQuery,250);
+	setTimeout(waitjQuery,300);
+	
 	</script>
 </body>
 </html>
