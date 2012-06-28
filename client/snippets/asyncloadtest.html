@@ -3,13 +3,127 @@
 	<!--<script type="text/javascript" src="https://www.google.com/jsapi?key=ABQIAAAAGbCP7xAnDeaBWr-NDrNqXBQmMOc3nLjHthTa4EGe0lmmw0PRdxREC4FbLwhuQ0MKiSEZhZaqWLSXNA"></script>-->
 	<!-- inc(asyncload.inc.js) -->
 	<!-- this loads asyncjs which allows us to async load javascript files-->
-	<script src="http://www.sinqrtel.com/js/sqrt_sync.js"></script>
+	<script>	
+	function asyncjs( jss ) {
+		var jsdata,js, d=document;
+		while( (jsdata = jss.shift()) && jsdata !=undefined ) {
+			if ( d.getElementById( jsdata.id ) == undefined) {
+				js = d.createElement('script');
+				js.id = jsdata.id; js.async = true; js.type = 'text/javascript';
+				js.src = ('https:' == d.location.protocol)?jsdata['https']:jsdata['http'];
+				d.getElementsByTagName('head')[0].appendChild(js);
+			}
+		}
+	}
+	
+	function moreQuorum(who) {
+		console.log("More Quorum:" + who);
+	}
+	
+	function fullQuorum() {
+		console.log("Full Quorum!");
+	}
+	
+	function requestQuorumCheck(js_callbacks,full_quorum_callback) {
+		if (typeof window.quorum == 'undefined') {
+			window.quorum = {'full_quorum_callback':full_quorum_callback,'quorum':{}};
+		}
+		for (js in js_callbacks) {
+			window.quorum.quorum[js] = {'status':false,'callback':js_callbacks[js]};
+			
+		}
+	}
+	
+	requestQuorumCheck({
+		'FB':moreQuorum, 'jQuery':moreQuorum, 'TWTR':moreQuorum, 'Sinqrtel':moreQuorum, 'Crypto':moreQuorum
+	}, fullQuorum);
+
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-24758076-1']);
+	_gaq.push(['_trackPageview']);
+	
+	asyncjs([
+		{
+		'id':'ga-sdk',
+			'https':'https://ssl.google-analytics.com/ga.js',
+			'http':'http://www.google-analytics.com/ga.js'
+		},
+		{
+		'id':'crypto-jssdk',
+			'https':'https://crypto-js.googlecode.com/files/2.4.0-crypto-sha1-hmac-pbkdf2-blockmodes-aes.js',
+			'http':'http://crypto-js.googlecode.com/files/2.4.0-crypto-sha1-hmac-pbkdf2-blockmodes-aes.js'
+		},
+		{
+		'id':'sqrt-jssdk',
+			'https':'https://www.sinqrtel.com/js/sqrt_basics.js',
+			'http':'http://www.sinqrtel.com/js/sqrt_basics.js'
+		},
+		{
+		'id':'twwt-jssdk',
+			'https':'https://widgets.twimg.com/j/2/widget.js',
+			'http':'http://widgets.twimg.com/j/2/widget.js',
+		},
+		{
+		'id':'jquery-jssdk',
+			'https':'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js',
+			'http':'http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js',
+		}
+	]);
+	</script>
+</head>
+<body>
+	<div id="fb-root"></div>
+	<h1>Test!</h1>
+	
+	<div class="fb-login-button">Login with Facebook</div>
+	
+	<div id="twitter_div"></div>
+
 	<script>
-	function twitter_loaded () {
-		new TWTR.Widget({
+	window.fbAsyncInit = function() {
+		FB.init({appId:'207120562693777',status:true,cookie:true,xfbml:true,oauth:true});
+		console.log("Async fb quorum check!")
+		updateQuorum();
+	};
+	
+	window.sqrtAsyncInit = function() {
+		console.log("Async sqrt quorum check!")
+		updateQuorum();
+	};
+	
+	/*Bottom loader*/
+	asyncjs([
+		{
+		'id':'facebook-jssdk',
+			'https':'https://connect.facebook.net/es_LA/all.js',
+			'http':'http://connect.facebook.net/es_LA/all.js'
+		},
+	]);
+	function updateQuorum() {
+		var fullQuorum = true;
+		for (js in window.quorum.quorum ) {
+			if (!window.quorum.quorum[js].status) {
+				window.quorum.quorum[js].status = (typeof window[js] != 'undefined');
+				console.log( js + ":" + window.quorum.quorum[js].status );
+				fullQuorum  = false;
+				if (window.quorum.quorum[js].status) {
+					window.quorum.quorum[js].callback(js);
+				}
+			}
+		}
+		if (!fullQuorum) {
+			setTimeout(updateQuorum,250);
+		} else {
+			window.quorum.fullQuorum;
+		}
+	}
+	setTimeout(updateQuorum,100);
+	</script>
+	<script charset="utf-8" src="http://widgets.twimg.com/j/2/widget.js"></script>
+	<script>
+	new TWTR.Widget({
 				version: 2,
 				type: 'search',
-				id:'twitter_div',
 				search: 'arcoiris',
 				interval: 30000,
 				title: 'Es un arcoiris doble',
@@ -34,77 +148,6 @@
 					behavior: 'default'
 				}
 			}).render().start();
-	}
-	
-	function fullQuorum() {
-		console.log('Full Quorum!');
-	}
-	
-	function moreQuorum(id, who) {
-		console.log('More Quorum: ' + id + ' (' + who +')');
-	}
-	
-	function timeoutQuorum() {
-		console.log('Timeout!');
-	}
-	
-	function quorumCryptoJS() {
-		return typeof this.CryptoJS.enc.Hex.parse==object;
-	}
-	
-	asyncjs({
-		'full_quorum_callback':fullQuorum,
-		'timeout':200000,
-		'timeout_callback':timeoutQuorum,
-		'libraries':
-		[
-			{
-			'id':'ga-sdk', 'quorumx':'_gat', 'callback':moreQuorum,
-				'uri':('https' == document.location.protocol)?'https://ssl':'http://www' + '.google-analytics.com/ga.js',
-			},
-			{
-			'id':'crypto-jssdk-core', 'quorumx':quorumCryptoJS, 'callback':moreQuorum,
-				'uri':('https' == document.location.protocol)?'https':'http' + '://crypto-js.googlecode.com/svn/tags/3.0.2/build/components/core-min.js'
-			},
-			{
-			'id':'crypto-jssdk-base64', 'quorumx':'CrytoJS', 'require':quorumCryptoJS, 'callback':moreQuorum,
-				'uri':('https' == document.location.protocol)?'https':'http' + '://crypto-js.googlecode.com/svn/tags/3.0.2/build/components/enc-base64-min.js'
-			},
-			{
-			'id':'crypto-jssdk-hmac', 'quorumx':'CrytoJS', 'require':quorumCryptoJS, 'callback':moreQuorum,
-				'uri':('https' == document.location.protocol)?'https':'http' + '://crypto-js.googlecode.com/svn/tags/3.0.2/build/components/hmac-min.js'
-			},
-			{
-			'id':'crypto-jssdk-sha1', 'quorumx':'CrytoJS', 'require':quorumCryptoJS, 'callback':moreQuorum,
-				'uri':('https' == document.location.protocol)?'https':'http' + '://crypto-js.googlecode.com/svn/tags/3.0.2/build/components/sha1-min.js'
-			},
-			{
-			'id':'sqrt-jssdk', 'quorumx':'Sinqrtel', 'callback':moreQuorum,
-				'uri':('https' == document.location.protocol)?'https':'http' + '://www.sinqrtel.com/js/sqrt_basics.js',
-			},
-			{
-			'id':'twwt-jssdk', 'quorumx':'TWTR', 'callback':twitter_loaded,
-				'uri':('https' == document.location.protocol)?'https':'http' + '://widgets.twimg.com/j/2/widget.js',
-			},
-			{
-			'id':'jquery-jssdk', 'quorumx':'jQuery', 'callback':moreQuorum,
-				'uri':('https' == document.location.protocol)?'https':'http' + '://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js',
-			},
-			{
-			'id':'facebook-jssdk', 'quorumx':'FB','require':'fb_root_created', 'callback':moreQuorum,
-				'uri':('https' == document.location.protocol)?'https':'http' + '://connect.facebook.net/es_LA/all.js',
-			},
-		]
-	});
 	</script>
-</head>
-<body>
-	<div id="fb-root"></div><script>window.fb_root_created=true;</script>
-	<h1>Test!</h1>
-	
-	<div class="fb-login-button">Login with Facebook</div>
-	
-	<div id="twitter_div"></div>
-
 </body>
 </html>

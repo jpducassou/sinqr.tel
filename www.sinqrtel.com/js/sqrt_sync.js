@@ -22,13 +22,14 @@ function asyncjs( p_jss ) {
 		window.quorum.timedout = false;
 	}
 	
-	var jsdata,d=document,jss = window.quorum;
+	var jss = window.quorum;
 	
-	if ( typeof jss.timeout != undefined && new Date().getTime() - jss.start.getTime() > jss.timeout ) {
-		if (!jss.timedout) {
-			jss.timedout = true;
-      fullQuorum = false;
-			jss.timeout_callback();
+	var jsdata,d=document;
+	
+	if ( typeof jss.timeout != undefined && new Date().getTime() - window.quorum.start.getTime() > window.quorum.timeout ) {
+		if (!window.quorum.timedout) {
+			window.quorum.timedout = true;
+			window.quorum.timeout_callback();
 		}
 	} else {
 		for ( i in jss.libraries ) {
@@ -36,7 +37,6 @@ function asyncjs( p_jss ) {
 			if ( !jsdata.loaded ) {
 				fullQuorum = false; //naturaly since we have not loaded all
 				jsdata.status = false;
-        //check to similar to status
 				if ( typeof jsdata.require == 'undefined' || !jsdata.require || typeof window[jsdata.require] != 'undefined' ) {
 					jsdata.loaded = true;
 					if ( d.getElementById( jsdata.id ) == undefined) {
@@ -45,23 +45,16 @@ function asyncjs( p_jss ) {
 						js.src = jsdata['uri'];
 						d.getElementsByTagName('head')[0].appendChild(js);
 					}
-				} else {
-          //console.log(jsdata.id + ' waiting for ' + jsdata.require);
-        }
+				}
 			} else {
-				if (!jsdata.status) {
-          if (typeof jsdata.quorumx == 'string') {
-            //
-            jsdata.status = (typeof window[jsdata.quorumx] != 'undefined' || typeof jsdata.quorumx == 'object');  
-          } else if (typeof jsdata.quorumx == 'function') {
-            jsdata.status = jsdata.quorumx;
-          }
-          if (jsdata.status) {
-            console.log( jsdata.id + ":" + jsdata.status );
-            typeof jsdata.callback != 'undefined' && jsdata.callback( jsdata.id, window[jsdata.quorumx] );
-          } else {
-          	fullQuorum  = false;
-          }
+				if (!jss.libraries[i].status) {
+					jss.libraries[i].status = (typeof window[jss.libraries[i].quorum] != 'undefined');
+					console.log( jss.libraries[i].id + ":" + jss.libraries[i].status );
+					if (jss.libraries[i].status) {
+						jss.libraries[i].quorum_callback( jss.libraries[i].id, window[jss.libraries[i].quorum] );
+					} else {
+						fullQuorum  = false;
+					}
 				}
 			}
 		}
@@ -69,8 +62,6 @@ function asyncjs( p_jss ) {
 	if (!fullQuorum) {
 		setTimeout(asyncjs,250);
 	} else {
-    if (!jss.timedout) {
-      jss.full_quorum_callback();
-    }
+		jss.full_quorum_callback();
 	}
 }
