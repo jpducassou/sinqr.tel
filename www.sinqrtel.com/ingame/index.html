@@ -8,61 +8,7 @@
 	<link href='http://fonts.googleapis.com/css?family=Syncopate:400,700' rel='stylesheet' type='text/css' />
 	<script>
 	quorum = 0;
-	window.fbAsyncInit = function() {
-		console.log("fbAsyncInit!");
-		FB.init({appId:'207120562693777',status:true,cookie:true,xfbml:true,oauth:true});
-		quorum++;
-	};
 	
-	window.sqrtAsyncInit = function (Sinqrtel) {
-		console.log("sqrtAsyncLoad!");
-		window.Sinqrtel = Sinqrtel;
-		quorum++;
-	};
-	
-	function asyncjs( jss ) {
-		var jsdata,js, d=document;
-		while( (jsdata = jss.shift()) && jsdata !=undefined ) {
-			if ( d.getElementById( jsdata.id ) == undefined) {
-				js = d.createElement('script');
-				js.id = jsdata.id; js.async = true; js.type = 'text/javascript';
-				js.src = ('https:' == d.location.protocol)?jsdata['https']:jsdata['http'];
-				d.getElementsByTagName('head')[0].appendChild(js);
-			}
-		}
-	}
-	
-	var _gaq = _gaq || [];
-	_gaq.push(['_setAccount', 'UA-24758076-1']);
-	_gaq.push(['_trackPageview']);
-	
-	asyncjs([
-		{
-		'id':'ga-sdk',
-			'https':'https://ssl.google-analytics.com/ga.js',
-			'http':'http://www.google-analytics.com/ga.js'
-		},
-		{
-		'id':'crypto-jssdk',
-			'https':'https://crypto-js.googlecode.com/files/2.4.0-crypto-sha1-hmac-pbkdf2-blockmodes-aes.js',
-			'http':'http://crypto-js.googlecode.com/files/2.4.0-crypto-sha1-hmac-pbkdf2-blockmodes-aes.js'
-		},
-		{
-		'id':'sqrt-jssdk',
-			'https':'https://www.sinqrtel.com/js/sqrt_basics.js',
-			'http':'http://www.sinqrtel.com/js/sqrt_basics.js'
-		},
-		{
-		'id':'twwt-jssdk',
-			'https':'https://widgets.twimg.com/j/2/widget.js',
-			'http':'http://widgets.twimg.com/j/2/widget.js',
-		},
-		{
-		'id':'jquery-jssdk',
-			'https':'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js',
-			'http':'http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js',
-		}
-	]);
 	</script>
 </script>
 </head>
@@ -197,14 +143,7 @@
 		</div>
 	</div>
 	<!--document end-->
-	<script type="text/javascript">		
-	asyncjs([
-		{
-		'id':'facebook-jssdk',
-			'https':'https://connect.facebook.net/es_LA/all.js',
-			'http':'http://connect.facebook.net/es_LA/all.js'
-		},
-	]);
+	<script type="text/javascript">
 	function waitSinqrtel () {
 		if ( quorum < 2 ) {
 			setTimeout(waitSinqrtel,300);

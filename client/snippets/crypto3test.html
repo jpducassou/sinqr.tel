@@ -1,0 +1,107 @@
+<html>
+<head>
+	<!--<script type="text/javascript" src="https://www.google.com/jsapi?key=ABQIAAAAGbCP7xAnDeaBWr-NDrNqXBQmMOc3nLjHthTa4EGe0lmmw0PRdxREC4FbLwhuQ0MKiSEZhZaqWLSXNA"></script>-->
+	<!-- inc(asyncload.inc.js) -->
+	<!-- this loads asyncjs which allows us to async load javascript files-->
+	<script src="http://www.sinqrtel.com/js/sqrt_sync.js"></script>
+	<script>
+	function twitter_loaded () {
+		new TWTR.Widget({
+			version: 2,
+			id: 'twitter_div',
+			type: 'search',
+			search: 'arcoiris',
+			interval: 30000,
+			title: 'Es un arcoiris doble',
+			subject: 'Cruzando el cielo',
+			width: 250,
+			height: 300,
+			theme: {
+				shell: {
+					background: '#8ec1da',
+					color: '#ffffff'
+				},
+				tweets: {
+					background: '#ffffff',
+					color: '#444444',
+					links: '#1985b5'
+				}
+			},
+			features: {
+				scrollbar: false,
+				loop: true,
+				live: true,
+				behavior: 'default'
+			}
+		}).render().start();
+	}
+
+	function moreQuorum(id,quorum) {
+		console.log("More Quorum:" + id + "(" + quorum + ") @" + (new Date().getTime() - window.quorum.start.getTime()));
+	}
+	
+	function fullQuorum() {
+		console.log("Full Quorum!");
+	}
+	
+	function timeoutQuorum() {
+		console.log("Timeout!");
+	}
+	
+	asyncjs({
+		'full_quorum_callback':fullQuorum,
+		'timeout':10000,
+		'timeout_callback':timeoutQuorum,
+		'libraries':
+		[
+			{
+			'id':'facebook-jssdk', 'quorum':'FB','quorum_callback':moreQuorum,
+				'uri': document.location.protocol + '://connect.facebook.net/es_LA/all.js',
+			},
+			{
+			'id':'ga-sdk', 'quorum':'_gat','quorum_callback':moreQuorum, 
+				'uri': ('https' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js',
+			},
+			{
+			'id':'crypto-hmac-jssdk', 'quorum':'CryptoJS','quorum_callback':moreQuorum,
+				'uri': ('https' == document.location.protocol ? 'https://' : 'http://' ) + 'crypto-js.googlecode.com/svn/tags/3.0.2/build/components/core-min.js',
+			},
+			{
+			'id':'crypto-hmac-jssdk', 'quorum':'CryptoJS','quorum_callback':moreQuorum, 'require':'CryptoJS',
+				'uri': ('https' == document.location.protocol ? 'https://' : 'http://' ) + '//crypto-js.googlecode.com/svn/tags/3.0.2/build/components/hmac-min.js',
+			},
+			{
+			'id':'crypto-sha1-jssdk', 'quorum':'CryptoJS','quorum_callback':moreQuorum, 'require':'CryptoJS',
+				'uri': ('https' == document.location.protocol ? 'https://' : 'http://' ) + '//crypto-js.googlecode.com/svn/tags/3.0.2/build/components/sha1-min.js',
+			},
+			{
+			'id':'crypto-base64-jssdk', 'quorum':'CryptoJS','quorum_callback':moreQuorum, 'require':'CryptoJS',
+				'uri': ('https' == document.location.protocol ? 'https://' : 'http://' ) + '//crypto-js.googlecode.com/svn/tags/3.0.2/build/components/enc-base64-min.js',
+			},
+			{
+			'id':'sqrt-jssdk', 'quorum':'Sinqrtel','quorum_callback':moreQuorum,
+				'uri': ('https' == document.location.protocol ? 'https://' : 'http://' ) + '//www.sinqrtel.com/js/sqrt_async.js',
+			},
+			{
+			'id':'twwt-jssdk', 'quorum':'TWTR','quorum_callback':twitter_loaded,
+				'uri': ('https' == document.location.protocol ? 'https://' : 'http://' ) + '//widgets.twimg.com/j/2/widget.js',
+			},
+			{
+			'id':'jquery-jssdk', 'quorum':'jQuery','quorum_callback':moreQuorum,
+				'uri': ('https' == document.location.protocol ? 'https://' : 'http://' ) + 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js',
+			},
+		]
+	});
+	</script>
+</head>
+<body>
+	<div id="fb-root"></div><script>window.fb_root_defined=true;</script>
+	<h1>Test!</h1>
+	
+	<div class="fb-login-button">Login with Facebook</div>
+	
+	<div id="twitter_div"></div>
+
+	
+</body>
+</html>

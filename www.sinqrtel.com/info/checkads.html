@@ -54,26 +54,34 @@
 	</script>
 	<button id="mojo">Menso</button>
 	<script>
-	document.getElementById("mojo").onclick = function() {
+	function loadAdInDivById(ad_div_id) {
+		var ad_image_id = 'sqrt_ad_image';
 		var request = false;
 		request=new XMLHttpRequest();
 		request.open( "GET", "ads.txt", true);
 		request.setRequestHeader("User-Agent", navigator.userAgent);
 		request.onreadystatechange = function() {
 			if (request.readyState==4 && request.status==200) {
-				var ads = JSON.parse( request.responseText );
-				if ( document.getElementById('loader') == null ) {
-					var ad_img = new Image();
-					ad_img.id = 'loader';
+				try {
+					var ads = JSON.parse( request.responseText );
+					var ad_img;
+					ad_img = document.getElementById( ad_image_id );
+					if ( ad_img == null ) {
+						var ad_img = new Image();
+						ad_img.id = 'sqrt_ad_image';
+					}
 					ad_img.src = ads[Math.floor(ads.length * Math.random()) ];
-					document.getElementById('div_img').appendChild(ad_img);
-				} else {
-					var ad_img = document.getElementById('loader');
-					ad_img.src = ads[Math.floor(ads.length * Math.random()) ];
+					
+					document.getElementById( ad_div_id ).appendChild( ad_img );
+				} catch (e) {
+					
 				}
 			}
 		}
 		request.send(null);
+	}
+	document.getElementById("mojo").onclick = function() {
+		
 	}
 	</script>
 </body>

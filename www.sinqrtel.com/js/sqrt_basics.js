@@ -25,7 +25,8 @@ window.onbeforeunload = function () {
 var Sinqrtel = {
 	//configuration
 	sqrt_google_api_key:'AIzaSyAYDaIJG7v7j5mKy6cAjhzRI4LVa7yu6io',
-	sqrt_amazon_queue_uri:'https://queue.amazonaws.com/041722291456/sinqrtel_public_tag',
+	sqrt_amazon_tag_queue_uri:'https://queue.amazonaws.com/041722291456/sinqrtel_public_tag',
+	sqrt_amazon_error_queue_uri:'https://queue.amazonaws.com/041722291456/sinqrtel_public_error',
 	sqrt_amazon_id:'AKIAIC2DBRTIUKHMGASQ',
 	sqrt_amazon_access_key:'2Ofh3ICjeKpxeWBV2KGmKJ4co4WoeGtpumiiGEPX',
 	sqrt_amazon_endpoint:'https://queue.amazonaws.com',
@@ -257,7 +258,7 @@ var Sinqrtel = {
 			} catch (e) {};
 		}
 	},
-	TagSend:function(message, stateChange) {
+	SendServerMessage:function(message, error, stateChange ) {
 		function _addZero(n) {
 				return ( n < 0 || n > 9 ? "" : "0" ) + n;
 		}
@@ -310,10 +311,11 @@ var Sinqrtel = {
 			params += "&Signature=" + encodeURIComponent( signature );
 			return params;
 		}
-		var postBody = _generateSignedParams( "SendMessage", message, Sinqrtel.sqrt_amazon_queue_uri, Sinqrtel.sqrt_amazon_id, Sinqrtel.sqrt_amazon_access_key, Sinqrtel.sqrt_amazon_endpoint, Sinqrtel.sqrt_amazon_version );
+		var queue_uri = error?this.sqrt_amazon_error_queue_uri:sqrt_amazon_tag_queue_uri;
+		var postBody = _generateSignedParams( "SendMessage", message, queue_uri, Sinqrtel.sqrt_amazon_id, Sinqrtel.sqrt_amazon_access_key, Sinqrtel.sqrt_amazon_endpoint, Sinqrtel.sqrt_amazon_version );
 		//request creation
 		var http = new XMLHttpRequest();
-		http.open("POST", Sinqrtel.sqrt_amazon_queue_uri, true);
+		http.open("POST", queue_uri, true);
 		http.setRequestHeader("Content-type", "application/x-www-form-urlencoded;"); //Send the proper header information along with the request
 		//request length can be skipped... so do it
 		//http.setRequestHeader("Content-length", url.length);
