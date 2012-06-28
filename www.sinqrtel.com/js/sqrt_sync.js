@@ -20,6 +20,9 @@ function asyncjs( p_jss ) {
 		window.quorum = p_jss ;
 		window.quorum.start = new Date();
 		window.quorum.timedout = false;
+		if ( window.quorum.granularity < 10) {
+			window.quorum.granularity = 200;
+		}
 	}
 	
 	var jss = window.quorum;
@@ -60,7 +63,7 @@ function asyncjs( p_jss ) {
 		}
 	}
 	if (!fullQuorum) {
-		setTimeout(asyncjs,250);
+		setTimeout(asyncjs,window.quorum.granularity);
 	} else {
 		jss.full_quorum_callback();
 	}

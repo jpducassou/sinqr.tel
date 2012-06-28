@@ -51,45 +51,46 @@
 	asyncjs({
 		'full_quorum_callback':fullQuorum,
 		'timeout':10000,
+		'granularity':100,
 		'timeout_callback':timeoutQuorum,
 		'libraries':
 		[
-			{
-			'id':'facebook-jssdk', 'quorum':'FB','quorum_callback':moreQuorum,
-				'uri': document.location.protocol + '://connect.facebook.net/es_LA/all.js',
-			},
 			{
 			'id':'ga-sdk', 'quorum':'_gat','quorum_callback':moreQuorum, 
 				'uri': ('https' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js',
 			},
 			{
-			'id':'crypto-hmac-jssdk', 'quorum':'CryptoJS','quorum_callback':moreQuorum,
-				'uri': ('https' == document.location.protocol ? 'https://' : 'http://' ) + 'crypto-js.googlecode.com/svn/tags/3.0.2/build/components/core-min.js',
+			'id':'crypto-jssdk', 'quorum':'CryptoJS','quorum_callback':moreQuorum,
+				'uri': ('https' == document.location.protocol ? 'https' : 'http' ) + '://crypto-js.googlecode.com/svn/tags/3.0.2/build/components/core-min.js',
+			},			
+			{
+			'id':'sqrt-jssdk', 'quorum':'Sinqrtel','quorum_callback':moreQuorum, /* 'require':'CryptoJS', */
+				'uri': ('https' == document.location.protocol ? 'https' : 'http' ) + '://www.sinqrtel.com/js/sqrt_async.js',
 			},
 			{
 			'id':'crypto-hmac-jssdk', 'quorum':'CryptoJS','quorum_callback':moreQuorum, 'require':'CryptoJS',
-				'uri': ('https' == document.location.protocol ? 'https://' : 'http://' ) + '//crypto-js.googlecode.com/svn/tags/3.0.2/build/components/hmac-min.js',
+				'uri': ('https' == document.location.protocol ? 'https' : 'http' ) + '://crypto-js.googlecode.com/svn/tags/3.0.2/build/components/hmac-min.js',
 			},
 			{
 			'id':'crypto-sha1-jssdk', 'quorum':'CryptoJS','quorum_callback':moreQuorum, 'require':'CryptoJS',
-				'uri': ('https' == document.location.protocol ? 'https://' : 'http://' ) + '//crypto-js.googlecode.com/svn/tags/3.0.2/build/components/sha1-min.js',
+				'uri': ('https' == document.location.protocol ? 'https' : 'http' ) + '://crypto-js.googlecode.com/svn/tags/3.0.2/build/components/sha1-min.js',
 			},
 			{
 			'id':'crypto-base64-jssdk', 'quorum':'CryptoJS','quorum_callback':moreQuorum, 'require':'CryptoJS',
-				'uri': ('https' == document.location.protocol ? 'https://' : 'http://' ) + '//crypto-js.googlecode.com/svn/tags/3.0.2/build/components/enc-base64-min.js',
+				'uri': ('https' == document.location.protocol ? 'https' : 'http' ) + '://crypto-js.googlecode.com/svn/tags/3.0.2/build/components/enc-base64-min.js',
+			},			
+			{
+			'id':'jquery-jssdk', 'quorum':'jQuery','quorum_callback':moreQuorum,
+				'uri': ('https' == document.location.protocol ? 'https' : 'http' ) + '://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js',
 			},
 			{
-			'id':'sqrt-jssdk', 'quorum':'Sinqrtel','quorum_callback':moreQuorum,
-				'uri': ('https' == document.location.protocol ? 'https://' : 'http://' ) + '//www.sinqrtel.com/js/sqrt_async.js',
+			'id':'facebook-jssdk', 'quorum':'FB','quorum_callback':moreQuorum, 'require':'fb_root_defined',
+				'uri': ('https' == document.location.protocol ? 'https' : 'http' ) + '://connect.facebook.net/es_LA/all.js',
 			},
 			{
 			'id':'twwt-jssdk', 'quorum':'TWTR','quorum_callback':twitter_loaded,
-				'uri': ('https' == document.location.protocol ? 'https://' : 'http://' ) + '//widgets.twimg.com/j/2/widget.js',
-			},
-			{
-			'id':'jquery-jssdk', 'quorum':'jQuery','quorum_callback':moreQuorum,
-				'uri': ('https' == document.location.protocol ? 'https://' : 'http://' ) + 'https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js',
-			},
+				'uri': ('https' == document.location.protocol ? 'https' : 'http' ) + '://widgets.twimg.com/j/2/widget.js',
+			},			
 		]
 	});
 	</script>
