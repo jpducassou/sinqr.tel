@@ -299,9 +299,9 @@ var Sinqrtel = {
 		}
 		function _generateSignedParams(actionName, messageBody, queueUrl, accessKeyId, secretKey, endpoint, version) {
 			//signable parameters
-			var params = "SignatureVersion=1&Action=" + actionName + "&Version=" + encodeURIComponent(version) +
+			var params = "SignatureVersion=1&Action=" + actionName + "&Version=" + encodeURIComponent( version ) +
 			"&QueueUrl=" + encodeURIComponent( queueUrl ) + "&MessageBody=" + encodeURIComponent( messageBody ) +
-			"&Timestamp=" + encodeURIComponent( getNowTimeStamp() ) + "&AWSAccessKeyId=" + encodeURIComponent(accessKeyId);
+			"&Timestamp=" + encodeURIComponent( _getNowTimeStamp() ) + "&AWSAccessKeyId=" + encodeURIComponent( accessKeyId );
 		
 			//calculate V1 signature with signable parameters
 			var stringToSign = _getStringToSign( params );
@@ -311,7 +311,7 @@ var Sinqrtel = {
 			params += "&Signature=" + encodeURIComponent( signature.toString(CryptoJS.enc.Base64));
 			return params;
 		}
-		var queue_uri = error?this.sqrt_amazon_error_queue_uri:sqrt_amazon_tag_queue_uri;
+		var queue_uri = error?this.sqrt_amazon_error_queue_uri:this.sqrt_amazon_tag_queue_uri;
 		var postBody = _generateSignedParams( "SendMessage", message, queue_uri, Sinqrtel.sqrt_amazon_id, Sinqrtel.sqrt_amazon_access_key, Sinqrtel.sqrt_amazon_endpoint, Sinqrtel.sqrt_amazon_version );
 		//request creation
 		var http = new XMLHttpRequest();

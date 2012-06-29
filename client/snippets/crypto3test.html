@@ -42,6 +42,9 @@
 	
 	function fullQuorum() {
 		console.log("Full Quorum!");
+		Sinqrtel.SendServerMessage("Test!",false,function(){
+			$("#message_sent").show();
+		});
 	}
 	
 	function timeoutQuorum() {
@@ -102,7 +105,9 @@
 	<div class="fb-login-button">Login with Facebook</div>
 	
 	<div id="twitter_div"></div>
-
 	
+	<button id="send_test">Enviar mensaje</button>
+	
+	<div id="message_sent" style="display:none">Mensaje enviado</div>
 </body>
 </html>
