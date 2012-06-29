@@ -179,6 +179,9 @@ var Sinqrtel = {
 	getTimeStamp:function() {
 		return Math.round((new Date()).getTime() / 1000 );
 	},
+	getTagValue:function() {
+		return 40;
+	},
 	sumAndUpdateScoresToTimeStamp:function( timeStamp ) {
 		//gets score and delete seen server scores to timeStamp
 		var sum = 0;
@@ -257,6 +260,9 @@ var Sinqrtel = {
 				}
 			} catch (e) {};
 		}
+	},
+	SendTag:function(from,to,stateChange) {
+		this.SendServerMessage(["v1",from,to].join("|"),false,stateChange);
 	},
 	SendServerMessage:function(message, error, stateChange ) {
 		function _addZero(n) {

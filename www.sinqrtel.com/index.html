@@ -1,46 +1,44 @@
 <!DOCTYPE html>
 <head>
   <meta charset="utf-8">
-  <title></title>
+  <title>Sinqrtel</title>
   <meta name="description" content="">
   <meta name="author" content="">
-  <link rel="stylesheet" href="css/common.css">
+  <link rel="stylesheet" href="../css/common_new.css">
   <link href='http://fonts.googleapis.com/css?family=Syncopate:400,700' rel='stylesheet' type='text/css'>
-  <script type="text/javascript" src="https://www.google.com/jsapi?key=ABQIAAAAGbCP7xAnDeaBWr-NDrNqXBQmMOc3nLjHthTa4EGe0lmmw0PRdxREC4FbLwhuQ0MKiSEZhZaqWLSXNA"></script>
-<script type="text/javascript">
-var _gaq = _gaq || [];
-_gaq.push(['_setAccount', 'UA-24758076-1']);
-_gaq.push(['_trackPageview']);
-
-(function() {
-  var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-  ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-  var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-})();
-
-var request = false;
-try {
-	request=new XMLHttpRequest();
-	request.open( "GET", "redir.json", true );
-	request.setRequestHeader("User-Agent", navigator.userAgent);
-	request.send(null)
-	request.onreadystatechange = function() {
-		if (request.readyState==4 && request.status==200) {
-			redirs = JSON.parse(request.responseText);
-			console.log( redirs[window.location.hash] );
- 			if ( redirs[window.location.hash] !== undefined ) {
- 				window.location = redirs[window.location.hash];
- 			}
+	<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', 'UA-24758076-1']);
+	_gaq.push(['_trackPageview']);
+	
+	(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+	
+	var request = false;
+	try {
+		request=new XMLHttpRequest();
+		request.open( "GET", "redir.json", true );
+		request.setRequestHeader("User-Agent", navigator.userAgent);
+		request.send(null)
+		request.onreadystatechange = function() {
+			if (request.readyState==4 && request.status==200) {
+				redirs = JSON.parse(request.responseText);
+				console.log( redirs[window.location.hash] );
+				if ( redirs[window.location.hash] !== undefined ) {
+					window.location = redirs[window.location.hash];
+				}
+			}
 		}
+	} catch (failed) {
+		console.log("Redir not found");
 	}
-} catch (failed) {
-	console.log("Redir not found");
-}
-</script>
+	</script>
 </head>
 
 <body>
-
 <div class="header">
 	<div id="header_container">
 		<div class="text_floater"><h1>Vivi la experiencia</h1></div><div class="logo_floater"><img src="img/logo_header.png" width="200" height="51" /></div>
@@ -49,8 +47,6 @@ try {
 <div id="main">
   <div id="container">
     <div id="container_top">
-    <div>
-    </div>
     <div style="float:right; max-width: 480; padding: 10px">
     <iframe width="600" height="450" src="http://www.youtube.com/embed/sOiKAO7SVhQ?autoplay=1&rel=0&fs=0&theme=light&loop=1&disablekb=1&controls=0&autohide=1" frameborder="0" allowfullscreen></iframe>
     </div>

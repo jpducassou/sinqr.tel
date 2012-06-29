@@ -5,11 +5,7 @@
 	<title>Perfil</title>
 	<meta name="viewport" content="width=1000" />
 	<link rel="stylesheet" href="../css/common.css" type="text/css" />
-	<link href='http://fonts.googleapis.com/css?family=Syncopate:400,700' rel='stylesheet' type='text/css' />
-	<script>
-	quorum = 0;
-	</script>
-</script>
+	<script type="text/javascript" src="http://www.sinqrtel.com/js/sqrt_sync.js"></script>
 </head>
 
 <body>
@@ -23,7 +19,7 @@
 	<div id="ad">
 		<div id="facebook-beforelogin">
     <h2>
-			<div class="fb-login-button"></div><div>&nbsp;y gan&aacute; tus puntos con:</div>
+			<div class="fb-login-button">Entrar</div><div>&nbsp;y gan&aacute; tus puntos con:</div>
      </h2>
 		</div>
 		<div id="facebook-afterlogin">
@@ -42,7 +38,7 @@
     <div id="ad_img"></div>
 	</div>
 <div id="main">
-	<div id="container">
+	<div id="container" class="hidden">
 		<div id="container_top">
 			<div class="container_left_spacer"></div>
 
@@ -143,44 +139,50 @@
 	</div>
 	<!--document end-->
 	<script type="text/javascript">
-	function waitSinqrtel () {
-		if ( quorum < 2 ) {
-			setTimeout(waitSinqrtel,300);
-			console.log("Waited on FB and Sinqrtel");
-		} else {
-			Sinqrtel.init();
+		function fbChangeLogin(response) {
+			if (response.status === 'connected') {
+				$("#facebook-beforelogin").hide();
+				$("#facebook-afterlogin").show();
+				Sinqrtel.SendServerMessage();
+				SendTag();
+				$("#sqrt_added_score").text(Sinqrtel.getTagValue());
+				
+			} else {
+				$("#facebook-beforelogin").show();
+				$("#facebook-afterlogin").hide();
+			}
 		}
-	}
-	setTimeout(waitSinqrtel,300);
-	
-	function waitjQuery () {
-		if ( typeof $ == 'undefined' || quorum < 2 ) {
-			setTimeout(waitjQuery,300);
-			console.log('waiting on jQuery');
-		} else {
-			$(document).ready(function() {
-				if (Sinqrtel.getViewUserId() != "" ) {
-					$("#facebook-beforelogin").hide();
-					$("#facebook-afterlogin").show();
-				} else {
-					$("#facebook-beforelogin").show();
-					$("#facebook-afterlogin").hide();
-				}
-				$("#ver_perfil").click( function () {
-					$("#ad").hide();
-					$("#main").show('slow');
-				});
-				$("#ver_mi_perfil").click( function () {
-					window.location.hash="#myself";
-					Sinqrtel.init();
-					$("#ad").hide();
-					$("#main").show('slow');
-				});
-			});
+		function okGA() {
+			
 		}
-	}
-	setTimeout(waitjQuery,300);
-	
+		function okjQuery() {
+			
+		}
+		function okFB() {
+			
+		}
+		function okTwitter() {
+			
+		}
+		function fullQuorum() {
+			FB.Event.subscribe('auth.login',fbChangeLogin);
+			FB.Event.subscribe('auth.logout',fbChangeLogin);
+			console.log("loaded!");
+			FB.getLoginStatus(fbChangeLogin);
+		}
+		asyncjs({
+			'full_quorum_callback':fullQuorum,'granularity':100,'libraries':[
+				{'id':'ga-sdk', 'quorum':'_gat','quorum_callback':okGA,'uri': ('https' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js',},
+				{'id':'crypto-jssdk', 'quorum':'CryptoJS','uri': ('https' == document.location.protocol ? 'https' : 'http' ) + '://crypto-js.googlecode.com/svn/tags/3.0.2/build/components/core-min.js',},			
+				{'id':'sqrt-jssdk', 'quorum':'Sinqrtel','uri': ('https' == document.location.protocol ? 'https' : 'http' ) + '://www.sinqrtel.com/js/sqrt_async.js',},
+				{'id':'crypto-hmac-jssdk', 'quorum':'CryptoJS','require':'CryptoJS','uri': ('https' == document.location.protocol ? 'https' : 'http' ) + '://crypto-js.googlecode.com/svn/tags/3.0.2/build/components/hmac-min.js',},
+				{'id':'crypto-sha1-jssdk', 'quorum':'CryptoJS','require':'CryptoJS', 'uri': ('https' == document.location.protocol ? 'https' : 'http' ) + '://crypto-js.googlecode.com/svn/tags/3.0.2/build/components/sha1-min.js',},
+				{'id':'crypto-base64-jssdk', 'quorum':'CryptoJS','require':'CryptoJS', 'uri': ('https' == document.location.protocol ? 'https' : 'http' ) + '://crypto-js.googlecode.com/svn/tags/3.0.2/build/components/enc-base64-min.js',},
+				{'id':'jquery-jssdk', 'quorum':'jQuery','quorum_callback':okjQuery,'uri': ('https' == document.location.protocol ? 'https' : 'http' ) + '://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js',},
+				{'id':'facebook-jssdk', 'quorum':'FB','quorum_callback':okFB, 'require':'fb_root_defined','uri': ('https' == document.location.protocol ? 'https' : 'http' ) + '://connect.facebook.net/es_LA/all.js#appId=207120562693777&status=true&cookie=true&oauth=true&xfbml=1',},
+				{'id':'twwt-jssdk', 'quorum':'TWTR','quorum_callback':okTwitter,'uri': ('https' == document.location.protocol ? 'https' : 'http' ) + '://widgets.twimg.com/j/2/widget.js',},
+			]
+		});
 	</script>
 </body>
 </html>

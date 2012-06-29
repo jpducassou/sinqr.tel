@@ -291,13 +291,14 @@ td { vertical-align: top; }
 
 .logo_floater {
 	float:left;
-	max-width:100%;
+	padding: 20px 0;	
 }
 
 #facebook-beforelogin {
 	max-width: 960px;
-	margin: 20px auto;
+	margin: auto;
 	display: none;
+	float: left;
 }
 
 #facebook-afterlogin {
@@ -743,17 +744,23 @@ h4
 #main {
 	background-color: #FFF;
 	width: 100%;
-	display: none;
 }
 
 #ad {
 	background-color: #FFF;
 	width: 100%;
 	display: block;
+	margin: 0 auto;
+  overflow: hidden;
+	max-width: 960px;
 }
 
 .clear {
 	clear:both;
+}
+
+.float_left {
+	float:left;
 }
 
 #sqrt_user_score_server {
@@ -765,6 +772,18 @@ h4
 	color: #ff0000;
 	float: left;
 }
+
 #ad_img {
 	width: auto;
+}
+
+#video_container {
+	float:right;
+	max-width: 540px;
+	padding: 5px;
+}
+
+#text_container {
+	float:left;
+	max-width: 400px;
 }
