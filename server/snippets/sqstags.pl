@@ -17,7 +17,7 @@ my $sqs = new Amazon::SQS::Simple( $access_key, $secret_key );
 # Get Existing queue by endpoint
 my $q = $sqs->GetQueue( $queue_uri );
 
-open( SIGNUPS, '>>signups_tedx.txt' );
+open( SIGNUPS, '>>sqs_tags.txt' );
 
 # Retrieve a message
 while ( my @msg = $q->ReceiveMessage( 'AttributeName.1' => 'All' , MaxNumberOfMessages=>10, VisibilityTimeout=>60 ) ) {
