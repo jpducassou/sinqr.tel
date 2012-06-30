@@ -4,41 +4,45 @@
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 	<title>Perfil</title>
 	<meta name="viewport" content="width=1000" />
-	<link rel="stylesheet" href="../css/common.css" type="text/css" />
+	<link rel="stylesheet" href="../css/common_new.css" type="text/css" />
 	<script type="text/javascript" src="http://www.sinqrtel.com/js/sqrt_sync.js"></script>
+ 	<link href='http://fonts.googleapis.com/css?family=Syncopate:400,700' rel='stylesheet' type='text/css'>
 </head>
 
 <body>
-	<div id="fb-root"></div>
+	<div id="fb-root"></div><script type="text/javascript">window.fb_root_defined=true</script>
 	<!--document begin-->	
 	<div class="header">
 		<div id="header_container">
 			<div class="text_floater"><h1>Vivi la experiencia</h1></div><div class="logo_floater"><img src="../img/logo_header.png" width="200" height="51" /></div>
 		</div>
 	</div>
+<div id="main">
 	<div id="ad">
 		<div id="facebook-beforelogin">
     <h2>
-			<div class="fb-login-button">Entrar</div><div>&nbsp;y gan&aacute; tus puntos con:</div>
-     </h2>
-		</div>
+    <div class="float_left"><div style="padding: 13px"><div class="fb-login-button">Entr&aacute;</div></div></div>
+    <div class="float_left">&nbsp;Y gan&aacute;&nbsp;</div><div id="sqrt_user_added_score1" class="float_left"></div><div class="float_left">&nbsp; puntos con:</div>
+    <div class="clear"></div>
+    </h2>
+    </div>
 		<div id="facebook-afterlogin">
 			<h2>
-				<div>Estos puntos te los regala:</div>
+				<div class="float_left">Sumaste&nbsp;</div><div id="sqrt_user_added_score2" class="float_left"></div><div class="float_left">&nbsp;puntos!</div>
 			</h2>
-
-			<h2>
-				<div>Sumaste&nbsp;</div><div id="sqrt_added_score"></div><div>&nbsp;puntos!</div>
-			</h2>
-			<h2>
-				<a id="ver_perfil">Ver perfil taggeado</a>
-				<a id="ver_mi_perfil">Ver mi perfil</a>
+      <div class="clear"></div>
+      <h2>
+				<div>Estos puntos te los regal&oacute;:</div>
+        <div class="clear"></div>
 			</h2>
 		</div>
     <div id="ad_img"></div>
+    <h2>
+			<a id="ver_perfil">Ver perfil taggeado</a>
+			<a id="ver_mi_perfil">Ver mi perfil</a>
+		</h2>
 	</div>
-<div id="main">
-	<div id="container" class="hidden">
+	<div id="container" style="display:none">
 		<div id="container_top">
 			<div class="container_left_spacer"></div>
 
@@ -67,6 +71,8 @@
 					<div id="sqrt_user_score_server">+</div>
 					<div id="sqrt_user_score_local"></div>
 					</h2>
+		      <div class="clear"></div>          
+          <div id="sqrt_user_score_local_explained" style="display:none">Estos puntos no han sido verificados y pueden variar.</div>
 				</div>
 				<div class="clear"></div>
 			<!--	<div class="clear follow_player">
@@ -139,27 +145,64 @@
 	</div>
 	<!--document end-->
 	<script type="text/javascript">
+		loadAdInDivById('ad_img');
 		function fbChangeLogin(response) {
+			$("#sqrt_user_added_score1").text(Sinqrtel.getTagValue());
+			$("#sqrt_user_added_score2").text(Sinqrtel.getTagValue());			
 			if (response.status === 'connected') {
 				$("#facebook-beforelogin").hide();
 				$("#facebook-afterlogin").show();
-				Sinqrtel.SendServerMessage();
-				SendTag();
-				$("#sqrt_added_score").text(Sinqrtel.getTagValue());
-				
 			} else {
 				$("#facebook-beforelogin").show();
 				$("#facebook-afterlogin").hide();
 			}
+			Sinqrtel.init();
 		}
 		function okGA() {
 			
 		}
 		function okjQuery() {
-			
+		$("#sqrt_user_score_local").hover(
+			function(){
+				$("#sqrt_user_score_local_explained").show('slow');
+				// Create an empty canvas element
+		    var canvas = document.createElement("canvas");
+				var img = document.getElementById('sqrt_ad_image');
+
+    		canvas.width = img.width;
+		    canvas.height = img.height;
+
+    		// Copy the image contents to the canvas
+		    var ctx = canvas.getContext("2d");
+    		ctx.drawImage(img, 0, 0);
+
+		    // Get the data-URL formatted image
+    		// Firefox supports PNG and JPEG. You could check img.src to
+		    // guess the original format, but be aware the using "image/jpg"
+		    // will re-encode the image.
+		    var dataURL = canvas.toDataURL("image/png");
+				var imgsha = CryptoJS.SHA1(dataURL);
+//				alert(dataURL);
+	//			alert("Stared for " + get_ad_watch_timer() + " to " + imgsha);
+			},
+			function(){
+				$("#sqrt_user_score_local_explained").hide('slow');
+			}
+		);
+		$("#ver_perfil").click(function(){
+			$("#ad").hide('slow');
+			$("#container").show('slow');
+			stop_ad_watch_timer();
+		});
+		$("#ver_mi_perfil").click(function(){
+			$("#ad").hide('slow');
+			$("#container").show('slow');
+			stop_ad_watch_timer();
+		});
+		
 		}
 		function okFB() {
-			
+			FB.init({appId:'207120562693777',status:true,cookie:true,xfbml:true,oauth:true});			
 		}
 		function okTwitter() {
 			
@@ -179,7 +222,7 @@
 				{'id':'crypto-sha1-jssdk', 'quorum':'CryptoJS','require':'CryptoJS', 'uri': ('https' == document.location.protocol ? 'https' : 'http' ) + '://crypto-js.googlecode.com/svn/tags/3.0.2/build/components/sha1-min.js',},
 				{'id':'crypto-base64-jssdk', 'quorum':'CryptoJS','require':'CryptoJS', 'uri': ('https' == document.location.protocol ? 'https' : 'http' ) + '://crypto-js.googlecode.com/svn/tags/3.0.2/build/components/enc-base64-min.js',},
 				{'id':'jquery-jssdk', 'quorum':'jQuery','quorum_callback':okjQuery,'uri': ('https' == document.location.protocol ? 'https' : 'http' ) + '://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js',},
-				{'id':'facebook-jssdk', 'quorum':'FB','quorum_callback':okFB, 'require':'fb_root_defined','uri': ('https' == document.location.protocol ? 'https' : 'http' ) + '://connect.facebook.net/es_LA/all.js#appId=207120562693777&status=true&cookie=true&oauth=true&xfbml=1',},
+				{'id':'facebook-jssdk', 'quorum':'FB','quorum_callback':okFB, 'require':'fb_root_defined','uri': ('https' == document.location.protocol ? 'https' : 'http' ) + '://connect.facebook.net/es_LA/all.js',},
 				{'id':'twwt-jssdk', 'quorum':'TWTR','quorum_callback':okTwitter,'uri': ('https' == document.location.protocol ? 'https' : 'http' ) + '://widgets.twimg.com/j/2/widget.js',},
 			]
 		});

@@ -66,7 +66,6 @@ var Sinqrtel = {
 		if (response != null && response.authResponse && response.status === 'connected') {
 			Sinqrtel.sqrt_fb_status = true;
 			Sinqrtel.setSqrtUserId( 'fb' + response.authResponse.userID );
-			Sinqrtel.setVisitingUserId( window.location.hash );
 			var user_id = Sinqrtel.getVisiting()?Sinqrtel.getVisitUserId():Sinqrtel.getSqrtUserId();
 			Sinqrtel.ProfileCustomize(window.document, user_id);
 		} else {
@@ -89,6 +88,7 @@ var Sinqrtel = {
 		console.log("sqrt_init");
 		this.sqrt_initialized = false;
 		
+		this.setVisitingUserId(window.location.hash.substring(1));
 		if ( window.location.hash == "" || window.location.hash =="#myself" ) {
 			if ( typeof FB != "undefined" ) {
 				FB.Event.subscribe('auth.statusChange', this.sqrt_update_fb_status );
@@ -98,7 +98,6 @@ var Sinqrtel = {
 			}	
 		} else {
 			//kill # and save as user
-			this.setVisitingUserId(window.location.hash.substring(1));
 			var user_id = this.getViewUserId();
 			this.ProfileCustomize(window.document, user_id );
 			this.sqrt_initialized = true;

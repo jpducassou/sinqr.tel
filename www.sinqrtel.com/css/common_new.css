@@ -317,6 +317,7 @@ td { vertical-align: top; }
   width: 100%;
 	background-color: #fff;
 	max-width: 960px;
+	padding: 5px;
 }
 
 #container_top {
@@ -778,7 +779,7 @@ h4
 }
 
 #video_container {
-	float:right;
+	float:left;
 	max-width: 540px;
 	padding: 5px;
 }
@@ -786,4 +787,5 @@ h4
 #text_container {
 	float:left;
 	max-width: 400px;
+	padding: 5px;
 }

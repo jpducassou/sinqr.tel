@@ -74,3 +74,48 @@ function asyncjs( p_jss ) {
 		}
 	}
 }
+
+function loadAdInDivById(ad_div_id) {
+	var ad_image_id = 'sqrt_ad_image';
+	var request = false;
+	request=new XMLHttpRequest();
+	request.open( "GET", "http://www.sinqrtel.com/info/ads.txt", true);
+	request.setRequestHeader("User-Agent", navigator.userAgent);
+	request.onreadystatechange = function() {
+		if (request.readyState==4 && request.status==200) {
+			try {
+				var ads = JSON.parse( request.responseText );
+				var ad_img;
+				ad_img = document.getElementById( ad_image_id );
+				if ( ad_img == null ) {
+					var ad_img = new Image();
+					ad_img.id = ad_image_id;
+				}
+				ad_img.src = ads[Math.floor(ads.length * Math.random()) ];
+				
+				start_ad_watch_timer();
+				
+				document.getElementById( ad_div_id ).appendChild( ad_img );
+			} catch (e) {
+				
+			}
+		}
+	}
+	request.send(null);
+}
+
+function start_ad_watch_timer() {
+	window.ad_watch_start = new Date().getTime();
+}
+
+function stop_ad_watch_timer() {
+	window.ad_watch_end= new Date().getTime();
+}
+
+function get_ad_watch_timer() {
+	var timer;
+	if ( typeof window.ad_watch_end != 'undefined' && window.ad_watch_start != 'undefined' ) {
+		timer = (window.ad_watch_end - window.ad_watch_start) / 1000;
+	}
+	return timer;
+}
