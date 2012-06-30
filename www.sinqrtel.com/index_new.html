@@ -48,14 +48,22 @@
 		<div id="container">
 			<div id="container_top">
 				<div id="text_container">
-					<div class="float_left"><h2>Ya est&aacute; jugando?&nbsp;</h2></div><div style="padding: 13px"><div class="fb-login-button">Entrar</div></div>
+					<div id="fb_signed_in" style="display:none">
+					<h2>
+						<div id="user_name" class="float_left"></div>
+						<div class="float_left">, ya est&aacute;s jugando&nbsp;</div>
+						<a href="http://www.sinqrtel.com/ingame">Entrar</a>
+					</h2>
+					</div>
 					<div class="clear"></div>
 					<h4>SinQRtel es el juego urbano y virtual que te permite acceder a promociones, descuentos y acumular puntos para canjear por premios, mientras jugas en forma gratuita.</h4>
 					<h4><strong>Jug&#225; con tu cuenta de Facebook, desde tu celular o PC.<BR/></strong></h4>
 					<h4><a class="links_aleatorios" href="/como_se_juega.html">C&#243;mo se juega?</a></h4>
 					<h4><a class="links_aleatorios" href="http://get.beetagg.com/">Descargar lector de c&#243;digos QR</a></h4>
 					<div class="clear"></div>
+					<div id="fb_login" style="display:none">
           <div class="float_left"><h2>Quer&eacute;s comenzar a jugar?&nbsp;</h2></div><div style="padding: 13px"><div class="fb-login-button">Entrar</div></div>
+					</div>
 					<!--<h2><a class="links_aleatorios" href="/beneficios.html">Beneficios activos</a></h2>-->
 				</div>
 				<div id="video_container">
@@ -84,7 +92,17 @@
 	<script type="text/javascript">
 		function fbChangeLogin(response) {
 			if (response.status === 'connected') {
-				window.location = 'http://www.sinqrtel.com/ingame#fb' + response.authResponse.userID;
+				window.location = 'http://www.sinqrtel.com/ingame';
+			}
+		}
+		function fbStatusSetup(response) {
+			if (response.status === 'connected') {
+				$("#fb_signed_in").show('slow');
+				FB.api('/me', function(response) {
+					$("#user_name").text(response.first_name);
+				});
+			} else {
+				$("#fb_login").show('slow');
 			}
 		}
 		function okGA() {
@@ -100,6 +118,7 @@
 			FB.Event.subscribe('auth.login',fbChangeLogin);
 			FB.Event.subscribe('auth.logout',fbChangeLogin);
 			console.log("loaded!");
+			FB.Event.subscribe('auth.authResponseChange',fbStatusSetup);
 		}
 		
 		asyncjs({
